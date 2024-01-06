@@ -1,12 +1,11 @@
 package com.sparta.topster.domain.user.entity;
 
-import com.sparta.topster.domain.user.model.BaseEntity;
+import com.sparta.topster.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,4 +46,8 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
+    public void update(String nickname, String intro) {
+        this.nickname = nickname;
+        this.intro = intro;
+    }
 }
