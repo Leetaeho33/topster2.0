@@ -1,6 +1,7 @@
 package com.sparta.topster.domain.user.entity;
 
 import com.sparta.topster.domain.BaseEntity;
+import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,8 +47,8 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public void update(String nickname, String intro) {
-        this.nickname = nickname;
-        this.intro = intro;
+    public void updateIntro(UpdateReq updateReq) {
+        this.nickname = updateReq.getNickname();
+        this.intro = updateReq.getIntro();
     }
 }
