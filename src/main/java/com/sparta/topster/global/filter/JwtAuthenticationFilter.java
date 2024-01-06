@@ -74,7 +74,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String json = objectMapper.writeValueAsString(responseDto);
         PrintWriter writer = response.getWriter();
         writer.println(json);
-        writer.println("{" + token + "}");
     }
 
     @Override
