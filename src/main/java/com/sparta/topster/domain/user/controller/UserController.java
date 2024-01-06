@@ -1,7 +1,8 @@
 package com.sparta.topster.domain.user.controller;
 
-import com.sparta.topster.domain.user.dto.update.UpdateRes;
+import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
+import com.sparta.topster.domain.user.dto.update.UpdateRes;
 import com.sparta.topster.domain.user.service.UserService;
 import com.sparta.topster.global.exception.ErrorCode;
 import com.sparta.topster.global.exception.ServiceException;
@@ -14,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +37,7 @@ public class UserController {
 
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
-        if(!fieldErrors.isEmpty()){
+        if (!fieldErrors.isEmpty()) {
             throw new ServiceException(ErrorCode.MODIFY_PROFILE_FAILED);
         }
 
@@ -44,6 +47,18 @@ public class UserController {
             .code("200")
             .message("성공적으로 수정되었습니다.")
             .data(updateRes)
+            .build());
+    }
+
+    @GetMapping()
+    public ResponseEntity<RootResponseDto> getUser(
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        getUserRes getUser = userService.getUser(userDetails.getUser());
+        return ResponseEntity.ok().body(RootResponseDto.builder()
+            .code("200")
+            .message("조회 완료")
+            .data(getUser)
             .build());
     }
 

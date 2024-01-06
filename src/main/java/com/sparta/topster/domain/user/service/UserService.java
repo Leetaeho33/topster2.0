@@ -5,6 +5,7 @@ import static com.sparta.topster.global.exception.ErrorCode.DUPLICATE_USERNAME;
 import static com.sparta.topster.global.exception.ErrorCode.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.global.exception.ErrorCode.WRONG_ADMIN_CODE;
 
+import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
@@ -73,7 +74,7 @@ public class UserService {
 
     @Transactional
     public UpdateRes updateUser(User user, UpdateReq updateReq) {
-        User findByUser = getUser(user.getId());
+        User findByUser = findByUser(user.getId());
 
         if(!passwordEncoder.matches(updateReq.getPassword(), findByUser.getPassword())){
             throw new ServiceException(NOT_FOUND_PASSWORD);
@@ -91,9 +92,20 @@ public class UserService {
             .build();
     }
 
+    public getUserRes getUser(User user) {
+        User findByUser = findByUser(user.getId());
 
-    private User getUser(Long userId) {
-        User findById = userRepository.findById(userId);
-        return findById;
+        return getUserRes.builder()
+            .username(user.getUsername())
+            .email(user.getEmail())
+            .nickname(user.getNickname())
+            .intro(user.getIntro())
+            .build();
     }
+
+
+    private User findByUser(Long userId) {
+        return userRepository.findById(userId);
+    }
+
 }
