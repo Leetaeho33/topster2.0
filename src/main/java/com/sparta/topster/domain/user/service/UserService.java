@@ -2,10 +2,13 @@ package com.sparta.topster.domain.user.service;
 
 import static com.sparta.topster.global.exception.ErrorCode.DUPLICATE_NICKNAME;
 import static com.sparta.topster.global.exception.ErrorCode.DUPLICATE_USERNAME;
+import static com.sparta.topster.global.exception.ErrorCode.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.global.exception.ErrorCode.WRONG_ADMIN_CODE;
 
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;
+import com.sparta.topster.domain.user.dto.update.UpdateReq;
+import com.sparta.topster.domain.user.dto.update.UpdateRes;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.domain.user.repository.UserRepository;
@@ -14,6 +17,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +69,31 @@ public class UserService {
             .nickname(saveUser.getNickname())
             .role(saveUser.getRole())
             .build();
+    }
+
+    @Transactional
+    public UpdateRes updateUser(User user, UpdateReq updateReq) {
+        User findByUser = getUser(user.getId());
+
+        if(!passwordEncoder.matches(updateReq.getPassword(), findByUser.getPassword())){
+            throw new ServiceException(NOT_FOUND_PASSWORD);
+        }
+
+        if(findByUser.getNickname().equals(updateReq.getNickname())){
+           throw new ServiceException(DUPLICATE_NICKNAME);
+        }
+
+        findByUser.update(updateReq.getNickname(), updateReq.getIntro());
+
+        return UpdateRes.builder()
+            .nickname(updateReq.getNickname())
+            .intro(updateReq.getIntro())
+            .build();
+    }
+
+
+    private User getUser(Long userId) {
+        User findById = userRepository.findById(userId);
+        return findById;
     }
 }
