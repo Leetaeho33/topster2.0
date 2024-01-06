@@ -84,7 +84,7 @@ public class UserService {
            throw new ServiceException(DUPLICATE_NICKNAME);
         }
 
-        findByUser.update(updateReq.getNickname(), updateReq.getIntro());
+        findByUser.updateIntro(updateReq);
 
         return UpdateRes.builder()
             .nickname(updateReq.getNickname())
