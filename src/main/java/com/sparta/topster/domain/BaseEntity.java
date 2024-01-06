@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.user.model;
+package com.sparta.topster.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.EntityListeners;
