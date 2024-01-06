@@ -1,5 +1,6 @@
 package com.sparta.topster.domain.user.dto.login;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,13 @@ public class LoginRes {
     private String username;
     private String nickname;
 
-    public LoginRes(String username) {
+    @Builder
+    public LoginRes(String username, String nickname) {
+        this.username = username;
+        this.nickname = nickname;
+    }
+
+    public LoginRes(String username){
+        this.username = username;
     }
 }
