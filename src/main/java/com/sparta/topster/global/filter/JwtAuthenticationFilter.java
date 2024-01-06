@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/v1/users/login");
     }
 
     @Override
@@ -57,14 +57,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         throws IOException {
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
-
+        String nickname = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getNickname();
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
         String message = "로그인에 성공했습니다.";
         response.setStatus(200);
 
-        LoginRes loginResponseDto = new LoginRes(username);
+        LoginRes loginResponseDto = new LoginRes(username, nickname);
         RootResponseDto<?> responseDto = RootResponseDto.builder()
             .code(String.valueOf(response.getStatus()))
             .message(message)
@@ -80,7 +80,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
         HttpServletResponse response, AuthenticationException failed) throws IOException {
-        response.setStatus(400);
+        response.setStatus(401);
 
         RootResponseDto<?> responseDto = RootResponseDto.builder()
             .code(LOGIN_FAILED.getCode())
