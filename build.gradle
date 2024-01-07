@@ -47,6 +47,9 @@ dependencies {
 
 	//Google OAuth2.0
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	//Naver Email
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {
