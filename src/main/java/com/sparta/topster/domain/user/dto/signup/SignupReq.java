@@ -33,6 +33,9 @@ public class SignupReq {
     @Size(max = 30, message = "30자 이내 간단한 소개")
     private String intro;
 
+    @NotBlank
+    private String certification;
+
     @Builder.Default
     private String adminToken = "";
 
