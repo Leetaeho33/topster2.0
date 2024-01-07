@@ -121,9 +121,17 @@ public class UserService {
             .build();
     }
 
+    @Transactional
+    public void deleteUser(User user, String password) {
+        User getUser = findByUser(user.getId());
+        if(passwordEncoder.matches(password,getUser.getPassword())){
+            userRepository.delete(getUser.getId());
+        }else{
+            throw new ServiceException(NOT_FOUND_PASSWORD);
+        }
+    }
 
     private User findByUser(Long userId) {
         return userRepository.findById(userId);
     }
-
 }

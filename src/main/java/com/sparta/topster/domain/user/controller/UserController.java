@@ -15,10 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.sparta.topster.domain.user.excepetion.UserException.MODIFY_PROFILE_FAILED;
@@ -51,7 +53,7 @@ public class UserController {
             .build());
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<RootResponseDto> getUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
@@ -60,6 +62,16 @@ public class UserController {
             .code("200")
             .message("조회 완료")
             .data(getUser)
+            .build());
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String password){
+        userService.deleteUser(userDetails.getUser(),password);
+
+        return ResponseEntity.ok().body(RootResponseDto.builder()
+            .code("200")
+            .message(userDetails.getUser().getUsername() + " 탈퇴 성공")
             .build());
     }
 
