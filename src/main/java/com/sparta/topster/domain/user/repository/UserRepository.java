@@ -22,4 +22,7 @@ public interface UserRepository {
 
     @Query("select c from User c where c.email = :googleEmail")
     Optional<User> findByGoogleEmail(String googleEmail);
+
+    @Query("select u from User u where u.email = :email")
+    Optional<User> findByUserEmail(String email);
 }
