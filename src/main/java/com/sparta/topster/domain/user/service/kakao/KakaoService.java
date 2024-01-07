@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.user.service;
+package com.sparta.topster.domain.user.service.kakao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
