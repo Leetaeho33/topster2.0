@@ -30,7 +30,6 @@ public class SignupReq {
     @Email
     private String email;
 
-    @NotBlank
     @Size(max = 30, message = "30자 이내 간단한 소개")
     private String intro;
 
