@@ -1,7 +1,7 @@
 package com.sparta.topster.domain.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.topster.domain.user.service.KakaoService;
+import com.sparta.topster.domain.user.service.kakao.KakaoService;
 import com.sparta.topster.global.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
