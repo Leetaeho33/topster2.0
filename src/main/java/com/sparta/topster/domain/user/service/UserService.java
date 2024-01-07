@@ -5,6 +5,8 @@ import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
+import static com.sparta.topster.global.exception.ErrorCode.DUPLICATE_EMAIL;
+
 import com.sparta.topster.domain.user.controller.MailController;
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
@@ -43,6 +45,7 @@ public class UserService {
 
         Optional<User> byUsername = userRepository.findByUsername(username);
         Optional<User> byNickname = userRepository.findBynickname(nickname);
+        Optional<User> byEmail = userRepository.findByUserEmail(signupReq.getEmail());
 
         if(byUsername.isPresent()){
             throw new ServiceException(NOT_FOUND_AUTHENTICATION_CODE);
@@ -50,6 +53,14 @@ public class UserService {
 
         if (byNickname.isPresent()){
             throw new ServiceException(DUPLICATE_NICKNAME);
+        }
+
+        if(byEmail.isPresent()){
+            throw new ServiceException(DUPLICATE_EMAIL);
+        }
+
+        if(!signupCode.equals(signupReq.getCertification())){
+            throw new ServiceException(NOT_FOUND_AUTHENTICATION_CODE);
         }
 
         UserRoleEnum role = UserRoleEnum.USER;
