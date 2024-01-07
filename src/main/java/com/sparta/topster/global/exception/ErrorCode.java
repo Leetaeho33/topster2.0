@@ -19,8 +19,8 @@ public enum ErrorCode {
     MODIFY_PROFILE_FAILED(HttpStatus.BAD_REQUEST, "1007", "유저 정보 수정에 실패했습니다."),
     NOT_ADMIN(HttpStatus.BAD_REQUEST, "1008", "관리자가 아닙니다."),
     NOT_AUTHORIZATION(HttpStatus.BAD_REQUEST, "1009", "인증되지 않은 사용자입니다."),
-    NOT_FOUND_PASSWORD(HttpStatus.BAD_REQUEST,"1010","비밀번호가 일치하지 않습니다.")
-
+    NOT_FOUND_PASSWORD(HttpStatus.BAD_REQUEST,"1010","비밀번호가 일치하지 않습니다."),
+    DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "1011", "중복된 사용자 이름입니다."),
 
     ;
 
