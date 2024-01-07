@@ -14,4 +14,8 @@ public interface UserRepository {
     User save(User user);
 
     User findById(Long id);
+
+    User findByKakaoId(Long kakaoId);
+
+    User findByEmail(String kakaoEmail);
 }

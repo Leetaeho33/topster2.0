@@ -37,6 +37,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private UserRoleEnum role;
 
+    private Long kakaoId;
+
     @Builder
     public User(String username, String nickname, String password, String email, String intro, UserRoleEnum role){
         this.username = username;
@@ -51,4 +53,18 @@ public class User extends BaseEntity {
         this.nickname = updateReq.getNickname();
         this.intro = updateReq.getIntro();
     }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
+    }
+
+    public User(String username, String password, String email, UserRoleEnum role, Long kakaoId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.kakaoId = kakaoId;
+    }
+
 }
