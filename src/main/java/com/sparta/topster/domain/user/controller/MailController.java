@@ -24,7 +24,7 @@ public class MailController {
         getCode.put(email,code);
         System.out.println("사용자에게 발송한 인증코드 ==> " + code);
 
-        return code;
+        return "작성하신 메일에서 인증번호를 확인해주세요.";
     }
 
     public String returnGetCode(String email){
