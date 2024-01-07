@@ -21,6 +21,7 @@ public enum ErrorCode {
     NOT_AUTHORIZATION(HttpStatus.BAD_REQUEST, "1009", "인증되지 않은 사용자입니다."),
     NOT_FOUND_PASSWORD(HttpStatus.BAD_REQUEST,"1010","비밀번호가 일치하지 않습니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "1011", "중복된 사용자 이름입니다."),
+    NOT_FOUND_AUTHENTICATION_CODE(HttpStatus.BAD_REQUEST,"1012","인증번호 오류")
 
     ;
 
