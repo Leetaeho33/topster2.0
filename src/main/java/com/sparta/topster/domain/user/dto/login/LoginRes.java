@@ -16,8 +16,4 @@ public class LoginRes {
         this.username = username;
         this.nickname = nickname;
     }
-
-    public LoginRes(String username){
-        this.username = username;
-    }
 }
