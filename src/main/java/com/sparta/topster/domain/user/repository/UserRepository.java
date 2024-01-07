@@ -1,6 +1,5 @@
 package com.sparta.topster.domain.user.repository;
 
-import com.sparta.topster.domain.user.entity.QUser;
 import com.sparta.topster.domain.user.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
