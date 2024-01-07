@@ -1,7 +1,6 @@
-package com.sparta.topster.domain.user.service;
+package com.sparta.topster.domain.user.service.google;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.domain.user.repository.UserRepository;
