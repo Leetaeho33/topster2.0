@@ -1,10 +1,12 @@
 package com.sparta.topster.domain.user.service;
 
 import static com.sparta.topster.global.exception.ErrorCode.DUPLICATE_NICKNAME;
-import static com.sparta.topster.global.exception.ErrorCode.DUPLICATE_USERNAME;
+import static com.sparta.topster.global.exception.ErrorCode.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.global.exception.ErrorCode.NOT_FOUND_PASSWORD;
+import static com.sparta.topster.global.exception.ErrorCode.TOKEN_ERROR;
 import static com.sparta.topster.global.exception.ErrorCode.WRONG_ADMIN_CODE;
 
+import com.sparta.topster.domain.user.controller.MailController;
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;
@@ -26,19 +28,25 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailController mailController;
 
     private final String ADMIN_TOKEN = "AAlrnYxKZ0aHgTBcXukeZygoC";
 
-    public SignupRes signup(SignupReq signupReq) {
+    public SignupRes signup(SignupReq signupReq){
         String username = signupReq.getUsername();
         String nickname = signupReq.getNickname();
         String password = passwordEncoder.encode(signupReq.getPassword());
+        String signupCode = mailController.returnGetCode(signupReq.getEmail());
+
+        if(!signupCode.equals(signupReq.getCertification())){
+            throw new ServiceException(TOKEN_ERROR);
+        }
 
         Optional<User> byUsername = userRepository.findByUsername(username);
         Optional<User> byNickname = userRepository.findBynickname(nickname);
 
         if(byUsername.isPresent()){
-            throw new ServiceException(DUPLICATE_USERNAME);
+            throw new ServiceException(NOT_FOUND_AUTHENTICATION_CODE);
         }
 
         if (byNickname.isPresent()){
@@ -93,7 +101,7 @@ public class UserService {
     }
 
     public getUserRes getUser(User user) {
-        User findByUser = findByUser(user.getId());
+        findByUser(user.getId());
 
         return getUserRes.builder()
             .username(user.getUsername())
