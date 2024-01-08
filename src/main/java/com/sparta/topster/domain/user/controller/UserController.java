@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.sparta.topster.domain.user.excepetion.UserException.MODIFY_PROFILE_FAILED;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -37,7 +39,7 @@ public class UserController {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
         if (!fieldErrors.isEmpty()) {
-            throw new ServiceException(ErrorCode.MODIFY_PROFILE_FAILED);
+            throw new ServiceException(MODIFY_PROFILE_FAILED);
         }
 
         UpdateRes updateRes = userService.updateUser(userDetails.getUser(), updateReq);

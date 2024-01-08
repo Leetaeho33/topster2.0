@@ -1,6 +1,6 @@
 package com.sparta.topster.global.filter;
 
-import static com.sparta.topster.global.exception.ErrorCode.TOKEN_ERROR;
+import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.topster.global.exception.ServiceException;
