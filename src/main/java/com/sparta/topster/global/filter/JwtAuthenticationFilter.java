@@ -1,18 +1,14 @@
 package com.sparta.topster.global.filter;
 
-import static com.sparta.topster.domain.user.excepetion.UserException.LOGIN_FAILED;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
-import com.sparta.topster.domain.user.dto.login.LoginRes;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
-import com.sparta.topster.global.response.RootResponseDto;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import com.sparta.topster.global.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
