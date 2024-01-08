@@ -28,15 +28,15 @@ public enum UserException implements ErrorCode {
 
     @Override
     public String getCode() {
-        return null;
+        return this.code;
     }
 
     @Override
     public HttpStatus getStatus() {
-        return null;
+        return this.Status;
     }
     @Override
     public String getMessage() {
-        return null;
+        return this.message;
     }
 }
