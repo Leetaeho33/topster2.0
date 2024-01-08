@@ -9,6 +9,7 @@ import static com.sparta.topster.global.exception.ErrorCode.DUPLICATE_EMAIL;
 
 import com.sparta.topster.domain.user.controller.MailController;
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
+import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
@@ -17,6 +18,8 @@ import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.domain.user.repository.UserRepository;
 import com.sparta.topster.global.exception.ServiceException;
+import com.sparta.topster.global.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailController mailController;
+    private final JwtUtil jwtUtil;
 
     private final String ADMIN_TOKEN = "AAlrnYxKZ0aHgTBcXukeZygoC";
 
@@ -88,6 +92,16 @@ public class UserService {
             .nickname(saveUser.getNickname())
             .role(saveUser.getRole())
             .build();
+    }
+
+    public void loginUser(LoginReq loginReq, HttpServletResponse response) {
+        String username = loginReq.getUsername();
+        Optional<User> byUsername = userRepository.findByUsername(username);
+
+        if(passwordEncoder.matches(loginReq.getPassword(),byUsername.get().getPassword())){
+            UserRoleEnum role = byUsername.get().getRole();
+            response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(byUsername.get().getUsername(),role));
+        }
     }
 
     @Transactional

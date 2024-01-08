@@ -27,7 +27,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/v1/users/login");
     }
 
     @Override
@@ -52,42 +51,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-        HttpServletResponse response, FilterChain chain, Authentication authResult)
-        throws IOException {
+        HttpServletResponse response, FilterChain chain, Authentication authResult) {
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
-        String nickname = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getNickname();
+
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
-
-        String message = "로그인에 성공했습니다.";
-        response.setStatus(200);
-
-        LoginRes loginResponseDto = new LoginRes(username, nickname);
-        RootResponseDto<?> responseDto = RootResponseDto.builder()
-            .code(String.valueOf(response.getStatus()))
-            .message(message)
-            .data(loginResponseDto)
-            .build();
-
-        String json = objectMapper.writeValueAsString(responseDto);
-        PrintWriter writer = response.getWriter();
-        writer.println(json);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
-        HttpServletResponse response, AuthenticationException failed) throws IOException {
+        HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(401);
-
-        RootResponseDto<?> responseDto = RootResponseDto.builder()
-            .code(LOGIN_FAILED.getCode())
-            .message(LOGIN_FAILED.getMessage())
-            .build();
-
-        String json = objectMapper.writeValueAsString(responseDto);
-        PrintWriter writer = response.getWriter();
-
-        writer.println(json);
     }
 }
