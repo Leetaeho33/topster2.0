@@ -1,15 +1,15 @@
 package com.sparta.topster.domain.user.controller;
 
+import static com.sparta.topster.domain.user.excepetion.UserException.MODIFY_PROFILE_FAILED;
+
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import com.sparta.topster.domain.user.dto.update.UpdateRes;
 import com.sparta.topster.domain.user.service.UserService;
-import com.sparta.topster.global.exception.ErrorCode;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootResponseDto;
 import com.sparta.topster.global.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import static com.sparta.topster.domain.user.excepetion.UserException.MODIFY_PROFILE_FAILED;
 
 @RestController
 @RequiredArgsConstructor
