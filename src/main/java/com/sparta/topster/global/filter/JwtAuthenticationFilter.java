@@ -1,7 +1,6 @@
 package com.sparta.topster.global.filter;
 
-import static com.sparta.topster.global.exception.ErrorCode.LOGIN_FAILED;
-
+import static com.sparta.topster.domain.user.excepetion.UserException.LOGIN_FAILED;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.login.LoginRes;
