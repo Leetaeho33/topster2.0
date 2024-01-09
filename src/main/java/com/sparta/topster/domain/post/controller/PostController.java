@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 import com.sparta.topster.domain.post.dto.request.PostCreateReq;
 import com.sparta.topster.domain.post.dto.request.PostUpdateReq;
+import com.sparta.topster.domain.post.dto.response.PostDeatilRes;
 import com.sparta.topster.domain.post.service.PostService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,4 +66,9 @@ public class PostController {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<PostDeatilRes> getPostDetail(@PathVariable Long id) {
+        PostDeatilRes res = postService.getPostDetail(id);
+        return ResponseEntity.ok(res);
+    }
 }
