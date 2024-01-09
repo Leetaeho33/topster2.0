@@ -40,6 +40,12 @@ public class PostService {
         return post.getId();
     }
 
+    public Long delete(Long id, Long userId) {
+        Post post = getUserPost(id, userId);
+        postRepository.delete(post);
+        return id;
+    }
+
 
     public Post getPost(Long id) {
         return postRepository.findById(id).orElseThrow(() -> {
