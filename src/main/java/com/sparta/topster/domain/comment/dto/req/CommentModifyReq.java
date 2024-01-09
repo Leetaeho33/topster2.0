@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.comment.dto;
+package com.sparta.topster.domain.comment.dto.req;
 
 import lombok.Getter;
 

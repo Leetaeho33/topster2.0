@@ -10,7 +10,7 @@ public interface CommentRespository {
 
   void save(String comment);
 
-  List<Comment> findAll();
+  List<Comment> findByPostId(Long postId);
 
   Comment findById(Long commentId);
 

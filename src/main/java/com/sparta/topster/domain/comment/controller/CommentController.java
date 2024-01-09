@@ -1,9 +1,8 @@
 package com.sparta.topster.domain.comment.controller;
 
-import com.sparta.topster.domain.comment.dto.CommentCreateReq;
-import com.sparta.topster.domain.comment.dto.CommentModifyReq;
-import com.sparta.topster.domain.comment.dto.CommentRes;
-import com.sparta.topster.domain.comment.entity.Comment;
+import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
+import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
+import com.sparta.topster.domain.comment.dto.res.CommentRes;
 import com.sparta.topster.domain.comment.service.CommentService;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import java.util.List;
@@ -30,8 +29,7 @@ public class CommentController {
                                                   @RequestBody CommentCreateReq commentCreateReq,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    commentService.createComment(postId, commentCreateReq, userDetails);
-    return null;
+    return ResponseEntity.ok().body(commentService.createComment(postId, commentCreateReq, userDetails));
   }
 
   @GetMapping("/post/{postId}/comments")
@@ -44,14 +42,14 @@ public class CommentController {
   public ResponseEntity<CommentRes> modifyComment(@PathVariable Long commentId,
                                                   @RequestBody CommentModifyReq commentModifyReq,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    commentService.modifyComment(commentId, commentModifyReq, userDetails);
-    return null;
+
+    return ResponseEntity.ok().body(commentService.modifyComment(commentId, commentModifyReq, userDetails));
   }
 
   @DeleteMapping("/comment/{commentId}")
   public ResponseEntity<CommentRes> deleteComment(@PathVariable Long commentId,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    commentService.deleteComment(commentId, userDetails);
-    return null;
+
+    return ResponseEntity.ok().body(commentService.deleteComment(commentId, userDetails));
   }
 }

@@ -1,7 +1,10 @@
 package com.sparta.topster.domain.comment.entity;
 
-import com.sparta.topster.domain.comment.dto.CommentModifyReq;
+import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
+import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
+import com.sparta.topster.domain.post.entity.Post;
 import com.sparta.topster.domain.user.entity.User;
+import com.sparta.topster.global.security.UserDetailsImpl;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,9 +33,16 @@ public class Comment {
     @ManyToOne
     private User user;
 
-//    @JoinColumn
-//    @ManyToOne
-//    private Board board;
+    @JoinColumn
+    @ManyToOne
+    private Post post;
+
+    public Comment(CommentCreateReq commentCreateReq, Post post, UserDetailsImpl userDetails) {
+        this.comment = commentCreateReq.getComment();
+        this.post = post;
+        this.user = userDetails.getUser();
+
+    }
 
     public void save(CommentModifyReq commentModifyReq) {
       this.comment = commentModifyReq.getComment();
