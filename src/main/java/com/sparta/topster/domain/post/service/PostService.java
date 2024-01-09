@@ -1,16 +1,21 @@
 package com.sparta.topster.domain.post.service;
 
 import com.sparta.topster.domain.post.dto.request.PostCreateReq;
+import com.sparta.topster.domain.post.dto.request.PostUpdateReq;
 import com.sparta.topster.domain.post.entity.Post;
+import com.sparta.topster.domain.post.exception.PostException;
 import com.sparta.topster.domain.post.repository.PostRepository;
 import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.service.TopsterService;
 import com.sparta.topster.domain.user.entity.User;
+import com.sparta.topster.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostService {
 
     private final PostRepository postRepository;
@@ -24,7 +29,30 @@ public class PostService {
             .topster(topster)
             .user(user)
             .build());
+
         return post.getId();
     }
 
+
+    public Long update(PostUpdateReq req, Long id, Long userId) {
+        Post post = getUserPost(id, userId);
+        post.update(req.title(), req.content());
+        return post.getId();
+    }
+
+
+    public Post getPost(Long id) {
+        return postRepository.findById(id).orElseThrow(() -> {
+            throw new ServiceException(PostException.NOT_FOUND);
+        });
+    }
+
+
+    private Post getUserPost(Long id, Long userId) {
+        Post post = getPost(id);
+        if (post.getUser().getId() != userId) {
+            throw new ServiceException(PostException.AccessDeniedError);
+        }
+        return post;
+    }
 }
