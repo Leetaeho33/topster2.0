@@ -41,7 +41,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
         URI uri = UriComponentsBuilder.fromUriString("http://www.maniadb.com")
                 .path("api/search/" + query + "/")
                 .queryParam("sr", "album")
-                .queryParam("display", 10)
+                .queryParam("display", 50)
                 .queryParam("v", 0.5)
                 .encode()
                 .build()
@@ -64,7 +64,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
     @Transactional
     @Override
     public List<AlbumRes> getAlbumsByArtist(String query) throws JsonProcessingException {
-        log.info("rawData 가져오기");
+        log.info(query + "로 rawData 가져오기");
         String rawData = getRawArtistData(query);
         JSONObject rawJSONData =new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
@@ -119,15 +119,20 @@ public class ManiadbServiceImpl implements  ManiadbService{
         return StringUtils.capitalize(s);
     }
 
-    private List<Song> fromStringToSong(String trackList, Album album){
-        String subSt = trackList.substring(9);
-        String[] stringSplit = subSt.split(" / ");
-        List<Song> songList = new ArrayList<>();
-        for(String s : stringSplit){
-            Song song = Song.builder().songname(s).build();
-            song.setAlbum(album);
-            songList.add(song);
+    // 여기도 tracklist가 비어있는 경우가 있음
+    private List<Song> fromStringToSong(String trackList, Album album) {
+        if (trackList.length() >= 9) {
+            String subSt = trackList.substring(9);
+            String[] stringSplit = subSt.split(" / ");
+            List<Song> songList = new ArrayList<>();
+            for (String s : stringSplit) {
+                Song song = Song.builder().songname(s).build();
+                song.setAlbum(album);
+                songList.add(song);
+            }
+            return songList;
         }
-        return songList;
+        return null;
     }
+
 }
