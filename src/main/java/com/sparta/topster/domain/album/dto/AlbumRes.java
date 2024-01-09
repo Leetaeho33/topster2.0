@@ -1,5 +1,7 @@
 package com.sparta.topster.domain.album.dto;
 
+import com.sparta.topster.domain.song.entity.Song;
+import lombok.Builder;
 import lombok.Getter;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,5 +15,13 @@ public class AlbumRes {
     String artist;
     String release;
     String image;
-    List<String> songs = new ArrayList<>();
+
+
+    @Builder
+    public AlbumRes(String title, String artist, String release, String image) {
+        this.title = title;
+        this.artist = artist;
+        this.release = release;
+        this.image = image;
+    }
 }

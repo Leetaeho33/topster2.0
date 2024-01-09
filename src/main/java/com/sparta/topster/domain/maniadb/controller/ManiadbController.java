@@ -24,4 +24,9 @@ public class ManiadbController {
     public ResponseEntity<Object> getRawData(@RequestParam("artistName") String query) throws JsonProcessingException {
         return ResponseEntity.ok(maniadbService.getRawArtistData(query));
     }
+
+    @GetMapping("/albums/artist")
+    public ResponseEntity<Object> getAlbums(@RequestParam("artistName") String query) throws JsonProcessingException {
+        return ResponseEntity.ok(maniadbService.getAlbumsByArtist(query));
+    }
 }
