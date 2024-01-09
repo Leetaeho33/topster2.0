@@ -1,12 +1,15 @@
 package com.sparta.topster.domain.user.service;
 
+import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_EMAIL;
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_NICKNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
+
 import com.sparta.topster.domain.user.controller.MailController;
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
+import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
@@ -15,6 +18,8 @@ import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.domain.user.repository.UserRepository;
 import com.sparta.topster.global.exception.ServiceException;
+import com.sparta.topster.global.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailController mailController;
+    private final JwtUtil jwtUtil;
 
     private final String ADMIN_TOKEN = "AAlrnYxKZ0aHgTBcXukeZygoC";
 
@@ -43,6 +49,7 @@ public class UserService {
 
         Optional<User> byUsername = userRepository.findByUsername(username);
         Optional<User> byNickname = userRepository.findBynickname(nickname);
+        Optional<User> byEmail = userRepository.findByUserEmail(signupReq.getEmail());
 
         if(byUsername.isPresent()){
             throw new ServiceException(NOT_FOUND_AUTHENTICATION_CODE);
@@ -50,6 +57,14 @@ public class UserService {
 
         if (byNickname.isPresent()){
             throw new ServiceException(DUPLICATE_NICKNAME);
+        }
+
+        if(byEmail.isPresent()){
+            throw new ServiceException(DUPLICATE_EMAIL);
+        }
+
+        if(!signupCode.equals(signupReq.getCertification())){
+            throw new ServiceException(NOT_FOUND_AUTHENTICATION_CODE);
         }
 
         UserRoleEnum role = UserRoleEnum.USER;
@@ -77,6 +92,16 @@ public class UserService {
             .nickname(saveUser.getNickname())
             .role(saveUser.getRole())
             .build();
+    }
+
+    public void loginUser(LoginReq loginReq, HttpServletResponse response) {
+        String username = loginReq.getUsername();
+        Optional<User> byUsername = userRepository.findByUsername(username);
+
+        if(passwordEncoder.matches(loginReq.getPassword(),byUsername.get().getPassword())){
+            UserRoleEnum role = byUsername.get().getRole();
+            response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(byUsername.get().getUsername(),role));
+        }
     }
 
     @Transactional
@@ -110,9 +135,17 @@ public class UserService {
             .build();
     }
 
+    @Transactional
+    public void deleteUser(User user, String password) {
+        User getUser = findByUser(user.getId());
+        if(passwordEncoder.matches(password,getUser.getPassword())){
+            userRepository.delete(getUser.getId());
+        }else{
+            throw new ServiceException(NOT_FOUND_PASSWORD);
+        }
+    }
 
     private User findByUser(Long userId) {
         return userRepository.findById(userId);
     }
-
 }

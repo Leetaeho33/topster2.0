@@ -1,7 +1,5 @@
 package com.sparta.topster.global.exception;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 
