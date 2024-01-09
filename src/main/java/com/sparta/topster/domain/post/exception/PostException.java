@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum PostException implements ErrorCode {
 
-    NOT_FOUND(HttpStatus.NOT_FOUND, "1001", "해당 게시글이 존재하지 않습니다."),
-    AccessDeniedError(HttpStatus.FORBIDDEN, "1002", "해당 게시글의 작성자가 아닙니다.");
+    NOT_FOUND(HttpStatus.NOT_FOUND, "P1001", "해당 게시글이 존재하지 않습니다."),
+    AccessDeniedError(HttpStatus.FORBIDDEN, "P1002", "해당 게시글의 작성자가 아닙니다.");
 
     private final HttpStatus Status;
     private final String code;
