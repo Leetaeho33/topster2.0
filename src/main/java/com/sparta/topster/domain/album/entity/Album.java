@@ -39,4 +39,8 @@ public class Album {
         this.image = image;
         this.songList = new ArrayList<>();
     }
+
+    public void setSongList(List<Song> songList) {
+        this.songList = songList;
+    }
 }
