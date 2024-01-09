@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.RepositoryDefinition;
 
 @RepositoryDefinition(domainClass = Post.class, idClass = Long.class)
-public interface PostRepository {
+public interface PostRepository extends PostQueryDslRepository {
 
     Post save(Post post);
 
