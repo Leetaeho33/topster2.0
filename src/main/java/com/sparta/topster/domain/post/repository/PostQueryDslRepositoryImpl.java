@@ -79,7 +79,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
 
     private OrderSpecifier getSort(String sortBy, Order order) {
         switch (sortBy) {
-            case "created":
+            case "createdAt":
                 return new OrderSpecifier<>(order, post.createdAt);
             case "title":
                 return new OrderSpecifier<>(order, post.title);
