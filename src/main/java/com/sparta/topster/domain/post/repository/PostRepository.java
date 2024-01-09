@@ -11,4 +11,5 @@ public interface PostRepository {
 
     Optional<Post> findById(Long id);
 
+    void delete(Post post);
 }
