@@ -3,13 +3,18 @@ package com.sparta.topster.domain.post.controller;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import com.sparta.topster.domain.post.dto.request.PostCreateReq;
+import com.sparta.topster.domain.post.dto.request.PostPageReq;
+import com.sparta.topster.domain.post.dto.request.PostSearchCond;
+import com.sparta.topster.domain.post.dto.request.PostSortReq;
 import com.sparta.topster.domain.post.dto.request.PostUpdateReq;
 import com.sparta.topster.domain.post.dto.response.PostDeatilRes;
+import com.sparta.topster.domain.post.dto.response.PostListRes;
 import com.sparta.topster.domain.post.service.PostService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -69,6 +74,14 @@ public class PostController {
     @GetMapping("/posts/{id}")
     public ResponseEntity<PostDeatilRes> getPostDetail(@PathVariable Long id) {
         PostDeatilRes res = postService.getPostDetail(id);
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<Page<PostListRes>> getPostList(PostSearchCond cond, PostPageReq pageReq,
+        PostSortReq sortReq) {
+
+        Page<PostListRes> res = postService.getPostList(cond, pageReq, sortReq);
         return ResponseEntity.ok(res);
     }
 }
