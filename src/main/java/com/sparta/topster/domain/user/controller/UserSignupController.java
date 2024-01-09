@@ -1,7 +1,7 @@
 package com.sparta.topster.domain.user.controller;
 
 
-import static com.sparta.topster.global.exception.ErrorCode.SIGNUP_FAIL;
+import static com.sparta.topster.domain.user.excepetion.UserException.SIGNUP_FAIL;
 
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;

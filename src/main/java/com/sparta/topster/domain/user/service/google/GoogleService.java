@@ -21,6 +21,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_EMAIL;
+
 @Service
 @RequiredArgsConstructor
 public class GoogleService {
@@ -58,7 +60,7 @@ public class GoogleService {
         if(byGoogleEmail.isEmpty()){
             userRepository.save(user);
         }else{
-            throw new ServiceException(ErrorCode.DUPLICATE_EMAIL);
+            throw new ServiceException(DUPLICATE_EMAIL);
         }
     }
 

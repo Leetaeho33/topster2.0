@@ -1,6 +1,6 @@
 package com.sparta.topster.global.config;
 
-import static com.sparta.topster.global.exception.ErrorCode.NOT_AUTHORIZATION;
+import static com.sparta.topster.domain.user.excepetion.UserException.NOT_AUTHORIZATION;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.topster.global.filter.JwtAuthenticationFilter;
