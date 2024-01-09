@@ -47,7 +47,7 @@ public class PostController {
 
         Long postId = postService.update(req, id, userDetails.getUser().getId());
         RootNoDataRes res = RootNoDataRes.builder()
-            .message(postId + "번 게시글 생성 완료하였습니다.")
+            .message(postId + "번 게시글 수정 완료하였습니다.")
             .code("201")
             .build();
         return ResponseEntity.ok(res);
@@ -60,7 +60,7 @@ public class PostController {
 
         Long deleteId = postService.delete(id, userDetails.getUser().getId());
         RootNoDataRes res = RootNoDataRes.builder()
-            .message(deleteId + "번 게시글 생성 완료하였습니다.")
+            .message(deleteId + "번 게시글 삭제 완료하였습니다.")
             .code("200")
             .build();
         return ResponseEntity.ok(res);
