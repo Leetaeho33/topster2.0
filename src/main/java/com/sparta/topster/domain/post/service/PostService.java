@@ -1,8 +1,12 @@
 package com.sparta.topster.domain.post.service;
 
 import com.sparta.topster.domain.post.dto.request.PostCreateReq;
+import com.sparta.topster.domain.post.dto.request.PostPageReq;
+import com.sparta.topster.domain.post.dto.request.PostSearchCond;
+import com.sparta.topster.domain.post.dto.request.PostSortReq;
 import com.sparta.topster.domain.post.dto.request.PostUpdateReq;
 import com.sparta.topster.domain.post.dto.response.PostDeatilRes;
+import com.sparta.topster.domain.post.dto.response.PostListRes;
 import com.sparta.topster.domain.post.entity.Post;
 import com.sparta.topster.domain.post.exception.PostException;
 import com.sparta.topster.domain.post.repository.PostRepository;
@@ -13,6 +17,7 @@ import com.sparta.topster.global.exception.ServiceException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +67,13 @@ public class PostService {
             .topsterId(post.getTopster().getId())
             .createdAt(dateFormat(post.getCreatedAt()))
             .build();
+    }
+
+    
+    public Page<PostListRes> getPostList(PostSearchCond cond, PostPageReq pageReq,
+        PostSortReq sortReq) {
+
+        return postRepository.getPostList(cond, pageReq.toPageable(), sortReq);
     }
 
 
