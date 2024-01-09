@@ -18,7 +18,6 @@ import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.global.exception.ServiceException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -347,8 +346,7 @@ class PostServiceTest {
                 .id(post.getId())
                 .nickname(post.getUser().getNickname())
                 .title(post.getTitle())
-                .createdAt(
-                    post.getCreatedAt().format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss")))
+                .createdAt(post.getCreatedAt())
                 .build())
             );
 
