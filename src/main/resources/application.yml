@@ -32,5 +32,10 @@ oauth2:
     resource-uri: https://www.googleapis.com/oauth2/v2/userinfo
 
 mail:
-  id: ${ID}
-  password: ${PASSWORD}
+  id: ${MAIL_ID}
+  password: ${MAIL_PASSWORD}
+
+spotify:
+  client:
+    id : ${SPOTIFY_CLIENT_ID}
+    secret : ${SPOTIFY_CLIENT_SECRET}
