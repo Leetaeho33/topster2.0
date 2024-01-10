@@ -1,5 +1,6 @@
 package com.sparta.topster.domain.topster_album.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.topster.domain.BaseEntity;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.topster.entity.Topster;
@@ -19,11 +20,12 @@ public class TopsterAlbum extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "album_id")
-    Album album;
+    private Album album;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "topster_id")
-    Topster topster;
+    private Topster topster;
 
     @Builder
     public TopsterAlbum(Album album, Topster topster) {

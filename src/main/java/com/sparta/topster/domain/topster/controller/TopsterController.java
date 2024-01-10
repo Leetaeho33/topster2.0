@@ -9,9 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/topsters")
 @Controller
@@ -24,4 +22,10 @@ public class TopsterController {
                                          @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok(topsterService.createTopster(topsterCreateReq, userDetails.getUser()));
     }
+
+    @GetMapping("/{topsterId}")
+    public ResponseEntity<Object> getTopstesr(@PathVariable Long topsterId){
+        return ResponseEntity.ok(topsterService.getTopster(topsterId));
+    }
+
 }
