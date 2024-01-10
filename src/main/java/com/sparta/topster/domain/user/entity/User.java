@@ -1,12 +1,17 @@
 package com.sparta.topster.domain.user.entity;
 
 import com.sparta.topster.domain.BaseEntity;
+import com.sparta.topster.domain.like.entity.Like;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,6 +43,11 @@ public class User extends BaseEntity {
     private UserRoleEnum role;
 
     private Long kakaoId;
+
+    @JoinColumn
+    @OneToMany
+    private List<Like> likeList = new ArrayList<>();
+
 
     @Builder
     public User(String username, String nickname, String password, String email, String intro, UserRoleEnum role){

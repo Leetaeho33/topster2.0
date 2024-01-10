@@ -8,7 +8,6 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.topster.domain.post.dto.request.PostSearchCond;
@@ -37,8 +36,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                     post.id,
                     post.user.nickname,
                     post.title,
-                    Expressions.stringTemplate("DATE_FORMAT({0}, '%Y.%m.%d %H:%i:%s')", post.createdAt)
-                        .as("createdAt")))
+                    post.createdAt))
             .from(post)
             .leftJoin(post.user)
             .where(search(cond.key(), cond.query()))
@@ -79,7 +77,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
 
     private OrderSpecifier getSort(String sortBy, Order order) {
         switch (sortBy) {
-            case "created":
+            case "createdAt":
                 return new OrderSpecifier<>(order, post.createdAt);
             case "title":
                 return new OrderSpecifier<>(order, post.title);
