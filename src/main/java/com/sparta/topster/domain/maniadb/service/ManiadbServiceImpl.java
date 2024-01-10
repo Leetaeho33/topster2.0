@@ -51,26 +51,23 @@ public class ManiadbServiceImpl implements  ManiadbService{
 
         //uri를 날리고 온 response(XML)
         ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-
-        String xml = response.getBody();
-        JSONObject jsonObject = XML.toJSONObject(xml);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        Object json = objectMapper.readValue(jsonObject.toString(), Object.class);
-        String rawData = objectMapper.writeValueAsString(json);
-        return rawData;
+        String rawDataJSON = fromXMLtoJSON(response.getBody());
+        return rawDataJSON;
     }
 
-    @Transactional
+
     @Override
-    public List<AlbumRes> getAlbumsByArtist(String query) throws JsonProcessingException {
-        log.info("rawData 가져오기");
+    public JSONArray getAlbumsJSONArray(String query) throws JsonProcessingException {
+        log.info(query + "로 rawData 가져오기");
         String rawData = getRawArtistData(query);
-        JSONObject rawJSONData =new JSONObject(rawData);
+        JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
-        JSONArray items = rawJSONData.getJSONObject("rss").getJSONObject("channel").
+        return rawJSONData.getJSONObject("rss").getJSONObject("channel").
                 getJSONArray("item");
-        List<AlbumRes> albumResList = new ArrayList<>();
+    }
+
+    public List<Album> fromJSONArrayToAlbum(JSONArray items, String query){
+        List<Album> albumList = new ArrayList<>();
         for(Object item : items){
             JSONObject itemObj = (JSONObject) item;
             // 가수를 검색했을 때 제목에 가수가 포함된 것도 포함됨.
@@ -79,27 +76,20 @@ public class ManiadbServiceImpl implements  ManiadbService{
             // maniadb에서 대문자/소문자를 구분하기 때문에 첫글자를 대문자로 변환하는 메소드 사용
             if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))){
                 log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
-                Album album = fromJSONtoAlbum(itemObj);
-                album = albumRepository.save(album);
-                if(itemObj.getJSONObject("maniadb:albumtrack")
-                        .getJSONObject("major_tracks").has("song")){
-                    JSONArray songs = itemObj.getJSONObject("maniadb:albumtrack")
-                            .getJSONObject("major_tracks").getJSONArray("song");
-                    for(Object songObj : songs){
-                        JSONObject songName = (JSONObject)songObj;
-                        String songNameSt = songName.getString("name");
-                        Song song = Song.builder().songname(songNameSt).build();
-                        song.setAlbum(album);
-                        album.getSongList().add(song);
-                    }
-                    AlbumRes albumRes = AlbumRes.builder().title(album.getTitle()).artist(album.getArtist())
-                            .release(album.getReleaseDate()).image(album.getImage()).build();
-                    albumResList.add(albumRes);
-                }
 
+                Album album = fromJSONToAlbum(itemObj);
+                List<Song> songList = fromJSONToSong((JSONObject) item, album);
+                album.setSongList(songList);
+                albumList.add(album);
+                }
             }
-        }
-        return albumResList;
+        return albumList;
+    }
+
+    public List<Song> fromJSONToSong(JSONObject item, Album album){
+        String trackList = item.getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
+        List<Song> songList = fromStringToSong(trackList,album);
+        return songList;
     }
 
     public Album fromJSONtoAlbum(JSONObject albumJSON) {
@@ -115,4 +105,29 @@ public class ManiadbServiceImpl implements  ManiadbService{
     private String initialUpperCase(String s){
         return StringUtils.capitalize(s);
     }
+    // 여기도 tracklist가 비어있는 경우가 있음
+    private List<Song> fromStringToSong(String trackList, Album album) {
+        if (trackList.length() >= 9) {
+            String subSt = trackList.substring(9);
+            String[] stringSplit = subSt.split(" / ");
+            List<Song> songList = new ArrayList<>();
+            for (String s : stringSplit) {
+                Song song = Song.builder().songname(s).build();
+                song.setAlbum(album);
+                songList.add(song);
+            }
+            return songList;
+        }
+        return null;
+    }
+
+    private String fromXMLtoJSON(String xml) throws JsonProcessingException {
+        JSONObject jsonObject = XML.toJSONObject(xml);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        Object json = objectMapper.readValue(jsonObject.toString(), Object.class);
+        String rawData = objectMapper.writeValueAsString(json);
+        return rawData;
+    }
+
 }
