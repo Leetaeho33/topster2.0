@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "tb_post")
 public class Post extends BaseEntity {
 
     @Id
@@ -40,7 +42,7 @@ public class Post extends BaseEntity {
         this.user = user;
         this.topster = topster;
     }
-    
+
     public void update(String title, String content) {
         this.title = title;
         this.content = content;

@@ -14,8 +14,6 @@ import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.service.TopsterService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -65,11 +63,11 @@ public class PostService {
             .content(post.getContent())
             .nickname(post.getUser().getNickname())
             .topsterId(post.getTopster().getId())
-            .createdAt(dateFormat(post.getCreatedAt()))
+            .createdAt(post.getCreatedAt())
             .build();
     }
 
-    
+
     public Page<PostListRes> getPostList(PostSearchCond cond, PostPageReq pageReq,
         PostSortReq sortReq) {
 
@@ -89,9 +87,5 @@ public class PostService {
             throw new ServiceException(PostException.AccessDeniedError);
         }
         return post;
-    }
-
-    private String dateFormat(LocalDateTime date) {
-        return date.format(DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss"));
     }
 }
