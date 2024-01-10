@@ -32,7 +32,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
 
     private final RestTemplate restTemplate;
     private final AlbumRepository albumRepository;
-    private final SongRepository songRepository;
+    private  final SongRepository songRepository;
 
     @Override
     public String getRawArtistData(String query) throws JsonProcessingException {
@@ -76,6 +76,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
             // maniadb에서 대문자/소문자를 구분하기 때문에 첫글자를 대문자로 변환하는 메소드 사용
             if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))){
                 log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
+
                 Album album = fromJSONToAlbum(itemObj);
                 List<Song> songList = fromJSONToSong((JSONObject) item, album);
                 album.setSongList(songList);
@@ -91,7 +92,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
         return songList;
     }
 
-    public Album fromJSONToAlbum(JSONObject albumJSON) {
+    public Album fromJSONtoAlbum(JSONObject albumJSON) {
         String title = albumJSON.getString("title");
         String artist = albumJSON.getString("maniadb:albumartists");
         String release = albumJSON.getString("release");
@@ -104,7 +105,6 @@ public class ManiadbServiceImpl implements  ManiadbService{
     private String initialUpperCase(String s){
         return StringUtils.capitalize(s);
     }
-
     // 여기도 tracklist가 비어있는 경우가 있음
     private List<Song> fromStringToSong(String trackList, Album album) {
         if (trackList.length() >= 9) {
@@ -129,4 +129,5 @@ public class ManiadbServiceImpl implements  ManiadbService{
         String rawData = objectMapper.writeValueAsString(json);
         return rawData;
     }
+
 }

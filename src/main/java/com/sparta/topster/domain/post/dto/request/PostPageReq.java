@@ -1,12 +1,10 @@
 package com.sparta.topster.domain.post.dto.request;
 
-import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @Getter
-@Builder
 public class PostPageReq {
 
     private Integer page;
