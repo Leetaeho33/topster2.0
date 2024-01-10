@@ -33,7 +33,7 @@ public class Topster extends BaseEntity {
     List<TopsterAlbum> topsterAlbumList = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "topster_id")
+    @JoinColumn(name = "user_id")
     User user;
 
     @Builder
