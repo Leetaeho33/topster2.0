@@ -3,17 +3,21 @@ package com.sparta.topster.domain.topster.entity;
 
 import com.sparta.topster.domain.BaseEntity;
 import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
+import com.sparta.topster.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.message.StringFormattedMessage;
 import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
 @Table(name = "tb_topster")
 @Entity
+@Getter
 public class Topster extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +30,17 @@ public class Topster extends BaseEntity {
     private String content;
 
     @OneToMany(mappedBy = "topster", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    List<TopsterAlbum> topsterAlbumList;
+    List<TopsterAlbum> topsterAlbumList = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "topster_id")
+    User user;
 
     @Builder
-    public Topster(String title, String content, List<TopsterAlbum> topsterAlbumList) {
+    public Topster(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.topsterAlbumList = topsterAlbumList;
+        this.user = user;
+//        this.topsterAlbumList = topsterAlbumList;
     }
 }
