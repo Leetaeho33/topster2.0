@@ -51,14 +51,8 @@ public class ManiadbServiceImpl implements  ManiadbService{
 
         //uri를 날리고 온 response(XML)
         ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-
-        String xml = response.getBody();
-        JSONObject jsonObject = XML.toJSONObject(xml);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        Object json = objectMapper.readValue(jsonObject.toString(), Object.class);
-        String rawData = objectMapper.writeValueAsString(json);
-        return rawData;
+        String rawDataJSON = fromXMLtoJSON(response.getBody());
+        return rawDataJSON;
     }
 
     @Transactional
@@ -85,20 +79,9 @@ public class ManiadbServiceImpl implements  ManiadbService{
                 String trackList = ((JSONObject) item).getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
                 List<Song> songList = fromStringToSong(trackList,album);
                 album.setSongList(songList);
-//                if(itemObj.getJSONObject("maniadb:albumtrack")
-//                        .getJSONObject("major_tracks").has("song")){
-//                    JSONArray songs = itemObj.getJSONObject("maniadb:albumtrack")
-//                            .getJSONObject("major_tracks").getJSONArray("song");
-//                    for(Object songObj : songs){
-//                        JSONObject songName = (JSONObject)songObj;
-//                        String songNameSt = songName.getString("name");
-//                        Song song = Song.builder().songname(songNameSt).build();
-//                        song.setAlbum(album);
-//                        album.getSongList().add(song);
-//                    }
-                    AlbumRes albumRes = AlbumRes.builder().title(album.getTitle()).artist(album.getArtist())
-                            .release(album.getReleaseDate()).image(album.getImage()).build();
-                    albumResList.add(albumRes);
+                AlbumRes albumRes = AlbumRes.builder().title(album.getTitle()).artist(album.getArtist())
+                        .release(album.getReleaseDate()).image(album.getImage()).build();
+                albumResList.add(albumRes);
                 }
 
             }
@@ -135,4 +118,12 @@ public class ManiadbServiceImpl implements  ManiadbService{
         return null;
     }
 
+    private String fromXMLtoJSON(String xml) throws JsonProcessingException {
+        JSONObject jsonObject = XML.toJSONObject(xml);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        Object json = objectMapper.readValue(jsonObject.toString(), Object.class);
+        String rawData = objectMapper.writeValueAsString(json);
+        return rawData;
+    }
 }
