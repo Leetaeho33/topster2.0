@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface AlbumRepository {
     Album save(Album album);
     Optional<Album> findById(Long albumId);
-
+    Optional<Album> findByTitle(String albumTitle);
+    Album findOrCreateByTitle(String albumTitle);
 }
