@@ -66,11 +66,4 @@ public class AlbumService {
                         build()));
         return album;
     }
-
-    public boolean isExistAlbum(String albumTitle){
-        Optional<Album> optionalAlbum = albumRepository.findByTitle(albumTitle);
-        return optionalAlbum.isPresent();
-    }
-
-
 }
