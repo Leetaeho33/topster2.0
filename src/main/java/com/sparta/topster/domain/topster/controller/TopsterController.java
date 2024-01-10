@@ -2,6 +2,8 @@ package com.sparta.topster.domain.topster.controller;
 
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.service.TopsterService;
+import com.sparta.topster.domain.user.entity.User;
+import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.response.RootResponseDto;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,16 @@ public class TopsterController {
     }
 
     @GetMapping("/{topsterId}")
-    public ResponseEntity<Object> getTopstesr(@PathVariable Long topsterId){
+    public ResponseEntity<Object> getTopster(@PathVariable Long topsterId){
         return ResponseEntity.ok(topsterService.getTopster(topsterId));
+    }
+    @DeleteMapping("/{topsterId}")
+    public ResponseEntity<Object> deleteTopstesr(@PathVariable Long topsterId,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
+        topsterService.deleteTopster(topsterId, userDetails.getUser());
+        return ResponseEntity.ok(RootNoDataRes.builder().
+                code(HttpStatus.OK.toString()).
+                message("탑스터가 정상적으로 삭제 되었습니다.").build());
     }
 
 }

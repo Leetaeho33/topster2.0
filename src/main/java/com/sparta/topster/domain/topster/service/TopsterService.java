@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_AUTHOR;
 import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_EXIST_TOPSTER;
 
 @Service
@@ -40,6 +41,7 @@ public class TopsterService {
 
     @Transactional
     public TopsterCreateRes createTopster(TopsterCreateReq topsterCreateReq, User user) {
+        log.info("Topster 등록 시작");
         List<AlbumInsertReq> albumInsertReqList = topsterCreateReq.getAlbumInsertReqList();
         String title = topsterCreateReq.getTitle();
         String content = topsterCreateReq.getContent();
@@ -48,10 +50,11 @@ public class TopsterService {
                 content(content).
                 user(user).
                 build();
+        log.info("빈 Topster save");
         topster = topsterRepository.save(topster);
 
+        log.info("Topster AlbumLlist에 Album추가 시작");
         for(AlbumInsertReq albumInsertReq : albumInsertReqList){
-
             String albumTitle = albumInsertReq.getTitle();
             String albumReleaseDate = albumInsertReq.getReleaseDate();
             String albumImage = albumInsertReq.getImage();
@@ -68,9 +71,10 @@ public class TopsterService {
             topsterAlbumRepository.save(topsterAlbum);
 
             topster.getTopsterAlbumList().add(topsterAlbum);
-
             }
+        log.info("Topster AlbumLlist에 Album추가 완료");
         List<AlbumRes> albumResList  = new ArrayList<>();
+        log.info("Topster Entity -> TopsterCreateRes");
         for(TopsterAlbum topsterAlbum : topster.getTopsterAlbumList()){
             albumResList.add(
                     AlbumRes.builder().
@@ -85,6 +89,15 @@ public class TopsterService {
                 content(topster.getContent()).
                 albumResList(albumResList).build();
     }
+    public void deleteTopster(Long topsterId, User user) {
+        log.info("topster 삭제 시작");
+        if(checkAuthor(user.getId(),topsterId)){
+            topsterRepository.delete(getTopster(topsterId));
+        }else{
+            log.error(NOT_AUTHOR.getMessage());
+            throw new ServiceException(NOT_AUTHOR);
+        }
+    }
 
     public Topster getTopster(Long topsterId){
         log.info("topster 조회 시작");
@@ -96,7 +109,8 @@ public class TopsterService {
             throw new ServiceException(NOT_EXIST_TOPSTER);
         }
     }
-    public TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr){
+    private TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr){
+        log.info("Topster Entity -> TopsterGetRes");
         List<AlbumRes> albumResList = new ArrayList<>();
         for(TopsterAlbum topsterAlbum : topstesr.getTopsterAlbumList()){
             albumResList.add(AlbumRes.builder()
@@ -108,5 +122,9 @@ public class TopsterService {
         return TopsterGetRes.builder().title(topstesr.getTitle())
                 .content(topstesr.getContent())
                 .albumResList(albumResList).build();
+    }
+    private boolean checkAuthor(Long userId, Long topsterId){
+        Topster topster = getTopster(topsterId);
+        return topster.getUser().getId().equals((userId));
     }
 }

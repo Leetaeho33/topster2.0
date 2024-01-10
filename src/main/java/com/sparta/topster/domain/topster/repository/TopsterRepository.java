@@ -10,4 +10,6 @@ public interface TopsterRepository {
     Topster save(Topster topster);
 
     Optional<Topster> findById(Long topsterId);
+
+    void delete(Topster topster);
 }
