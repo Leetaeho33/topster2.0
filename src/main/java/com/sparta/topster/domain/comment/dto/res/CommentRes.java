@@ -11,7 +11,8 @@ public class CommentRes {
     String commentWriter;
 
     public CommentRes(Comment comment) {
+        this.id = comment.getCommentId();
         this.comment = comment.getComment();
-//        this.commentWriter = comment.getBoard().getCommentWriter;
+        this.commentWriter = comment.getUser().getUsername();
     }
 }

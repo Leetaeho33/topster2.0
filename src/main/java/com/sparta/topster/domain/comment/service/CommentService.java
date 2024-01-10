@@ -9,6 +9,7 @@ import com.sparta.topster.domain.comment.repository.CommentRespository;
 import com.sparta.topster.domain.post.entity.Post;
 import com.sparta.topster.domain.post.repository.PostRepository;
 import com.sparta.topster.global.exception.ServiceException;
+import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,14 +42,15 @@ public class CommentService {
     List<CommentRes> postCommentList = new ArrayList<>();
 
     for (Comment comment : findCommentList) {
-      if(comment.getPost().getId().equals(postId)) {
+      if(!comment.getPost().getId().equals(postId)) {
         postCommentList.add(new CommentRes(comment));
       }
+
     }
         return postCommentList;
   }
 
-  public CommentRes modifyComment(Long commentId, CommentModifyReq commentModifyReq, UserDetailsImpl userDetails) {
+  public RootNoDataRes modifyComment(Long commentId, CommentModifyReq commentModifyReq, UserDetailsImpl userDetails) {
     log.info("댓글 수정");
     Comment comment = modifyAndDeleteCommentAuthor(commentId, userDetails);
 
@@ -57,22 +59,26 @@ public class CommentService {
     log.info("댓글 수정 완료");
     commentRespository.save(comment);
 
-    return new CommentRes(comment);
+    return RootNoDataRes.builder()
+        .message(commentId + "번 댓글을 수정하였습니다.")
+        .code("200").build();
   }
 
-  public CommentRes deleteComment(Long commentId, UserDetailsImpl userDetails) {
+  public RootNoDataRes deleteComment(Long commentId, UserDetailsImpl userDetails) {
     log.info("댓글 삭제");
     Comment comment = modifyAndDeleteCommentAuthor(commentId, userDetails);
 
     log.info("댓글 삭제 완료");
     commentRespository.delete(comment);
 
-    return new CommentRes(comment);
+    return RootNoDataRes.builder()
+        .message(commentId + "번 댓글을 삭제하였습니다.")
+        .code("200").build();
   }
 
 
   public Comment modifyAndDeleteCommentAuthor(Long commentId, UserDetailsImpl userDetails) {
-
+    log.info("테스트");
     Comment comment = commentRespository.findById(commentId);
 
     if(comment == null) {
@@ -82,7 +88,7 @@ public class CommentService {
     if(!comment.getUser().getUsername().equals(userDetails.getUsername())) {
       throw new ServiceException(CommentException.MODIFY_AND_DELETE_ONLY_AUTHOR); // 작성자만 수정 및 삭제 할 수 있습니다.
     }
-
+    System.out.println(comment);
     return comment;
   }
 }

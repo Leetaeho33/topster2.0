@@ -3,7 +3,9 @@ package com.sparta.topster.domain.comment.controller;
 import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
 import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
 import com.sparta.topster.domain.comment.dto.res.CommentRes;
+import com.sparta.topster.domain.comment.entity.Comment;
 import com.sparta.topster.domain.comment.service.CommentService;
+import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,21 +35,22 @@ public class CommentController {
   }
 
   @GetMapping("/post/{postId}/comments")
-  public List<CommentRes> getComment(@PathVariable Long postId) {
-    return commentService.getComment(postId);
+  public ResponseEntity<?> getComment(@PathVariable Long postId) {
+
+    return ResponseEntity.ok().body(commentService.getComment(postId));
 
   }
 
-  @PatchMapping("/comment/{commentId}")
-  public ResponseEntity<CommentRes> modifyComment(@PathVariable Long commentId,
+  @PatchMapping("/comments/{commentId}")
+  public ResponseEntity<RootNoDataRes> modifyComment(@PathVariable Long commentId,
                                                   @RequestBody CommentModifyReq commentModifyReq,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
     return ResponseEntity.ok().body(commentService.modifyComment(commentId, commentModifyReq, userDetails));
   }
 
-  @DeleteMapping("/comment/{commentId}")
-  public ResponseEntity<CommentRes> deleteComment(@PathVariable Long commentId,
+  @DeleteMapping("/comments/{commentId}")
+  public ResponseEntity<RootNoDataRes> deleteComment(@PathVariable Long commentId,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
     return ResponseEntity.ok().body(commentService.deleteComment(commentId, userDetails));
