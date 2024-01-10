@@ -13,23 +13,29 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/topsters")
+@RequestMapping("/api/v1")
 @Controller
 @RequiredArgsConstructor
 public class TopsterController {
     private final TopsterService topsterService;
 
-    @PostMapping
+    @PostMapping("/topsters")
     public ResponseEntity<Object> create(@RequestBody TopsterCreateReq topsterCreateReq,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok(topsterService.createTopster(topsterCreateReq, userDetails.getUser()));
     }
 
-    @GetMapping("/{topsterId}")
+    @GetMapping("/topsters/{topsterId}")
     public ResponseEntity<Object> getTopster(@PathVariable Long topsterId){
-        return ResponseEntity.ok(topsterService.getTopster(topsterId));
+        return ResponseEntity.ok(topsterService.getTopsterService(topsterId));
     }
-    @DeleteMapping("/{topsterId}")
+
+    @GetMapping("/users/{userId}/topsters")
+    public ResponseEntity<Object> getTopsterByUser(@PathVariable Long userId){
+        return ResponseEntity.ok(topsterService.getTopsterByUserService(userId));
+    }
+
+    @DeleteMapping("/topsters/{topsterId}")
     public ResponseEntity<Object> deleteTopstesr(@PathVariable Long topsterId,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails){
         topsterService.deleteTopster(topsterId, userDetails.getUser());
