@@ -55,16 +55,19 @@ public class ManiadbServiceImpl implements  ManiadbService{
         return rawDataJSON;
     }
 
-    @Transactional
+
     @Override
-    public List<AlbumRes> getAlbumsByArtist(String query) throws JsonProcessingException {
+    public JSONArray getAlbumsJSONArray(String query) throws JsonProcessingException {
         log.info(query + "로 rawData 가져오기");
         String rawData = getRawArtistData(query);
-        JSONObject rawJSONData =new JSONObject(rawData);
+        JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
-        JSONArray items = rawJSONData.getJSONObject("rss").getJSONObject("channel").
+        return rawJSONData.getJSONObject("rss").getJSONObject("channel").
                 getJSONArray("item");
-        List<AlbumRes> albumResList = new ArrayList<>();
+    }
+
+    public List<Album> fromJSONArrayToAlbum(JSONArray items, String query){
+        List<Album> albumList = new ArrayList<>();
         for(Object item : items){
             JSONObject itemObj = (JSONObject) item;
             // 가수를 검색했을 때 제목에 가수가 포함된 것도 포함됨.
@@ -79,13 +82,13 @@ public class ManiadbServiceImpl implements  ManiadbService{
                 String trackList = ((JSONObject) item).getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
                 List<Song> songList = fromStringToSong(trackList,album);
                 album.setSongList(songList);
-                AlbumRes albumRes = AlbumRes.builder().title(album.getTitle()).artist(album.getArtist())
-                        .release(album.getReleaseDate()).image(album.getImage()).build();
-                albumResList.add(albumRes);
+                albumList.add(album);
+//                AlbumRes albumRes = AlbumRes.builder().title(album.getTitle()).artist(album.getArtist())
+//                        .release(album.getReleaseDate()).image(album.getImage()).build();
                 }
 
             }
-        return albumResList;
+        return albumList;
     }
 
     public Album fromJSONToAlbum(JSONObject albumJSON) {
