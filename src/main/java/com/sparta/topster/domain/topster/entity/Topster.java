@@ -1,6 +1,8 @@
 package com.sparta.topster.domain.topster.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.topster.domain.BaseEntity;
 import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
 import com.sparta.topster.domain.user.entity.User;
@@ -28,6 +30,7 @@ public class Topster extends BaseEntity {
 
     @Column
     private String content;
+
 
     @OneToMany(mappedBy = "topster", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     List<TopsterAlbum> topsterAlbumList = new ArrayList<>();

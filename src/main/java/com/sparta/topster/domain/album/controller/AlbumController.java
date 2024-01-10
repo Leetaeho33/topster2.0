@@ -2,6 +2,7 @@ package com.sparta.topster.domain.album.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.topster.domain.album.service.AlbumService;
+import com.sparta.topster.global.response.RootResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

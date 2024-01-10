@@ -36,7 +36,6 @@ public class AlbumService {
 
         List<AlbumRes> albumResList = new ArrayList<>();
         for(Album album : albumList){
-            albumRepository.save(album);
             AlbumRes albumRes = AlbumRes.builder().artist(album.getArtist()).title(album.getTitle())
                     .image(album.getImage()).release(album.getReleaseDate()).build();
             albumResList.add(albumRes);
@@ -67,11 +66,4 @@ public class AlbumService {
                         build()));
         return album;
     }
-
-    public boolean isExistAlbum(String albumTitle){
-        Optional<Album> optionalAlbum = albumRepository.findByTitle(albumTitle);
-        return optionalAlbum.isPresent();
-    }
-
-
 }

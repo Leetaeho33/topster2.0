@@ -10,12 +10,12 @@ import java.util.List;
 public class TopsterCreateRes {
     String title;
     String content;
-    List<AlbumRes> albumResList;
+    List<AlbumRes> albums;
 
     @Builder
     public TopsterCreateRes(String title, String content, List<AlbumRes> albumResList) {
         this.title = title;
         this.content = content;
-        this.albumResList = albumResList;
+        this.albums = albumResList;
     }
 }
