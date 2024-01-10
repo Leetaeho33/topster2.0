@@ -77,7 +77,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
             if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))){
                 log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
 
-                Album album = fromJSONToAlbum(itemObj);
+                Album album = fromJSONtoAlbum(itemObj);
                 List<Song> songList = fromJSONToSong((JSONObject) item, album);
                 album.setSongList(songList);
                 albumList.add(album);
