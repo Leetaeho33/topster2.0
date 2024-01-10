@@ -15,7 +15,6 @@ import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.config.annotation.web.oauth2.resourceserver.OpaqueTokenDsl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +35,7 @@ public class TopsterService {
     @Transactional
     public TopsterCreateRes createTopster(TopsterCreateReq topsterCreateReq, User user) {
         log.info("Topster 등록 시작");
-        List<AlbumInsertReq> albumInsertReqList = topsterCreateReq.getAlbumInsertReqList();
+        List<AlbumInsertReq> albumInsertReqList = topsterCreateReq.getAlbums();
         String title = topsterCreateReq.getTitle();
         String content = topsterCreateReq.getContent();
         Topster topster = Topster.builder().
