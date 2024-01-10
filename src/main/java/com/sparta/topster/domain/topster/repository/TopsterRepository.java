@@ -5,5 +5,5 @@ import org.springframework.data.repository.RepositoryDefinition;
 
 @RepositoryDefinition(domainClass = Topster.class, idClass = Long.class)
 public interface TopsterRepository {
-
+    Topster save(Topster topster);
 }
