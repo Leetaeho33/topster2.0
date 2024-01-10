@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.album.dto;
+package com.sparta.topster.domain.album.dto.res;
 
 import com.sparta.topster.domain.song.entity.Song;
 import lombok.Builder;

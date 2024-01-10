@@ -3,7 +3,7 @@ package com.sparta.topster.domain.maniadb.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sparta.topster.domain.album.dto.AlbumRes;
+import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.album.repository.AlbumRepository;
 import com.sparta.topster.domain.song.entity.Song;
@@ -77,7 +77,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
             if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))){
                 log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
 
-                Album album = fromJSONToAlbum(itemObj);
+                Album album = fromJSONtoAlbum(itemObj);
                 List<Song> songList = fromJSONToSong((JSONObject) item, album);
                 album.setSongList(songList);
                 albumList.add(album);
