@@ -3,7 +3,7 @@ package com.sparta.topster.domain.maniadb.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sparta.topster.domain.album.dto.AlbumRes;
+import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.album.repository.AlbumRepository;
 import com.sparta.topster.domain.song.entity.Song;
