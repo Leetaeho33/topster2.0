@@ -41,7 +41,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
         URI uri = UriComponentsBuilder.fromUriString("http://www.maniadb.com")
                 .path("api/search/" + query + "/")
                 .queryParam("sr", "album")
-                .queryParam("display", 50)
+                .queryParam("display", 10)
                 .queryParam("v", 0.5)
                 .encode()
                 .build()
@@ -77,18 +77,18 @@ public class ManiadbServiceImpl implements  ManiadbService{
             if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))){
                 log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
                 Album album = fromJSONToAlbum(itemObj);
-                album = albumRepository.save(album);
-
-                String trackList = ((JSONObject) item).getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
-                List<Song> songList = fromStringToSong(trackList,album);
+                List<Song> songList = fromJSONToSong((JSONObject) item, album);
                 album.setSongList(songList);
                 albumList.add(album);
-//                AlbumRes albumRes = AlbumRes.builder().title(album.getTitle()).artist(album.getArtist())
-//                        .release(album.getReleaseDate()).image(album.getImage()).build();
                 }
-
             }
         return albumList;
+    }
+
+    public List<Song> fromJSONToSong(JSONObject item, Album album){
+        String trackList = item.getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
+        List<Song> songList = fromStringToSong(trackList,album);
+        return songList;
     }
 
     public Album fromJSONToAlbum(JSONObject albumJSON) {
