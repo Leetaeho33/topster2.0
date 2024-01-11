@@ -34,7 +34,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
         List<PostListRes> list = jpaQueryFactory.select(
                 Projections.fields(PostListRes.class,
                     post.id,
-                    post.user.nickname,
+                    post.user.nickname.as("author"),
                     post.title,
                     post.createdAt))
             .from(post)
