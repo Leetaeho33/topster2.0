@@ -11,5 +11,5 @@ import java.util.List;
 public class TopsterGetRes {
     String title;
     String content;
-    List<AlbumRes> albumResList;
+    List<AlbumRes> albums;
 }

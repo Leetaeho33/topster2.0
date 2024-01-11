@@ -148,7 +148,7 @@ public class TopsterService {
         }
         return TopsterGetRes.builder().title(topstesr.getTitle())
                 .content(topstesr.getContent())
-                .albumResList(albumResList).build();
+                .albums(albumResList).build();
     }
 
 
