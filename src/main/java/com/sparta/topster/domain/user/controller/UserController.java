@@ -55,12 +55,11 @@ public class UserController {
             throw new ServiceException(MODIFY_PROFILE_FAILED);
         }
 
-        UpdateRes updateRes = userService.updateUser(userDetails.getUser(), updateReq);
+        userService.updateUser(userDetails.getUser(), updateReq);
 
         return ResponseEntity.ok().body(RootResponseDto.builder()
             .code("200")
             .message("성공적으로 수정되었습니다.")
-            .data(updateRes)
             .build());
     }
 
@@ -68,11 +67,10 @@ public class UserController {
     public ResponseEntity<RootResponseDto> getUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        getUserRes getUser = userService.getUser(userDetails.getUser());
+        userService.getUser(userDetails.getUser());
         return ResponseEntity.ok().body(RootResponseDto.builder()
             .code("200")
             .message("조회 완료")
-            .data(getUser)
             .build());
     }
 

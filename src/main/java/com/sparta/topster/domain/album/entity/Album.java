@@ -1,7 +1,6 @@
 package com.sparta.topster.domain.album.entity;
 
 import com.sparta.topster.domain.song.entity.Song;
-import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,9 +30,6 @@ public class Album {
     @OneToMany(mappedBy = "album", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     List<Song> songList;
 
-//    @OneToMany(mappedBy = "album", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-//    List<TopsterAlbum> topsterAlbumList;
-
 
     @Builder
     public Album(String title, String artist, String release, String image) {
@@ -43,7 +39,6 @@ public class Album {
         this.image = image;
         this.songList = new ArrayList<>();
     }
-
 
     public void setSongList(List<Song> songList) {
         this.songList = songList;

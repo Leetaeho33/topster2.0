@@ -34,12 +34,11 @@ public class UserSignupController {
             throw new ServiceException(SIGNUP_FAIL);
         }
 
-        SignupRes signupRes = userService.signup(signupReq);
+        userService.signup(signupReq);
 
         return ResponseEntity.ok().body(RootResponseDto.builder()
             .code("200")
             .message("회원가입 성공")
-            .data(signupRes)
             .build());
     }
 

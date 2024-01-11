@@ -18,7 +18,9 @@ public class GoogleController {
     }
 
     @GetMapping("/{registrationId}")
-    public void googleLogin(@RequestParam String code, @PathVariable String registrationId) {
+    public String googleLogin(@RequestParam String code, @PathVariable String registrationId) {
         googleService.socialLogin(code, registrationId);
+
+        return "redirect:/";
     }
 }
