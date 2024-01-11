@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/album")
+@RequestMapping("/api/v1/albums")
 public class AlbumController {
 
     private final AlbumService albumService;
@@ -21,7 +21,7 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.getRawArtistData(query));
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Object> getAlbums(@RequestParam("artistName") String query) throws JsonProcessingException {
         return ResponseEntity.ok(albumService.getAlbumsByArtist(query));
     }
