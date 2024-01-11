@@ -46,7 +46,6 @@ public class CommentService {
       }
 
     }
-    System.out.println(postCommentList);
         return postCommentList;
   }
 
@@ -54,7 +53,7 @@ public class CommentService {
     log.info("댓글 수정");
     Comment comment = modifyAndDeleteCommentAuthor(commentId, userDetails);
 
-    comment.save(commentModifyReq);
+    comment.update(commentModifyReq.getContent());
 
     log.info("댓글 수정 완료");
     commentRespository.save(comment);
@@ -78,7 +77,6 @@ public class CommentService {
 
 
   public Comment modifyAndDeleteCommentAuthor(Long commentId, UserDetailsImpl userDetails) {
-    log.info("테스트");
     Comment comment = commentRespository.findById(commentId);
 
     if(comment == null) {
@@ -89,7 +87,7 @@ public class CommentService {
       throw new ServiceException(CommentException.MODIFY_AND_DELETE_ONLY_AUTHOR); // 작성자만 수정 및 삭제 할 수 있습니다.
     }
     System.out.println(comment);
-    log.info("테스트끝");
+
     return comment;
 
   }

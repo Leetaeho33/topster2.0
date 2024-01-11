@@ -1,5 +1,6 @@
 package com.sparta.topster.domain.comment.entity;
 
+import com.sparta.topster.domain.BaseEntity;
 import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
 import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
 import com.sparta.topster.domain.post.entity.Post;
@@ -13,16 +14,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "tb_comment")
-public class Comment {
+@Builder
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +43,7 @@ public class Comment {
     @ManyToOne
     private Post post;
 
+
     public Comment(CommentCreateReq commentCreateReq, Post post, UserDetailsImpl userDetails) {
         this.content = commentCreateReq.getContent();
         this.post = post;
@@ -46,8 +51,8 @@ public class Comment {
 
     }
 
-    public void save(CommentModifyReq commentModifyReq) {
-      this.content = commentModifyReq.getComment();
-    }
 
+    public void update(String comment) {
+        this.content = comment;
+    }
 }
