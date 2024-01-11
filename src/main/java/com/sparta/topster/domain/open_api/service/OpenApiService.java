@@ -11,6 +11,4 @@ import java.util.List;
 public interface OpenApiService {
     String getRawArtistData(String query);
     List<Album> getAlbums(String query);
-//    List<Song> fromJSONToSong(JSONObject item, Album album);
-//    Album fromJSONtoAlbum(JSONObject albumJSON);
 }

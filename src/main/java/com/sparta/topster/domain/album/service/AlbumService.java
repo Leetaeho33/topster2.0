@@ -24,12 +24,12 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final OpenApiService openApiService;
 
-    public String getRawArtistData(String query) throws JsonProcessingException {
+    public String getRawArtistData(String query){
         return openApiService.getRawArtistData(query);
     }
 
 
-    public List<AlbumRes> getAlbumsByArtist(String query) throws JsonProcessingException {
+    public List<AlbumRes> getAlbumsByArtist(String query){
         List<Album> albumList = openApiService.getAlbums(query);
 
         List<AlbumRes> albumResList = new ArrayList<>();

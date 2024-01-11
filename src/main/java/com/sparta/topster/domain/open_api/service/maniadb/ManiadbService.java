@@ -66,31 +66,41 @@ public class ManiadbService implements OpenApiService {
         List<Album> albumList = new ArrayList<>();
         for(Object item : items){
             JSONObject itemObj = (JSONObject) item;
+            log.info("maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
+
             // 가수를 검색했을 때 제목에 가수가 포함된 것도 포함됨.
-            log.info("open_api:albumartists : " + itemObj.getString("open_api:albumartists"));
             // 따라서 albumartists가 query를 포함한 것만 필터링
             // maniadb에서 대문자/소문자를 구분하기 때문에 첫글자를 대문자로 변환하는 메소드 사용
-            if(itemObj.getString("open_api:albumartists").contains(initialUpperCase(query))){
-                log.info("필터링 된 open_api:albumartists : " + itemObj.getString("open_api:albumartists"));
 
+
+            if(query.matches("^[a-zA-Z]$")){
+                if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))) {
+                    log.info("쿼리문이 영어로 이루어져 있을 때");
+                    log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
+                    Album album = fromJSONtoAlbum(itemObj);
+                    List<Song> songList = fromJSONToSong((JSONObject) item, album);
+                    album.setSongList(songList);
+                    albumList.add(album);
+                }
+            }else{
                 Album album = fromJSONtoAlbum(itemObj);
                 List<Song> songList = fromJSONToSong((JSONObject) item, album);
                 album.setSongList(songList);
                 albumList.add(album);
-                }
             }
+        }
         return albumList;
     }
 
     private List<Song> fromJSONToSong(JSONObject item, Album album){
-        String trackList = item.getJSONObject("open_api:albumtrack").getString("open_api:tracklist");
+        String trackList = item.getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
         List<Song> songList = fromStringToSong(trackList,album);
         return songList;
     }
 
     private Album fromJSONtoAlbum(JSONObject albumJSON) {
         String title = albumJSON.getString("title");
-        String artist = albumJSON.getString("open_api:albumartists");
+        String artist = albumJSON.getString("maniadb:albumartists");
         String release = albumJSON.getString("release");
         String image = albumJSON.getString("image");
 
