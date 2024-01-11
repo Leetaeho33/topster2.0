@@ -11,8 +11,6 @@ public interface LikeRepository {
 
   List<Like> findAllByTopster(Topster topster);
 
-  Like findByTopsterAndUser(Topster topster, User user);
-
   void delete(Like alreadyLike);
 
   void save(Like like);
