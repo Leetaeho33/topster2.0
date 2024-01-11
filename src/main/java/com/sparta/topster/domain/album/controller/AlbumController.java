@@ -21,6 +21,7 @@ public class AlbumController {
         return ResponseEntity.ok(albumService.getRawArtistData(query));
     }
 
+
     @GetMapping
     public ResponseEntity<Object> getAlbums(@RequestParam("artistName") String query) throws JsonProcessingException {
         return ResponseEntity.ok(albumService.getAlbumsByArtist(query));

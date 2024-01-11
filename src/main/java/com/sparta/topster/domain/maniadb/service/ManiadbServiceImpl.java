@@ -64,6 +64,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
                 getJSONArray("item");
     }
 
+
     public List<Album> fromJSONArrayToAlbum(JSONArray items, String query){
         List<Album> albumList = new ArrayList<>();
         for(Object item : items){
@@ -94,11 +95,13 @@ public class ManiadbServiceImpl implements  ManiadbService{
         return albumList;
     }
 
+
     public List<Song> fromJSONToSong(JSONObject item, Album album){
         String trackList = item.getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
         List<Song> songList = fromStringToSong(trackList,album);
         return songList;
     }
+
 
     public Album fromJSONtoAlbum(JSONObject albumJSON) {
         String title = albumJSON.getString("title");
@@ -110,9 +113,11 @@ public class ManiadbServiceImpl implements  ManiadbService{
         return album;
     }
 
+
     private String initialUpperCase(String s){
         return StringUtils.capitalize(s);
     }
+
     // 여기도 tracklist가 비어있는 경우가 있음
     private List<Song> fromStringToSong(String trackList, Album album) {
         if (trackList.length() >= 9) {
@@ -128,6 +133,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
         }
         return null;
     }
+
 
     private String fromXMLtoJSON(String xml) throws JsonProcessingException {
         JSONObject jsonObject = XML.toJSONObject(xml);
