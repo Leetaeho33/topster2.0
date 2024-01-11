@@ -7,6 +7,7 @@ import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.open_api.service.OpenApiService;
 import com.sparta.topster.domain.song.entity.Song;
 import com.sparta.topster.domain.song.repository.SongRepository;
+import com.sparta.topster.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -22,6 +23,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sparta.topster.domain.open_api.exception.ManiadbException.NOT_SERCH_ALBUM;
 
 @Service
 @Slf4j(topic = "ManiaServiceImpl")
@@ -58,8 +61,13 @@ public class ManiadbService implements OpenApiService {
         String rawData = getRawArtistData(query);
         JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
-        return fromJSONArrayToAlbum(rawJSONData.getJSONObject("rss").getJSONObject("channel").
-                getJSONArray("item"), query);
+        if(rawJSONData.getJSONObject("rss").getJSONObject("channel").
+                has("item")){
+            return fromJSONArrayToAlbum(rawJSONData.getJSONObject("rss").getJSONObject("channel").
+                    getJSONArray("item"), query);
+        }
+        log.error(NOT_SERCH_ALBUM.getMessage());
+        throw new ServiceException(NOT_SERCH_ALBUM);
     }
 
     private List<Album> fromJSONArrayToAlbum(JSONArray items, String query){
@@ -73,7 +81,7 @@ public class ManiadbService implements OpenApiService {
             // maniadb에서 대문자/소문자를 구분하기 때문에 첫글자를 대문자로 변환하는 메소드 사용
 
 
-            if(query.matches("^[a-zA-Z]$")){
+            if(query.matches("^[a-zA-Z]*$")){
                 if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))) {
                     log.info("쿼리문이 영어로 이루어져 있을 때");
                     log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
@@ -109,8 +117,14 @@ public class ManiadbService implements OpenApiService {
     }
 
     private String initialUpperCase(String s){
-        return StringUtils.capitalize(s);
+        String[] subString = s.split(" ");
+        StringBuilder sb = new StringBuilder();
+        for(String sIndex : subString){
+            sb.append(StringUtils.capitalize(sIndex));
+        }
+        return StringUtils.capitalize(sb.toString());
     }
+
     // 여기도 tracklist가 비어있는 경우가 있음
     private List<Song> fromStringToSong(String trackList, Album album) {
         if (trackList.length() >= 9) {
@@ -137,7 +151,7 @@ public class ManiadbService implements OpenApiService {
             return rawData;
         }
         catch (JsonProcessingException e){
-            return null;
+            throw new ServiceException(NOT_SERCH_ALBUM);
         }
     }
 
