@@ -62,7 +62,7 @@ public class PostService {
             .id(post.getId())
             .title(post.getTitle())
             .content(post.getContent())
-            .nickname(post.getUser().getNickname())
+            .author(post.getUser().getNickname())
             .topsterId(post.getTopster().getId())
             .createdAt(post.getCreatedAt())
             .build();
