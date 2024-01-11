@@ -25,15 +25,25 @@ public class TopsterController {
         return ResponseEntity.ok(topsterService.createTopster(topsterCreateReq, userDetails.getUser()));
     }
 
+
     @GetMapping("/topsters/{topsterId}")
     public ResponseEntity<Object> getTopster(@PathVariable Long topsterId){
         return ResponseEntity.ok(topsterService.getTopsterService(topsterId));
     }
 
+
     @GetMapping("/users/{userId}/topsters")
     public ResponseEntity<Object> getTopsterByUser(@PathVariable Long userId){
         return ResponseEntity.ok(topsterService.getTopsterByUserService(userId));
     }
+
+
+    @GetMapping("/topsters/my")
+    public ResponseEntity<?> getMyTopster(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(topsterService.getTopsterByUserService(userDetails.getUser()
+                .getId()));
+    }
+
 
     @DeleteMapping("/topsters/{topsterId}")
     public ResponseEntity<Object> deleteTopstesr(@PathVariable Long topsterId,
@@ -43,5 +53,6 @@ public class TopsterController {
                 code(HttpStatus.OK.toString()).
                 message("탑스터가 정상적으로 삭제 되었습니다.").build());
     }
+
 
 }
