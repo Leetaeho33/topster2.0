@@ -78,9 +78,13 @@ public class TopsterService {
                             build());
         }
         return TopsterCreateRes.builder().
+                id(topster.getId()).
                 title(topster.getTitle()).
                 content(topster.getContent()).
-                albumResList(albumResList).build();
+                author(topster.getUser().getNickname()).
+                albums(albumResList).
+                createdAt(topster.getCreatedAt()).
+                build();
     }
 
 
@@ -140,15 +144,22 @@ public class TopsterService {
         log.info("Topster Entity -> TopsterGetRes");
         List<AlbumRes> albumResList = new ArrayList<>();
         for(TopsterAlbum topsterAlbum : topstesr.getTopsterAlbumList()){
-            albumResList.add(AlbumRes.builder()
+            albumResList.add(
+                    AlbumRes.builder()
+                    .id(topsterAlbum.getAlbum().getId())
                     .title(topsterAlbum.getAlbum().getTitle())
                     .artist(topsterAlbum.getAlbum().getArtist())
                     .release(topsterAlbum.getAlbum().getReleaseDate())
                     .image(topsterAlbum.getAlbum().getImage()).build());
         }
-        return TopsterGetRes.builder().title(topstesr.getTitle())
+        return TopsterGetRes.builder()
+                .id(topstesr.getId())
+                .title(topstesr.getTitle())
                 .content(topstesr.getContent())
-                .albums(albumResList).build();
+                .albums(albumResList)
+                .author(topstesr.getUser().getNickname())
+                .createdAt(topstesr.getCreatedAt())
+                .build();
     }
 
 

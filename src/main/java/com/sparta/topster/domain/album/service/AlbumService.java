@@ -34,7 +34,7 @@ public class AlbumService {
 
         List<AlbumRes> albumResList = new ArrayList<>();
         for(Album album : albumList){
-            AlbumRes albumRes = AlbumRes.builder().artist(album.getArtist()).title(album.getTitle())
+            AlbumRes albumRes = AlbumRes.builder().id(album.getId()).artist(album.getArtist()).title(album.getTitle())
                     .image(album.getImage()).release(album.getReleaseDate()).build();
             albumResList.add(albumRes);
         }
