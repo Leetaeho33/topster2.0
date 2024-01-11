@@ -11,6 +11,7 @@ import com.sparta.topster.domain.post.entity.Post;
 import com.sparta.topster.domain.post.exception.PostException;
 import com.sparta.topster.domain.post.repository.PostRepository;
 import com.sparta.topster.domain.topster.entity.Topster;
+import com.sparta.topster.domain.topster.exception.TopsterException;
 import com.sparta.topster.domain.topster.service.TopsterService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
@@ -28,7 +29,7 @@ public class PostService {
     private final TopsterService topsterService;
 
     public Long save(PostCreateReq req, Long topsterId, User user) {
-        Topster topster = topsterService.getTopster(topsterId);
+        Topster topster = getUserTopster(topsterId, user);
         Post post = postRepository.save(Post.builder()
             .title(req.title())
             .content(req.content())
@@ -61,7 +62,7 @@ public class PostService {
             .id(post.getId())
             .title(post.getTitle())
             .content(post.getContent())
-            .nickname(post.getUser().getNickname())
+            .author(post.getUser().getNickname())
             .topsterId(post.getTopster().getId())
             .createdAt(post.getCreatedAt())
             .build();
@@ -79,6 +80,15 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(() -> {
             throw new ServiceException(PostException.NOT_FOUND);
         });
+    }
+
+
+    private Topster getUserTopster(Long topsterId, User user) {
+        Topster topster = topsterService.getTopster(topsterId);
+        if (!topster.getUser().getId().equals(user.getId())) {
+            throw new ServiceException(TopsterException.NOT_AUTHOR);
+        }
+        return topster;
     }
 
 

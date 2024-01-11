@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class PostListRes {
 
     private Long id;
-    private String nickname;
+    private String author;
     private String title;
     private LocalDateTime createdAt;
 }
