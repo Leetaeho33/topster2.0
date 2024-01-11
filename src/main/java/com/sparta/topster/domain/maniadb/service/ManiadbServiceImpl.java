@@ -31,8 +31,6 @@ import java.util.List;
 public class ManiadbServiceImpl implements  ManiadbService{
 
     private final RestTemplate restTemplate;
-    private final AlbumRepository albumRepository;
-    private  final SongRepository songRepository;
 
     @Override
     public String getRawArtistData(String query) throws JsonProcessingException {
@@ -66,31 +64,44 @@ public class ManiadbServiceImpl implements  ManiadbService{
                 getJSONArray("item");
     }
 
+
     public List<Album> fromJSONArrayToAlbum(JSONArray items, String query){
         List<Album> albumList = new ArrayList<>();
         for(Object item : items){
             JSONObject itemObj = (JSONObject) item;
-            // 가수를 검색했을 때 제목에 가수가 포함된 것도 포함됨.
             log.info("maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
+
+            // 가수를 검색했을 때 제목에 가수가 포함된 것도 포함됨.
             // 따라서 albumartists가 query를 포함한 것만 필터링
             // maniadb에서 대문자/소문자를 구분하기 때문에 첫글자를 대문자로 변환하는 메소드 사용
-            if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))){
-                log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
 
+
+            if(query.matches("^[a-zA-Z]$")){
+                if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))) {
+                    log.info("쿼리문이 영어로 이루어져 있을 때");
+                    log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
+                    Album album = fromJSONtoAlbum(itemObj);
+                    List<Song> songList = fromJSONToSong((JSONObject) item, album);
+                    album.setSongList(songList);
+                    albumList.add(album);
+                }
+            }else{
                 Album album = fromJSONtoAlbum(itemObj);
                 List<Song> songList = fromJSONToSong((JSONObject) item, album);
                 album.setSongList(songList);
                 albumList.add(album);
-                }
             }
+        }
         return albumList;
     }
+
 
     public List<Song> fromJSONToSong(JSONObject item, Album album){
         String trackList = item.getJSONObject("maniadb:albumtrack").getString("maniadb:tracklist");
         List<Song> songList = fromStringToSong(trackList,album);
         return songList;
     }
+
 
     public Album fromJSONtoAlbum(JSONObject albumJSON) {
         String title = albumJSON.getString("title");
@@ -102,9 +113,11 @@ public class ManiadbServiceImpl implements  ManiadbService{
         return album;
     }
 
+
     private String initialUpperCase(String s){
         return StringUtils.capitalize(s);
     }
+
     // 여기도 tracklist가 비어있는 경우가 있음
     private List<Song> fromStringToSong(String trackList, Album album) {
         if (trackList.length() >= 9) {
@@ -120,6 +133,7 @@ public class ManiadbServiceImpl implements  ManiadbService{
         }
         return null;
     }
+
 
     private String fromXMLtoJSON(String xml) throws JsonProcessingException {
         JSONObject jsonObject = XML.toJSONObject(xml);

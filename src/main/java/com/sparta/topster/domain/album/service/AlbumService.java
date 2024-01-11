@@ -30,6 +30,7 @@ public class AlbumService {
         return maniadbService.getRawArtistData(query);
     }
 
+
     public List<AlbumRes> getAlbumsByArtist(String query) throws JsonProcessingException {
         JSONArray items =  maniadbService.getAlbumsJSONArray(query);
         List<Album> albumList = maniadbService.fromJSONArrayToAlbum(items, query);
@@ -43,6 +44,7 @@ public class AlbumService {
         return albumResList;
     }
 
+
     public Album getAlbum(Long albumId){
         Optional<Album> optionalAlbum = albumRepository.findById(albumId);
         if(optionalAlbum.isPresent()){
@@ -52,6 +54,8 @@ public class AlbumService {
             throw new ServiceException(NOT_EXIST_ALBUM);
         }
     }
+
+
     public Album getAlbumByTitleOrCreate(String albumTitle,
                                          String albumImage,
                                          String albumArtist,
