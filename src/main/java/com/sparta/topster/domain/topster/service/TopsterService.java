@@ -83,10 +83,12 @@ public class TopsterService {
                 albumResList(albumResList).build();
     }
 
+
     public TopsterGetRes getTopsterService(Long topsterId){
         Topster topster = getTopster(topsterId);
         return fromTopsterToTopsterGetRes(topster);
     }
+
 
     public Object getTopsterByUserService(Long userId) {
         List<Topster> topsterList = getTopsterByUser(userId);
@@ -96,6 +98,7 @@ public class TopsterService {
         }
         return topsterGetResList;
     }
+
 
     public void deleteTopster(Long topsterId, User user) {
         log.info("topster 삭제 시작");
@@ -107,6 +110,7 @@ public class TopsterService {
         }
     }
 
+
     public Topster getTopster(Long topsterId){
         log.info("topsterId :" + topsterId +"로 topster 조회 시작");
         Optional<Topster> optionalTopster = topsterRepository.findById(topsterId);
@@ -117,6 +121,7 @@ public class TopsterService {
             throw new ServiceException(NOT_EXIST_TOPSTER);
         }
     }
+
 
     public List<Topster> getTopsterByUser(Long userId) {
         log.info("userId :" + userId + "로 topster 조회 시작");
@@ -130,6 +135,7 @@ public class TopsterService {
         }
     }
 
+
     private TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr){
         log.info("Topster Entity -> TopsterGetRes");
         List<AlbumRes> albumResList = new ArrayList<>();
@@ -142,8 +148,9 @@ public class TopsterService {
         }
         return TopsterGetRes.builder().title(topstesr.getTitle())
                 .content(topstesr.getContent())
-                .albumResList(albumResList).build();
+                .albums(albumResList).build();
     }
+
 
     private boolean checkAuthor(Long userId, Long topsterId){
         Topster topster = getTopster(topsterId);

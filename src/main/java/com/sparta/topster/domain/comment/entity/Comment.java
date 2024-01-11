@@ -29,7 +29,7 @@ public class Comment {
     private Long id;
 
     @Column
-    private String comment;
+    private String content;
 
     @JoinColumn
     @ManyToOne
@@ -40,14 +40,14 @@ public class Comment {
     private Post post;
 
     public Comment(CommentCreateReq commentCreateReq, Post post, UserDetailsImpl userDetails) {
-        this.comment = commentCreateReq.getComment();
+        this.content = commentCreateReq.getContent();
         this.post = post;
         this.user = userDetails.getUser();
 
     }
 
     public void save(CommentModifyReq commentModifyReq) {
-      this.comment = commentModifyReq.getComment();
+      this.content = commentModifyReq.getComment();
     }
 
 }

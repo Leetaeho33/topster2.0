@@ -7,12 +7,12 @@ import lombok.Getter;
 public class CommentRes {
 
     Long id;
-    String comment;
+    String content;
     String commentWriter;
 
     public CommentRes(Comment comment) {
-        this.id = comment.getCommentId();
-        this.comment = comment.getComment();
+        this.id = comment.getId();
+        this.content = comment.getContent();
         this.commentWriter = comment.getUser().getUsername();
     }
 }

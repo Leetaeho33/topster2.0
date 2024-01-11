@@ -12,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,12 +33,18 @@ public class Like extends BaseEntity{
     @ManyToOne
     private Topster topster;
 
+    @Column
+    private Long likeCount = 0L;
+
     @Column(nullable = false)
     private boolean status; // true : 좋아요 , false = 좋아요 취소
 
     public Like(Topster topster, UserDetailsImpl userDetails) {
         this.topster = topster;
         this.user = userDetails.getUser();
+    }
 
+    public void upAndDownLikeCount(long l) {
+        this.likeCount = l;
     }
 }
