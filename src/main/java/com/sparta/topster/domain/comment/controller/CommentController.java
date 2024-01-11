@@ -3,11 +3,9 @@ package com.sparta.topster.domain.comment.controller;
 import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
 import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
 import com.sparta.topster.domain.comment.dto.res.CommentRes;
-import com.sparta.topster.domain.comment.entity.Comment;
 import com.sparta.topster.domain.comment.service.CommentService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
 
   private final CommentService commentService;
-  @PostMapping("/post/{postId}/comments")
+  @PostMapping("/posts/{postId}/comments")
   public ResponseEntity<CommentRes> createComment(@PathVariable Long postId,
                                                   @RequestBody CommentCreateReq commentCreateReq,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -34,7 +32,7 @@ public class CommentController {
     return ResponseEntity.ok().body(commentService.createComment(postId, commentCreateReq, userDetails));
   }
 
-  @GetMapping("/post/{postId}/comments")
+  @GetMapping("/posts/{postId}/comments")
   public ResponseEntity<?> getComment(@PathVariable Long postId) {
 
     return ResponseEntity.ok().body(commentService.getComment(postId));
