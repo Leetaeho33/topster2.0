@@ -24,7 +24,7 @@ import static com.sparta.topster.domain.album.exception.AlbumException.NOT_EXIST
 @RequiredArgsConstructor
 public class AlbumService {
     private final AlbumRepository albumRepository;
-    private final ManiadbServiceImpl maniadbService;
+    private final ManiadbService maniadbService;
 
     public String getRawArtistData(String query) throws JsonProcessingException {
         return maniadbService.getRawArtistData(query);
