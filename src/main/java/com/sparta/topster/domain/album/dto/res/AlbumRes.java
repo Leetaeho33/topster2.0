@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class AlbumRes {
+    Long id;
     String title;
     String artist;
     String releaseDate;
@@ -12,7 +13,8 @@ public class AlbumRes {
 
 
     @Builder
-    public AlbumRes(String title, String artist, String release, String image) {
+    public AlbumRes(Long id, String title, String artist, String release, String image) {
+        this.id = id;
         this.title = title;
         this.artist = artist;
         this.releaseDate = release;
