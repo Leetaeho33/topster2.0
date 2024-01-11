@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.album.repository.AlbumRepository;
-import com.sparta.topster.domain.maniadb.service.ManiadbService;
-import com.sparta.topster.domain.maniadb.service.ManiadbServiceImpl;
+import com.sparta.topster.domain.open_api.service.OpenApiService;
 import com.sparta.topster.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,16 +22,15 @@ import static com.sparta.topster.domain.album.exception.AlbumException.NOT_EXIST
 @RequiredArgsConstructor
 public class AlbumService {
     private final AlbumRepository albumRepository;
-    private final ManiadbServiceImpl maniadbService;
+    private final OpenApiService openApiService;
 
-    public String getRawArtistData(String query) throws JsonProcessingException {
-        return maniadbService.getRawArtistData(query);
+    public String getRawArtistData(String query){
+        return openApiService.getRawArtistData(query);
     }
 
 
-    public List<AlbumRes> getAlbumsByArtist(String query) throws JsonProcessingException {
-        JSONArray items =  maniadbService.getAlbumsJSONArray(query);
-        List<Album> albumList = maniadbService.fromJSONArrayToAlbum(items, query);
+    public List<AlbumRes> getAlbumsByArtist(String query){
+        List<Album> albumList = openApiService.getAlbums(query);
 
         List<AlbumRes> albumResList = new ArrayList<>();
         for(Album album : albumList){
