@@ -4,7 +4,6 @@ import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_NICKNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
-import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
 
 import com.sparta.topster.domain.user.controller.MailController;
