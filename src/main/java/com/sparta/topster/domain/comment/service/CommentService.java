@@ -7,7 +7,9 @@ import com.sparta.topster.domain.comment.entity.Comment;
 import com.sparta.topster.domain.comment.exception.CommentException;
 import com.sparta.topster.domain.comment.repository.CommentRespository;
 import com.sparta.topster.domain.post.entity.Post;
+import com.sparta.topster.domain.post.exception.PostException;
 import com.sparta.topster.domain.post.service.PostService;
+import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -90,5 +93,16 @@ public class CommentService {
 
     return comment;
 
+  }
+
+  public RootNoDataRes isAuthor(Long commentId, User user) {
+    Comment comment = commentRespository.findById(commentId);
+
+    if(!comment.getUser().getId().equals(user.getId())){
+      throw new ServiceException(PostException.AccessDeniedError);
+    }
+    return RootNoDataRes.builder()
+        .message("해당 댓글의 작성자입니다.")
+        .code("200").build();
   }
 }
