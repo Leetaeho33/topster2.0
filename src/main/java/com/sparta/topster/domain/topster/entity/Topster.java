@@ -39,11 +39,18 @@ public class Topster extends BaseEntity {
     @JoinColumn(name = "user_id")
     User user;
 
+    @Column
+    private Long likeCount = 0L;
+
     @Builder
     public Topster(String title, String content, User user) {
         this.title = title;
         this.content = content;
         this.user = user;
 //        this.topsterAlbumList = topsterAlbumList;
+    }
+
+    public void upAndDownLikeCount(Integer l) {
+        this.likeCount += l;
     }
 }

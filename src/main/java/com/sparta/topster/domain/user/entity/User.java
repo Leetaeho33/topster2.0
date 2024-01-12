@@ -44,11 +44,6 @@ public class User extends BaseEntity {
 
     private Long kakaoId;
 
-    @JoinColumn
-    @OneToMany
-    private List<Like> likeList = new ArrayList<>();
-
-
     @Builder
     public User(String username, String nickname, String password, String email, String intro, UserRoleEnum role){
         this.username = username;
