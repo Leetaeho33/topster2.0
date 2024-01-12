@@ -42,14 +42,14 @@ public class PostService {
 
 
     public Long update(PostUpdateReq req, Long id, Long userId) {
-        Post post = getUserPost(getPost(id), userId);
+        Post post = getUserPost(id, userId);
         post.update(req.title(), req.content());
         return post.getId();
     }
 
 
     public Long delete(Long id, Long userId) {
-        Post post = getUserPost(getPost(id), userId);
+        Post post = getUserPost(id, userId);
         postRepository.delete(post);
         return id;
     }
@@ -76,6 +76,11 @@ public class PostService {
     }
 
 
+    public void isAuthor(Long id, Long userId) {
+        getUserPost(id, userId);
+    }
+
+
     public Post getPost(Long id) {
         return postRepository.findById(id).orElseThrow(() -> {
             throw new ServiceException(PostException.NOT_FOUND);
@@ -92,7 +97,8 @@ public class PostService {
     }
 
 
-    private Post getUserPost(Post post, Long userId) {
+    private Post getUserPost(Long id, Long userId) {
+        Post post = getPost(id);
         if (post.getUser().getId() != userId) {
             throw new ServiceException(PostException.AccessDeniedError);
         }

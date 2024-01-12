@@ -84,4 +84,16 @@ public class PostController {
         Page<PostListRes> res = postService.getPostList(cond, pageReq, sortReq);
         return ResponseEntity.ok(res);
     }
+
+
+    @GetMapping("/posts/{id}/isAuthor")
+    public ResponseEntity<RootNoDataRes> isAuthor(@PathVariable Long id,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        postService.isAuthor(id, userDetails.getUser().getId());
+        return ResponseEntity.ok(RootNoDataRes.builder()
+            .code("200")
+            .message("본인의 게시글이 맞습니다")
+            .build());
+    }
 }
