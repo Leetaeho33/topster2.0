@@ -9,7 +9,7 @@ public record PostDeatilRes(
     Long topsterId,
     String title,
     String content,
-    String nickname,
+    String author,
     LocalDateTime createdAt
 ) {
 
