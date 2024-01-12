@@ -72,7 +72,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/v1/users/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST,"api/v1/users/mail/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"api/v1/post/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"api/v1/posts/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"api/v1/topsters/**").permitAll()
                 .anyRequest().authenticated()
         ).exceptionHandling(
             (exception) -> exception.authenticationEntryPoint(getAuthenticationEntryPoint())
