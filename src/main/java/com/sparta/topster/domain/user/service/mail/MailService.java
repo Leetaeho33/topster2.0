@@ -1,36 +1,40 @@
 package com.sparta.topster.domain.user.service.mail;
 
+import com.sparta.topster.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MailService implements MailServiceInter {
 
     @Autowired
     JavaMailSender emailSender; // MailConfig에서 등록해둔 Bean을 autowired하여 사용하기
 
     private String ePw; // 사용자가 메일로 받을 인증번호
+    private final RedisUtil redisUtil;
 
     @Value("${mail.id}")
     private String from;
 
     // 메일 내용 작성
     @Override
-    public MimeMessage creatMessage(String to) throws MessagingException, UnsupportedEncodingException {
-        System.out.println("메일받을 사용자" + to);
+    public MimeMessage creatMessage(String email) throws MessagingException, UnsupportedEncodingException {
+        System.out.println("메일받을 사용자" + email);
         System.out.println("인증번호" + ePw);
 
         MimeMessage message = emailSender.createMimeMessage();
 
-        message.addRecipients(RecipientType.TO, to); // 메일 받을 사용자
+        message.addRecipients(RecipientType.TO, email); // 메일 받을 사용자
         message.setSubject("[Topster2.0] 회원가입을 위한 이메일 인증코드 입니다"); // 이메일 제목
 
         String msgg = "";
@@ -79,12 +83,15 @@ public class MailService implements MailServiceInter {
     // MimeMessage 객체 안에 내가 전송할 메일의 내용을 담는다
     // bean으로 등록해둔 javaMail 객체를 사용하여 이메일을 발송한다
     @Override
-    public String sendSimpleMessage(String to) throws Exception {
+    public String sendSimpleMessage(String email) throws Exception {
 
         ePw = createKey(); // 랜덤 인증코드 생성
+
+        redisUtil.setDataExpire(email,ePw,60*5L); //5분
+
         System.out.println("********생성된 랜덤 인증코드******** => " + ePw);
 
-        MimeMessage message = creatMessage(to); // "to" 로 메일 발송
+        MimeMessage message = creatMessage(email); // "to" 로 메일 발송
 
         System.out.println("********생성된 메시지******** => " + message);
 

@@ -12,6 +12,10 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 server:
   servlet:
@@ -34,3 +38,4 @@ oauth2:
 mail:
   id: ${MAIL_ID}
   password: ${MAIL_PASSWORD}
+
