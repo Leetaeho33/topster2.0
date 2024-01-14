@@ -9,11 +9,13 @@ import java.util.List;
 
 @Getter
 @Builder
-public class TopsterGetRes {
+public class TopsterGetLoginRes {
     Long id;
     String title;
     String author;
     String content;
+    Long likeCount;
+    Boolean likeStatus;
     List<AlbumRes> albums;
     LocalDateTime createdAt;
 }
