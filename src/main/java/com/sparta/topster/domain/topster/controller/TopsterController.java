@@ -55,7 +55,7 @@ public class TopsterController {
     }
 
 
-    @GetMapping("/topsters/{topsterId}/like")
+    @PostMapping("/topsters/{topsterId}/like")
     public ResponseEntity<?> toggleLike(@PathVariable Long topsterId,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(topsterService.toggleTopsterLike(topsterId, userDetails.getUser()));

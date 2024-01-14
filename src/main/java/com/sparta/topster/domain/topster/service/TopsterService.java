@@ -7,8 +7,8 @@ import com.sparta.topster.domain.album.service.AlbumService;
 import com.sparta.topster.domain.like.entity.Like;
 import com.sparta.topster.domain.like.service.LikeService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
-import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
-import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
+import com.sparta.topster.domain.topster.dto.res.TopsterCreateLoginRes;
+import com.sparta.topster.domain.topster.dto.res.TopsterGetLoginRes;
 import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.repository.TopsterRepository;
 import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
@@ -19,7 +19,6 @@ import com.sparta.topster.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +39,7 @@ public class TopsterService {
     private final LikeService likeService;
 
     @Transactional
-    public TopsterCreateRes createTopster(TopsterCreateReq topsterCreateReq, User user) {
+    public TopsterCreateLoginRes createTopster(TopsterCreateReq topsterCreateReq, User user) {
         log.info("Topster 등록 시작");
         List<AlbumInsertReq> albumInsertReqList = topsterCreateReq.getAlbums();
         String title = topsterCreateReq.getTitle();
@@ -74,7 +73,7 @@ public class TopsterService {
             }
         log.info("Topster AlbumLlist에 Album추가 완료");
         List<AlbumRes> albumResList  = new ArrayList<>();
-        log.info("Topster Entity -> TopsterCreateRes");
+        log.info("Topster Entity -> TopsterCreateLoginRes");
         for(TopsterAlbum topsterAlbum : topster.getTopsterAlbumList()){
             albumResList.add(
                     AlbumRes.builder().
@@ -84,7 +83,7 @@ public class TopsterService {
                             release(topsterAlbum.getAlbum().getReleaseDate()).
                             build());
         }
-        return TopsterCreateRes.builder().
+        return TopsterCreateLoginRes.builder().
                 id(topster.getId()).
                 title(topster.getTitle()).
                 content(topster.getContent()).
@@ -95,24 +94,17 @@ public class TopsterService {
     }
 
 
-    public TopsterGetRes getTopsterService(Long topsterId){
-        // null이면 그냥 예외 처리할텐데?
-        Long userId;
-        if(loginUser().getUser() == null){
-            userId =0L;
-        }else {
-            userId = loginUser().getUser().getId();
-        }
+    public TopsterGetLoginRes getTopsterService(Long topsterId){
         Topster topster = getTopster(topsterId);
-        return fromTopsterToTopsterGetRes(topster, userId);
+        return fromTopsterToTopsterGetNotLoginRes(topster);
     }
 
 
     public Object getTopsterByUserService(Long userId) {
         List<Topster> topsterList = getTopsterByUser(userId);
-        List<TopsterGetRes> topsterGetResList = new ArrayList<>();
+        List<TopsterGetLoginRes> topsterGetResList = new ArrayList<>();
         for(Topster topster:topsterList){
-            topsterGetResList.add(fromTopsterToTopsterGetRes(topster, userId));
+            topsterGetResList.add(fromTopsterToTopsterGetLoginRes(topster, userId));
         }
         return topsterGetResList;
     }
@@ -135,14 +127,14 @@ public class TopsterService {
         Like like = likeService.getLike(user.getId(), topsterId);
         if(like == null){
             log.info("탑스터에 좋아요가 눌리지 않은 상태");
-            topster.getTopsterLike().add(new Like(topster, loginUser()));
+            topster.getTopsterLike().add(Like.builder().user(user).topster(topster).build());
             topster.upAndDownLikeCount(1);
         }else {
             log.info("탑스터에 좋아요가 눌린 상태");
             likeService.deleteLike(like);
             topster.upAndDownLikeCount(-1);
         }
-        return fromTopsterToTopsterGetRes(topster, loginUser().getUser().getId());
+        return fromTopsterToTopsterGetLoginRes(topster, user.getId());
     }
 
 
@@ -171,8 +163,8 @@ public class TopsterService {
     }
 
 
-    private TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr, Long userId){
-        log.info("Topster Entity -> TopsterGetRes");
+    private TopsterGetLoginRes fromTopsterToTopsterGetLoginRes(Topster topstesr, Long userId){
+        log.info("Topster Entity -> TopsterGetLoginRes");
         List<AlbumRes> albumResList = new ArrayList<>();
         for(TopsterAlbum topsterAlbum : topstesr.getTopsterAlbumList()){
             albumResList.add(
@@ -184,7 +176,7 @@ public class TopsterService {
                     .image(topsterAlbum.getAlbum().getImage()).build());
         }
 
-        return TopsterGetRes.builder()
+        return TopsterGetLoginRes.builder()
                 .id(topstesr.getId())
                 .title(topstesr.getTitle())
                 .content(topstesr.getContent())
@@ -196,17 +188,36 @@ public class TopsterService {
                 .build();
     }
 
+    private TopsterGetLoginRes fromTopsterToTopsterGetNotLoginRes(Topster topstesr){
+        log.info("Topster Entity -> TopsterGetNotLoginRes");
+        List<AlbumRes> albumResList = new ArrayList<>();
+        for(TopsterAlbum topsterAlbum : topstesr.getTopsterAlbumList()){
+            albumResList.add(
+                    AlbumRes.builder()
+                            .id(topsterAlbum.getAlbum().getId())
+                            .title(topsterAlbum.getAlbum().getTitle())
+                            .artist(topsterAlbum.getAlbum().getArtist())
+                            .release(topsterAlbum.getAlbum().getReleaseDate())
+                            .image(topsterAlbum.getAlbum().getImage()).build());
+        }
+
+        return TopsterGetLoginRes.builder()
+                .id(topstesr.getId())
+                .title(topstesr.getTitle())
+                .content(topstesr.getContent())
+                .albums(albumResList)
+                .author(topstesr.getUser().getNickname())
+                .likeCount(topstesr.getLikeCount())
+                .createdAt(topstesr.getCreatedAt())
+                .build();
+    }
+
 
     private boolean checkAuthor(Long userId, Long topsterId){
         Topster topster = getTopster(topsterId);
         return topster.getUser().getId().equals((userId));
     }
 
-
-    public UserDetailsImpl loginUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (UserDetailsImpl) authentication.getPrincipal();
-    }
 
 
     public boolean isLikePresent(Long userId, Long topsterId){
