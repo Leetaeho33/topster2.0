@@ -57,6 +57,10 @@ dependencies {
 
     // 테스트용 h2 데이터 베이스
     implementation 'com.h2database:h2'
+
+    //redis, lettuce
+    implementation 'org.springframework.data:spring-data-redis:3.1.2'
+    implementation 'io.lettuce:lettuce-core:6.2.5.RELEASE'
 }
 
 tasks.named('test') {

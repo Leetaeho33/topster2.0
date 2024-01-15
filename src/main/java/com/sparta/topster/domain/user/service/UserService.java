@@ -18,10 +18,13 @@ import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.domain.user.repository.UserRepository;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.util.JwtUtil;
+import com.sparta.topster.global.util.RedisUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +36,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MailController mailController;
     private final JwtUtil jwtUtil;
+    private final RedisUtil redisUtil;
 
     private final String ADMIN_TOKEN = "AAlrnYxKZ0aHgTBcXukeZygoC";
 
@@ -42,7 +45,7 @@ public class UserService {
         String username = signupReq.getUsername();
         String nickname = signupReq.getNickname();
         String password = passwordEncoder.encode(signupReq.getPassword());
-        String signupCode = mailController.returnGetCode(signupReq.getEmail());
+        String signupCode = redisUtil.getData(signupReq.getEmail());
 
         if (signupCode == null || !signupCode.equals(signupReq.getCertification())) {
             log.error(NOT_FOUND_AUTHENTICATION_CODE.getMessage());
