@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class TopsterCreateLoginRes {
+public class TopsterCreateRes {
     Long id;
     String title;
     String content;
@@ -19,7 +19,7 @@ public class TopsterCreateLoginRes {
     List<AlbumRes> albums;
 
     @Builder
-    public TopsterCreateLoginRes(Long id, String title, String content, String author, LocalDateTime createdAt, List<AlbumRes> albums) {
+    public TopsterCreateRes(Long id, String title, String content, String author, LocalDateTime createdAt, List<AlbumRes> albums) {
         this.id = id;
         this.title = title;
         this.content = content;
