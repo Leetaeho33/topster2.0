@@ -1,14 +1,14 @@
 package com.sparta.topster.domain.album.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
+import com.sparta.topster.domain.album.entity.CacheAlbum;
 import com.sparta.topster.domain.album.repository.AlbumRepository;
+import com.sparta.topster.domain.album.repository.CacheAlbumRepository;
 import com.sparta.topster.domain.open_api.service.OpenApiService;
 import com.sparta.topster.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import static com.sparta.topster.domain.album.exception.AlbumException.NOT_EXIST
 public class AlbumService {
     private final AlbumRepository albumRepository;
     private final OpenApiService openApiService;
+    private final CacheAlbumRepository cacheAlbumRepository;
 
     public String getRawArtistData(String query){
         return openApiService.getRawArtistData(query);
@@ -30,14 +31,28 @@ public class AlbumService {
 
 
     public List<AlbumRes> getAlbumsByArtist(String query){
+
+        Optional<CacheAlbum> cacheAlbum = cacheAlbumRepository.findById(query);
+
+        if (cacheAlbum.isPresent()) {
+            log.info("캐싱된 자료 사용");
+            return cacheAlbum.get().getAlbums();
+        }
+
         List<Album> albumList = openApiService.getAlbums(query);
 
         List<AlbumRes> albumResList = new ArrayList<>();
         for(Album album : albumList){
             AlbumRes albumRes = AlbumRes.builder().id(album.getId()).artist(album.getArtist()).title(album.getTitle())
-                    .image(album.getImage()).release(album.getReleaseDate()).build();
+                    .image(album.getImage()).releaseDate(album.getReleaseDate()).build();
             albumResList.add(albumRes);
         }
+        CacheAlbum saveCache = CacheAlbum.builder()
+            .artist(query)
+            .albums(albumResList)
+            .build();
+        cacheAlbumRepository.save(saveCache);
+        log.info("캐싱이 안 된 자료 사용 후 캐싱");
         return albumResList;
     }
 

@@ -15,11 +15,11 @@ public class AlbumRes {
 
 
     @Builder
-    public AlbumRes(Long id, String title, String artist, String release, String image) {
+    public AlbumRes(Long id, String title, String artist, String releaseDate, String image) {
         this.id = id;
         this.title = title;
         this.artist = artist;
-        this.releaseDate = release;
+        this.releaseDate = releaseDate;
         this.image = image;
     }
 }
