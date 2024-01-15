@@ -1,16 +1,12 @@
 package com.sparta.topster.domain.like.service;
 
+import com.sparta.topster.domain.like.dto.LikeCountStatusRes;
 import com.sparta.topster.domain.like.entity.Like;
 import com.sparta.topster.domain.like.repository.LikeRepository;
-import com.sparta.topster.domain.topster.entity.Topster;
-import com.sparta.topster.domain.topster.service.TopsterService;
-import com.sparta.topster.global.security.UserDetailsImpl;
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
+
 //    private final TopsterService topsterService;
 //
 //  @Transactional
@@ -63,4 +60,18 @@ public class LikeService {
     likeRepository.delete(like);
   }
 
+  public LikeCountStatusRes getLikeCountAndStatus(Long topsterId, Long userId) {
+    // 좋아요 수 가져오기
+    Long likeCount = likeRepository.countByTopsterId(topsterId);
+
+    // 사용자가 좋아요를 눌렀는지 확인
+    boolean isLiked = false;
+    if(userId != null) {
+      // 특정 사용자가 특정 topster에 좋아요를 눌렀는지 여부를 확인
+      isLiked = likeRepository.existsByTopsterIdAndUserId(topsterId, userId);
+    }
+
+    // 좋아요 수와 좋아요 여부를 담은 응답 객체 반환
+    return new LikeCountStatusRes(topsterId, likeCount, isLiked);
+  }
 }
