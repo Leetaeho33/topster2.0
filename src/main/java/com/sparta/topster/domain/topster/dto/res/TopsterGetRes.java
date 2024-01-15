@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class TopsterGetLoginRes {
+public class TopsterGetRes {
     Long id;
     String title;
     String author;

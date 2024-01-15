@@ -13,5 +13,6 @@ public interface TopsterRepository {
     Optional<Topster> findById(Long topsterId);
     List<Topster> findByUserId(Long userId);
     void delete(Topster topster);
+    List<Topster> findTop3ByOrderByLikeCountDesc();
 
 }
