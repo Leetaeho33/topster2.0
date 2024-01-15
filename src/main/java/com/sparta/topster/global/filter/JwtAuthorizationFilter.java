@@ -3,6 +3,7 @@ package com.sparta.topster.global.filter;
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.security.UserDetailsServiceImpl;
 import com.sparta.topster.global.util.JwtUtil;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -53,6 +55,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
+            if (isTokenExpired(info, response)) {
+                refreshAccessToken(info.getSubject(), response);
+            }
+
             try {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
@@ -70,6 +76,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
+    }
+
+    private boolean isTokenExpired(Claims info, HttpServletResponse response) {
+        Date expiration = info.getExpiration();
+        if (expiration != null && expiration.before(new Date())) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return true;
+        }
+        return false;
+    }
+
+    private void refreshAccessToken(String username, HttpServletResponse response) {
+        String newAccessToken = jwtUtil.createToken(username, getUserRoleFromRedis(username));
+        response.setHeader(JwtUtil.REFRESH_TOKEN_PREFIX, newAccessToken);
+    }
+
+    private UserRoleEnum getUserRoleFromRedis(String username) {
+        return UserRoleEnum.USER;
     }
 
     private Authentication createAuthentication(String username) {

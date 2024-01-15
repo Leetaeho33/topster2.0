@@ -14,16 +14,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    private final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; //7일
+
+    private final long TOKEN_TIME = 60 * 60 * 1000L;
+
+    public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -32,7 +43,7 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     //토큰 만료시간
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
+
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -48,6 +59,9 @@ public class JwtUtil {
     public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
+        String refreshToken = generateRefreshToken(username);
+        storeRefreshToken(username,refreshToken);
+
         return BEARER_PREFIX +
             Jwts.builder()
                 .setSubject(username)
@@ -56,6 +70,14 @@ public class JwtUtil {
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();
+    }
+
+    public String generateRefreshToken(String username) {
+        return UUID.randomUUID().toString();
+    }
+
+    public void storeRefreshToken(String username, String refreshToken) {
+        redisTemplate.opsForValue().set(REFRESH_TOKEN_PREFIX + username, refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
     }
 
     public String getJwtFromHeader(HttpServletRequest request) {

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j(topic = "JWT 생성")
@@ -53,6 +54,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+
+        String refreshToken = extractRefreshTokenFromResponse(response);
+        if (refreshToken != null) {
+            jwtUtil.storeRefreshToken(username, refreshToken);
+        }
+        SecurityContextHolder.getContext().setAuthentication(authResult);
+    }
+
+    private String extractRefreshTokenFromResponse(HttpServletResponse response) {
+        return null;
     }
 
     @Override

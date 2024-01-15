@@ -6,7 +6,6 @@ import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
 
-import com.sparta.topster.domain.user.controller.MailController;
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
@@ -23,8 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,8 +102,9 @@ public class UserService {
 
         if (passwordEncoder.matches(loginReq.getPassword(), byUsername.get().getPassword())) {
             UserRoleEnum role = byUsername.get().getRole();
-            response.setHeader(JwtUtil.AUTHORIZATION_HEADER,
-                jwtUtil.createToken(byUsername.get().getUsername(), role));
+            response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(byUsername.get().getUsername(), role));
+            String refreshToken = jwtUtil.generateRefreshToken(byUsername.get().getUsername());
+            jwtUtil.storeRefreshToken(byUsername.get().getUsername(), refreshToken);
         }else{
             log.error(NOT_FOUND_PASSWORD.getMessage());
             throw new ServiceException(NOT_FOUND_PASSWORD);
