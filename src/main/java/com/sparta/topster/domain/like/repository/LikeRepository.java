@@ -16,5 +16,6 @@ public interface LikeRepository {
   void save(Like like);
 
   Optional<Like> findByTopsterIdAndUserId(Long topsterId, Long userId);
+  boolean existsByTopsterIdAndUserId(Long topsterId, Long userId);
 
 }

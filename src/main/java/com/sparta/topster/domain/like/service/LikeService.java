@@ -18,35 +18,34 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
-    private final TopsterService topsterService;
-
-  @Transactional
-  public boolean toggleLike(Long topsterId, UserDetailsImpl userDetails) {
-    // 해당 id의 탑스터가 존재하는지 검증
-    Topster topster = topsterService.getTopster(topsterId);
-
-    // 현재 사용자의 좋아요 상태 조회
-    Like optionalLike = getLike(userDetails.getUser().getId(), topsterId);
-
-    log.info("조회된 좋아요 목록을 순회");
-      // 현재 사용자가 이미 해당 게시물에 좋아요를 눌렀는지 확인
-      if(optionalLike != null) {
-        // 이미 좋아요를 눌렀다면 해당 좋아요 삭제
-        likeRepository.delete(optionalLike);
-        // 좋아요 수 감소
-        topster.upAndDownLikeCount(-1);
-        return false;
-      }
-     log.info("좋아요 누르지 않았다면 실행");
-    // likeCount + 1
-    topster.upAndDownLikeCount(1);
-    // 해당 탑스타와 사용자 정보를 가지고 있는 좋아요 객체 생성
-    Like like = new Like(topster, userDetails);
-    // 좋아요 정보를 데이터베이스에 저장
-    likeRepository.save(like);
-
-    return true;
-  }
+//    private final TopsterService topsterService;
+//
+//  @Transactional
+//  public boolean toggleLike(Long topsterId, UserDetailsImpl userDetails) {
+//    // 해당 id의 탑스터가 존재하는지 검증
+//    Topster topster = topsterService.getTopster(topsterId);
+//
+//    // 해당 탑스타에 대한 모든 좋아요 정보를 조회
+//    Like optionalLike = getLike(userDetails.getUser().getId(), topsterId);
+//
+//    log.info("조회된 좋아요 목록을 순회");
+//      // 현재 사용자가 이미 해당 게시물에 좋아요를 눌렀는지 확인
+//      if(optionalLike != null) {
+//        // 이미 좋아요를 눌렀다면 해당 좋아요 삭제
+//        likeRepository.delete(optionalLike);
+//        topster.upAndDownLikeCount(-1);
+//        return false;
+//      }
+//     log.info("좋아요 누르지 않았다면 실행");
+//    // likeCount + 1
+//    topster.upAndDownLikeCount(1);
+//    // 해당 탑스타와 사용자 정보를 가지고 있는 좋아요 객체 생성
+//    Like like = new Like(topster, userDetails);
+//    // 사용자가 아직 좋아요를 누르지 않았다면 좋아요 정보 추가
+//    likeRepository.save(like);
+//
+//    return true;
+//  }
 
   public Like getLike(Long userId, Long topsterId) {
     Optional<Like> optionalLike = likeRepository.findByTopsterIdAndUserId(topsterId, userId);
@@ -56,6 +55,12 @@ public class LikeService {
       log.info("해당 유저가 탑스터에 좋아요를 누르지 않았습니다.");
     }
     return null;
+  }
+
+
+  public void deleteLike(Like like){
+    log.info("like 삭제");
+    likeRepository.delete(like);
   }
 
 }

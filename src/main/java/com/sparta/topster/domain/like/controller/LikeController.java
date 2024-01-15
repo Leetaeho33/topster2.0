@@ -18,20 +18,20 @@ public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping("/{topsterId}/like")
-    public ResponseEntity<?> toggleLike(@PathVariable Long topsterId,
-                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
-        try {
-            boolean liked = likeService.toggleLike(topsterId, userDetails);
-
-            if(liked) {
-                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요"));
-            } else {
-                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요 취소"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new RootNoDataRes(e.getMessage(), "400"));
-        }
-    }
+//    @PostMapping("/{topsterId}/like")
+//    public ResponseEntity<?> toggleLike(@PathVariable Long topsterId,
+//                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//
+//        try {
+//            boolean liked = likeService.toggleLike(topsterId, userDetails);
+//
+//            if(liked) {
+//                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요"));
+//            } else {
+//                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요 취소"));
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(new RootNoDataRes(e.getMessage(), "400"));
+//        }
+//    }
 }

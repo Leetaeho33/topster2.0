@@ -40,7 +40,7 @@ public class ManiadbService implements OpenApiService {
         URI uri = UriComponentsBuilder.fromUriString("http://www.maniadb.com")
                 .path("api/search/" + query + "/")
                 .queryParam("sr", "album")
-                .queryParam("display", 10)
+                .queryParam("display", 20)
                 .queryParam("v", 0.5)
                 .encode()
                 .build()
