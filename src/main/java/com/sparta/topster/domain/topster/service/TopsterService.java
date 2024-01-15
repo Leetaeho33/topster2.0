@@ -80,7 +80,7 @@ public class TopsterService {
                             title(topsterAlbum.getAlbum().getTitle()).
                             artist(topsterAlbum.getAlbum().getArtist()).
                             image(topsterAlbum.getAlbum().getImage()).
-                            release(topsterAlbum.getAlbum().getReleaseDate()).
+                            releaseDate(topsterAlbum.getAlbum().getReleaseDate()).
                             build());
         }
         return TopsterCreateLoginRes.builder().
@@ -172,7 +172,7 @@ public class TopsterService {
                     .id(topsterAlbum.getAlbum().getId())
                     .title(topsterAlbum.getAlbum().getTitle())
                     .artist(topsterAlbum.getAlbum().getArtist())
-                    .release(topsterAlbum.getAlbum().getReleaseDate())
+                    .releaseDate(topsterAlbum.getAlbum().getReleaseDate())
                     .image(topsterAlbum.getAlbum().getImage()).build());
         }
 
@@ -197,7 +197,7 @@ public class TopsterService {
                             .id(topsterAlbum.getAlbum().getId())
                             .title(topsterAlbum.getAlbum().getTitle())
                             .artist(topsterAlbum.getAlbum().getArtist())
-                            .release(topsterAlbum.getAlbum().getReleaseDate())
+                            .releaseDate(topsterAlbum.getAlbum().getReleaseDate())
                             .image(topsterAlbum.getAlbum().getImage()).build());
         }
 
