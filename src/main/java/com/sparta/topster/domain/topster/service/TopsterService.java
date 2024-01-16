@@ -91,9 +91,9 @@ public class TopsterService {
     }
 
 
-    public TopsterGetRes getTopsterService(Long topsterId, User user){
+    public TopsterGetRes getTopsterService(Long topsterId){
         Topster topster = getTopster(topsterId);
-        return fromTopsterToTopsterGetRes(topster, user.getId());
+        return fromTopsterToTopsterGetRes(topster);
     }
 
 
@@ -101,7 +101,7 @@ public class TopsterService {
         List<Topster> topsterList = getTopsterByUser(userId);
         List<TopsterGetRes> topsterGetResList = new ArrayList<>();
         for(Topster topster:topsterList){
-            topsterGetResList.add(fromTopsterToTopsterGetRes(topster, userId));
+            topsterGetResList.add(fromTopsterToTopsterGetRes(topster));
         }
         return topsterGetResList;
     }
@@ -131,7 +131,7 @@ public class TopsterService {
             likeService.deleteLike(like);
             topster.upAndDownLikeCount(-1);
         }
-        return fromTopsterToTopsterGetRes(topster, user.getId());
+        return fromTopsterToTopsterGetRes(topster);
     }
 
 
@@ -160,18 +160,18 @@ public class TopsterService {
     }
 
 
-    public List<TopsterGetRes> getTopsterTopThree(User user) {
+    public List<TopsterGetRes> getTopsterTopThree() {
         List<Topster> topsterList = topsterRepository.findTop3ByOrderByLikeCountDesc();
         List<TopsterGetRes> topsterGetResList = new ArrayList<>();
         for(Topster topster : topsterList){
-            topsterGetResList.add(fromTopsterToTopsterGetRes(topster, user.getId()));
+            topsterGetResList.add(fromTopsterToTopsterGetRes(topster));
         }
         return topsterGetResList ;
     }
 
 
 
-    private TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr, Long userId){
+    private TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr){
         log.info("Topster Entity -> TopsterGetRes");
         List<AlbumRes> albumResList = new ArrayList<>();
         for(TopsterAlbum topsterAlbum : topstesr.getTopsterAlbumList()){
@@ -190,8 +190,6 @@ public class TopsterService {
                 .content(topstesr.getContent())
                 .albums(albumResList)
                 .author(topstesr.getUser().getNickname())
-                .likeCount(topstesr.getLikeCount())
-                .likeStatus(isLikePresent(userId, topstesr.getId()))
                 .createdAt(topstesr.getCreatedAt())
                 .build();
     }
@@ -202,11 +200,5 @@ public class TopsterService {
         return topster.getUser().getId().equals((userId));
     }
 
-
-
-    public boolean isLikePresent(Long userId, Long topsterId){
-        Like like = likeService.getLike(userId, topsterId);
-        return like != null;
-    }
 
 }

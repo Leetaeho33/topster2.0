@@ -13,8 +13,6 @@ public class TopsterCreateRes {
     String title;
     String content;
     String author;
-    Long likeCount;
-    Boolean likeStatus;
     LocalDateTime createdAt;
     List<AlbumRes> albums;
 
@@ -26,7 +24,5 @@ public class TopsterCreateRes {
         this.author = author;
         this.createdAt = createdAt;
         this.albums = albums;
-        this.likeCount =0L;
-        this.likeStatus = false;
     }
 }

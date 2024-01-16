@@ -27,9 +27,8 @@ public class TopsterController {
 
 
     @GetMapping("/topsters/{topsterId}")
-    public ResponseEntity<Object> getTopster(@PathVariable Long topsterId,
-                                             @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseEntity.ok(topsterService.getTopsterService(topsterId, userDetails.getUser()));
+    public ResponseEntity<Object> getTopster(@PathVariable Long topsterId){
+        return ResponseEntity.ok(topsterService.getTopsterService(topsterId));
     }
 
 
@@ -47,8 +46,8 @@ public class TopsterController {
 
 
     @GetMapping("/topsters/top-three")
-    public ResponseEntity<?> getTopThreeTopster(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(topsterService.getTopsterTopThree(userDetails.getUser()));
+    public ResponseEntity<?> getTopThreeTopster() {
+        return ResponseEntity.ok(topsterService.getTopsterTopThree());
     }
 
 

@@ -1,7 +1,9 @@
 package com.sparta.topster.domain.open_api.service.spotify;
 
 import com.neovisionaries.i18n.CountryCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -21,25 +23,29 @@ import java.text.ParseException;
 @Configuration
 public class SpotifyUtil {
 
-    @Value("${spotify.client.id}")
     private String CLIENT_ID;
-    @Value("${spotify.client.secret}")
     private String CLIENT_SECRET;
-
+    private SpotifyApi spotifyApi;
     private URI redirecURI = UriComponentsBuilder.fromUriString("http://localhost:8080")
             .path("/users/login")
             .encode()
             .build()
             .toUri();
-    private SpotifyApi spotifyApi = new SpotifyApi.Builder()
-            .setClientId(CLIENT_ID)
-            .setClientSecret(CLIENT_SECRET)
-            .setRedirectUri(redirecURI)
-            .build();
-
-
+    
+    public SpotifyUtil(@Value("${spotify.client.id}") String CLIENT_ID, @Value("${spotify.client.secret}") String CLIENT_SECRET) {
+        spotifyApi = new SpotifyApi.Builder()
+                .setClientId(CLIENT_ID)
+                .setClientSecret(CLIENT_SECRET)
+                .setRedirectUri(redirecURI)
+                .build();
+        this.CLIENT_ID = CLIENT_ID;
+        this.CLIENT_SECRET = CLIENT_SECRET;
+    }
 
     public String accesstoken() {
+        log.info(CLIENT_ID);
+        log.info(CLIENT_SECRET);
+
         ClientCredentialsRequest clientCredentialsRequest = spotifyApi.clientCredentials().build();
         try {
             final ClientCredentials clientCredentials = clientCredentialsRequest.execute();
