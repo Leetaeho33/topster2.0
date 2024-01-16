@@ -14,8 +14,6 @@ public class TopsterGetRes {
     String title;
     String author;
     String content;
-    Long likeCount;
-    Boolean likeStatus;
     List<AlbumRes> albums;
     LocalDateTime createdAt;
 }
