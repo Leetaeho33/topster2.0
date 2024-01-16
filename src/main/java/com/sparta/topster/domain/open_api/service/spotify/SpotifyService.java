@@ -26,7 +26,6 @@ import static com.sparta.topster.domain.open_api.exception.ManiadbException.NOT_
 @RequiredArgsConstructor
 public class SpotifyService implements OpenApiService {
     private final SpotifyUtil spotifyUtil;
-    private final RestTemplate restTemplate;
 
     public String getAccessToken() {
         String accessToken =  spotifyUtil.accesstoken();
