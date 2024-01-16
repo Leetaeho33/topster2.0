@@ -3,6 +3,7 @@ package com.sparta.topster.domain.open_api.service.spotify;
 import com.neovisionaries.i18n.CountryCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,6 @@ import java.text.ParseException;
 
 @Slf4j(topic = "SpotifyUtil")
 @Configuration
-@RequiredArgsConstructor
 public class SpotifyUtil {
 
     private String CLIENT_ID;
@@ -31,7 +31,7 @@ public class SpotifyUtil {
             .encode()
             .build()
             .toUri();
-
+    
     public SpotifyUtil(@Value("${spotify.client.id}") String CLIENT_ID, @Value("${spotify.client.secret}") String CLIENT_SECRET) {
         spotifyApi = new SpotifyApi.Builder()
                 .setClientId(CLIENT_ID)
