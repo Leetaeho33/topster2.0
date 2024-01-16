@@ -22,16 +22,16 @@ import java.text.ParseException;
 public class SpotifyUtil {
 
     @Value("${spotify.client.id}")
-    private static final String CLIENT_ID = "9bca8c7747be4c06aa416f8961c96a3b";
+    private String CLIENT_ID;
     @Value("${spotify.client.secret}")
-    private static final String CLIENT_SECRET = "9de70f9d8e024fbbaaaedfed3a18ca3a";
+    private String CLIENT_SECRET;
 
-    private static final URI redirecURI = UriComponentsBuilder.fromUriString("http://localhost:8080")
+    private URI redirecURI = UriComponentsBuilder.fromUriString("http://localhost:8080")
             .path("/users/login")
             .encode()
             .build()
             .toUri();
-    private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
+    private SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(CLIENT_ID)
             .setClientSecret(CLIENT_SECRET)
             .setRedirectUri(redirecURI)
