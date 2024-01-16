@@ -14,8 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,9 +28,9 @@ public class JwtUtil {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    private final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; //7일
+    public final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; //7일
 
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
+    public final long TOKEN_TIME = 1 * 60 * 1000L; //1분
 
     public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 
@@ -42,8 +40,6 @@ public class JwtUtil {
     public static final String AUTHORIZATION_KEY = "auth";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
-    //토큰 만료시간
-
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -59,9 +55,6 @@ public class JwtUtil {
     public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
-        String refreshToken = generateRefreshToken(username);
-        storeRefreshToken(username,refreshToken);
-
         return BEARER_PREFIX +
             Jwts.builder()
                 .setSubject(username)
@@ -72,12 +65,20 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateRefreshToken(String username) {
-        return UUID.randomUUID().toString();
-    }
+    public String createRefreshToken(String username, UserRoleEnum role){
+        Date date = new Date();
 
-    public void storeRefreshToken(String username, String refreshToken) {
-        redisTemplate.opsForValue().set(REFRESH_TOKEN_PREFIX + username, refreshToken, REFRESH_TOKEN_EXPIRATION, TimeUnit.MILLISECONDS);
+        String refreshToken = BEARER_PREFIX +
+            Jwts.builder()
+                .setSubject(username)
+                .claim(REFRESH_TOKEN_PREFIX, role)
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+        //
+        redisTemplate.opsForValue().set(username,refreshToken);
+        return refreshToken;
     }
 
     public String getJwtFromHeader(HttpServletRequest request) {

@@ -55,15 +55,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
-        String refreshToken = extractRefreshTokenFromResponse(response);
-        if (refreshToken != null) {
-            jwtUtil.storeRefreshToken(username, refreshToken);
-        }
         SecurityContextHolder.getContext().setAuthentication(authResult);
-    }
-
-    private String extractRefreshTokenFromResponse(HttpServletResponse response) {
-        return null;
     }
 
     @Override

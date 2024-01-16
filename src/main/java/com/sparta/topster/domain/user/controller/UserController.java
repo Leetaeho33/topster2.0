@@ -4,16 +4,20 @@ import static com.sparta.topster.domain.user.excepetion.UserException.MODIFY_PRO
 
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
+import com.sparta.topster.domain.user.dto.login.LoginRes;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import com.sparta.topster.domain.user.dto.update.UpdateRes;
 import com.sparta.topster.domain.user.service.UserService;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootResponseDto;
 import com.sparta.topster.global.security.UserDetailsImpl;
+import com.sparta.topster.global.util.RedisUtil;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -33,14 +37,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final RedisUtil redisUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginReq loginReq, HttpServletResponse response){
-        userService.loginUser(loginReq,response);
-        return ResponseEntity.ok().body(RootResponseDto.builder()
-            .code("200")
-            .message("로그인에 성공하였습니다.")
-            .build());
+        return ResponseEntity.ok(userService.loginUser(loginReq,response));
     }
 
     @PatchMapping("/update")
@@ -55,34 +56,31 @@ public class UserController {
             throw new ServiceException(MODIFY_PROFILE_FAILED);
         }
 
-        userService.updateUser(userDetails.getUser(), updateReq);
+        UpdateRes updateRes = userService.updateUser(userDetails.getUser(), updateReq);
 
-        return ResponseEntity.ok().body(RootResponseDto.builder()
-            .code("200")
-            .message("성공적으로 수정되었습니다.")
-            .build());
+        return ResponseEntity.ok(updateRes);
     }
 
     @GetMapping
-    public ResponseEntity<RootResponseDto> getUser(
+    public ResponseEntity<?> getUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        userService.getUser(userDetails.getUser());
-        return ResponseEntity.ok().body(RootResponseDto.builder()
-            .code("200")
-            .message("조회 완료")
-            .build());
+        getUserRes user = userService.getUser(userDetails.getUser());
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<RootResponseDto> deleteUser(
+    public ResponseEntity<?> deleteUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String password) {
         userService.deleteUser(userDetails.getUser(), password);
 
-        return ResponseEntity.ok().body(RootResponseDto.builder()
-            .code("200")
-            .message(userDetails.getUser().getUsername() + " 탈퇴 성공")
-            .build());
+        return ResponseEntity.ok().body(HttpStatus.OK);
     }
 
+    @GetMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse response){
+        userService.refreshToken(userDetails.getUser(), response);
+        String data = redisUtil.getData(userDetails.getUser().getUsername());
+        return ResponseEntity.ok().body(data);
+    }
 }
