@@ -23,10 +23,12 @@ public class LikeController {
 
     @GetMapping("/{topsterId}/like-count/status")
     public ResponseEntity<LikeCountStatusRes> getLikeCountAndStatus(@PathVariable Long topsterId,
-                                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-
-        return ResponseEntity.ok().body(likeService.getLikeCountAndStatus(topsterId, userDetails.getUser().getId()));
+        if (userDetails != null) {
+            return ResponseEntity.ok().body(likeService.getLikeCountAndStatus(topsterId, userDetails.getUser().getId()));
+        }
+        return ResponseEntity.ok(likeService.getLikeCountAndStatus(topsterId, null));
     }
 //    @PostMapping("/{topsterId}/like")
 //    public ResponseEntity<?> toggleLike(@PathVariable Long topsterId,
