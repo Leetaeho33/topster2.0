@@ -39,3 +39,7 @@ mail:
   id: ${MAIL_ID}
   password: ${MAIL_PASSWORD}
 
+spotify:
+  client:
+    id: ${SPOTIFY_CLIENT_ID}
+    secret : ${SPOTIFY_CLIENT_SECRET}

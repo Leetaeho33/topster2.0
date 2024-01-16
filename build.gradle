@@ -61,8 +61,18 @@ dependencies {
     //redis, lettuce
     implementation 'org.springframework.data:spring-data-redis:3.1.2'
     implementation 'io.lettuce:lettuce-core:6.2.5.RELEASE'
+
+    //spotify
+    implementation 'se.michaelthelin.spotify:spotify-web-api-java:8.3.4'
+    implementation 'com.github.thelinmichael:spotify-web-api-java:master-SNAPSHOT'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }

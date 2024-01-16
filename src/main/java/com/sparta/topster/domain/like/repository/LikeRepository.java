@@ -18,4 +18,5 @@ public interface LikeRepository {
   Optional<Like> findByTopsterIdAndUserId(Long topsterId, Long userId);
   boolean existsByTopsterIdAndUserId(Long topsterId, Long userId);
 
+  Long countByTopsterId(Long topsterId);
 }
