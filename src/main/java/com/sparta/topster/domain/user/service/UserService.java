@@ -4,11 +4,12 @@ import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_NICKNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
+import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
 
-import com.sparta.topster.domain.user.controller.MailController;
 import com.sparta.topster.domain.user.dto.getUser.getUserRes;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
+import com.sparta.topster.domain.user.dto.login.LoginRes;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
@@ -23,7 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,6 +38,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
+    private final RedisTemplate<String,String> redisTemplate = new RedisTemplate<>();
 
     private final String ADMIN_TOKEN = "AAlrnYxKZ0aHgTBcXukeZygoC";
 
@@ -99,14 +100,17 @@ public class UserService {
             .build();
     }
 
-    public void loginUser(LoginReq loginReq, HttpServletResponse response) {
+    public LoginRes loginUser(LoginReq loginReq, HttpServletResponse response) {
         String username = loginReq.getUsername();
         Optional<User> byUsername = userRepository.findByUsername(username);
 
         if (passwordEncoder.matches(loginReq.getPassword(), byUsername.get().getPassword())) {
             UserRoleEnum role = byUsername.get().getRole();
-            response.setHeader(JwtUtil.AUTHORIZATION_HEADER,
-                jwtUtil.createToken(byUsername.get().getUsername(), role));
+
+            response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(byUsername.get().getUsername(), role));
+            response.setHeader(JwtUtil.REFRESH_TOKEN_PREFIX, jwtUtil.createRefreshToken(byUsername.get().getUsername(), role));
+
+            return LoginRes.builder().username(byUsername.get().getUsername()).build();
         }else{
             log.error(NOT_FOUND_PASSWORD.getMessage());
             throw new ServiceException(NOT_FOUND_PASSWORD);
@@ -151,6 +155,18 @@ public class UserService {
             userRepository.delete(getUser.getId());
         } else {
             throw new ServiceException(NOT_FOUND_PASSWORD);
+        }
+    }
+
+    @Transactional
+    public void refreshToken(User user, HttpServletResponse response) {
+        String refreshToken = redisUtil.getData(user.getUsername());
+
+        if(refreshToken != null){
+            String newAccessToken = jwtUtil.createToken(user.getUsername(),user.getRole());
+            response.setHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
+        }else{
+            throw new ServiceException(TOKEN_ERROR);
         }
     }
 

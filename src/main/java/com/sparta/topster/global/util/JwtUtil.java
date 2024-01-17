@@ -14,10 +14,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -25,14 +25,21 @@ import org.springframework.util.StringUtils;
 @Component
 public class JwtUtil {
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    public final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; //7일
+
+    public final long TOKEN_TIME = 1 * 60 * 1000L; //1분
+
+    public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
+
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     public static final String AUTHORIZATION_KEY = "auth";
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
-    //토큰 만료시간
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -56,6 +63,22 @@ public class JwtUtil {
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();
+    }
+
+    public String createRefreshToken(String username, UserRoleEnum role){
+        Date date = new Date();
+
+        String refreshToken = BEARER_PREFIX +
+            Jwts.builder()
+                .setSubject(username)
+                .claim(REFRESH_TOKEN_PREFIX, role)
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+        //
+        redisTemplate.opsForValue().set(username,refreshToken);
+        return refreshToken;
     }
 
     public String getJwtFromHeader(HttpServletRequest request) {

@@ -1,9 +1,5 @@
 package com.sparta.topster.global.filter;
 
-import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.security.UserDetailsServiceImpl;
 import com.sparta.topster.global.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -41,13 +37,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(tokenValue)) {
             if (!jwtUtil.validateToken(tokenValue)) {
-                ObjectMapper ob = new ObjectMapper();
-                response.setStatus(400);
+                response.setStatus(401);
 
-                String json = ob.writeValueAsString(new ServiceException(TOKEN_ERROR));
                 PrintWriter writer = response.getWriter();
 
-                writer.println(json);
+                writer.println("토큰이 만료되었습니다.");
                 return;
             }
 
