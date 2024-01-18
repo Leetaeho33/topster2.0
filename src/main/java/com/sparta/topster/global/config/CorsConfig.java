@@ -12,12 +12,17 @@ public class CorsConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             public void addCorsMappings(CorsRegistry registry) {
+                String corsOrigins = System.getenv("CORS_ORIGINS");
+                String[] allowedOrigins = new String[] {};
+                if (corsOrigins != null) {
+                    allowedOrigins = corsOrigins.split(",");
+                }
                 registry.addMapping("/**")
                     .allowedMethods("*")
                     .allowedHeaders("*")
                     .allowCredentials(true)
                     .exposedHeaders("Authorization")
-                    .allowedOrigins("http://localhost:3000", "http://localhost:8000");
+                    .allowedOrigins(allowedOrigins);
             }
         };
     }
