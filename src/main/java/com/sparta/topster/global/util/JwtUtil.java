@@ -30,7 +30,7 @@ public class JwtUtil {
 
     public final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; //7일
 
-    public final long TOKEN_TIME = 1 * 60 * 1000L; //1분
+    public final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
     public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 

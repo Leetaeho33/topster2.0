@@ -26,13 +26,17 @@ public class SpotifyUtil {
     private String CLIENT_ID;
     private String CLIENT_SECRET;
     private SpotifyApi spotifyApi;
-    private URI redirecURI = UriComponentsBuilder.fromUriString("http://localhost:8080")
+    private URI redirecURI;
+    
+    public SpotifyUtil(@Value("${spotify.client.id}") String CLIENT_ID,
+        @Value("${spotify.client.secret}")String CLIENT_SECRET,
+        @Value("${base.url}") String baseUrl) {
+
+        redirecURI = UriComponentsBuilder.fromUriString(baseUrl)
             .path("/users/login")
             .encode()
             .build()
             .toUri();
-    
-    public SpotifyUtil(@Value("${spotify.client.id}") String CLIENT_ID, @Value("${spotify.client.secret}") String CLIENT_SECRET) {
         spotifyApi = new SpotifyApi.Builder()
                 .setClientId(CLIENT_ID)
                 .setClientSecret(CLIENT_SECRET)

@@ -1,0 +1,22 @@
+version: "3"
+services:
+  frontend:
+    image: gyungku/topster-front
+
+  nginx:
+    restart: always
+    image: gyungku/topster-nginx
+    ports:
+      - "80:80"
+
+  backend:
+    image: gyungku/topster-backend
+    depends_on:
+      - redis
+
+  redis:
+    image: gyungku/topster-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    container_name: redis
