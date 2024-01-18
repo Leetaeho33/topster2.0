@@ -35,3 +35,6 @@ spotify:
   client:
     id: test
     secret : testSecret
+
+base:
+  url: testurl
