@@ -9,3 +9,29 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+jwt:
+  secret:
+    key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+
+oauth2:
+  google:
+    client-id: googleId@test.test
+    client-secret: googlePassword
+    redirect-uri: http://localhost:8080/api/v1/users/google
+    token-uri: https://oauth2.googleapis.com/token
+    resource-uri: https://www.googleapis.com/oauth2/v2/userinfo
+
+mail:
+  id: test@test.test
+  password: testMailPassword
+
+spotify:
+  client:
+    id: test
+    secret : testSecret

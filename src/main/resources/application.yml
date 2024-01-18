@@ -1,9 +1,9 @@
 spring:
   datasource:
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_ROOT_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/topster
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
   jpa:
     hibernate:
       ddl-auto: update
@@ -12,9 +12,10 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
+        dialect: org.hibernate.dialect.MySQLDialect
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
 
 server:
@@ -31,7 +32,7 @@ oauth2:
   google:
     client-id: ${GOOGLE_ID}
     client-secret: ${GOOGLE_PASSWORD}
-    redirect-uri: http://localhost:8080/api/v1/users/google
+    redirect-uri: ${BASE_URL}/api/v1/users/google
     token-uri: https://oauth2.googleapis.com/token
     resource-uri: https://www.googleapis.com/oauth2/v2/userinfo
 
@@ -43,3 +44,6 @@ spotify:
   client:
     id: ${SPOTIFY_CLIENT_ID}
     secret : ${SPOTIFY_CLIENT_SECRET}
+
+base:
+  url: ${BASE_URL}
