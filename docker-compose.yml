@@ -13,6 +13,8 @@ services:
     image: gyungku/topster-backend
     depends_on:
       - redis
+    env_file:
+      - .env
 
   redis:
     image: gyungku/topster-redis
