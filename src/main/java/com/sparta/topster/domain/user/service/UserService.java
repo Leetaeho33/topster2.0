@@ -7,7 +7,7 @@ import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
 
-import com.sparta.topster.domain.user.dto.getUser.getUserRes;
+import com.sparta.topster.domain.user.dto.getUser.GetUserRes;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.login.LoginRes;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
-    private final RedisTemplate<String,String> redisTemplate = new RedisTemplate<>();
 
     private final String ADMIN_TOKEN = "AAlrnYxKZ0aHgTBcXukeZygoC";
 
@@ -108,7 +106,7 @@ public class UserService {
             UserRoleEnum role = byUsername.get().getRole();
 
             response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(byUsername.get().getUsername(), role));
-            response.setHeader(JwtUtil.REFRESH_TOKEN_PREFIX, jwtUtil.createRefreshToken(byUsername.get().getUsername(), role));
+            response.setHeader(JwtUtil.REFRESH_TOKEN_PREFIX, jwtUtil.createRefreshToken(byUsername.get().getUsername()));
 
             return LoginRes.builder().username(byUsername.get().getUsername()).build();
         }else{
@@ -137,10 +135,10 @@ public class UserService {
             .build();
     }
 
-    public getUserRes getUser(User user) {
+    public GetUserRes getUser(User user) {
         findByUser(user.getId());
 
-        return getUserRes.builder()
+        return GetUserRes.builder()
             .username(user.getUsername())
             .email(user.getEmail())
             .nickname(user.getNickname())
@@ -152,19 +150,19 @@ public class UserService {
     public void deleteUser(User user, String password) {
         User getUser = findByUser(user.getId());
         if (passwordEncoder.matches(password, getUser.getPassword())) {
-            userRepository.delete(getUser.getId());
+            userRepository.deleteById(getUser.getId());
         } else {
             throw new ServiceException(NOT_FOUND_PASSWORD);
         }
     }
 
     @Transactional
-    public void refreshToken(User user, HttpServletResponse response) {
-        String refreshToken = redisUtil.getData(user.getUsername());
+    public String refreshToken(String refreshToken) {
+        String username = redisUtil.getData(refreshToken);
 
         if(refreshToken != null){
-            String newAccessToken = jwtUtil.createToken(user.getUsername(),user.getRole());
-            response.setHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
+            Optional<User> byUsername = userRepository.findByUsername(username);
+            return jwtUtil.createToken(username,byUsername.get().getRole());
         }else{
             throw new ServiceException(TOKEN_ERROR);
         }

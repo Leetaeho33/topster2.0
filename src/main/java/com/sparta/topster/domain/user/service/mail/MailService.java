@@ -6,9 +6,10 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMessage.RecipientType;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailService implements MailServiceInter {
 
-    @Autowired
-    JavaMailSender emailSender; // MailConfig에서 등록해둔 Bean을 autowired하여 사용하기
+    private final JavaMailSender emailSender; // MailConfig에서 등록해둔 Bean을 autowired하여 사용하기
 
     private String ePw; // 사용자가 메일로 받을 인증번호
+
     private final RedisUtil redisUtil;
+
+    private static final int MAX_VERIFICATIONS_PER_DAY = 10;
 
     @Value("${mail.id}")
     private String from;
@@ -84,6 +87,12 @@ public class MailService implements MailServiceInter {
     // bean으로 등록해둔 javaMail 객체를 사용하여 이메일을 발송한다
     @Override
     public String sendSimpleMessage(String email) throws Exception {
+        String verificationCountKey = "verificationCount:" + email;
+        Long count = redisUtil.increment(verificationCountKey,1);
+        if(count > MAX_VERIFICATIONS_PER_DAY){
+            throw new RuntimeException("일 인증 횟수 초과");
+        }
+        redisUtil.setExpire(verificationCountKey, getSecondsUntilMidnight());
 
         ePw = createKey(); // 랜덤 인증코드 생성
 
@@ -104,6 +113,12 @@ public class MailService implements MailServiceInter {
         }
 
         return ePw; // 메일로 사용자에게 보낸 인증코드를 서버로 반환! 인증코드 일치여부를 확인하기 위함
+    }
+
+    private long getSecondsUntilMidnight() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime midnight = now.toLocalDate().plusDays(1).atStartOfDay();
+        return ChronoUnit.SECONDS.between(now, midnight);
     }
 
 }

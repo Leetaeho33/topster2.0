@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class getUserRes {
+public class GetUserRes {
 
     private String username;
     private String nickname;

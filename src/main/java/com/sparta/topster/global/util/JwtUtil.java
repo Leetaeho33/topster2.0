@@ -65,19 +65,17 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String createRefreshToken(String username, UserRoleEnum role){
+    public String createRefreshToken(String username){
         Date date = new Date();
 
         String refreshToken = BEARER_PREFIX +
             Jwts.builder()
-                .setSubject(username)
-                .claim(REFRESH_TOKEN_PREFIX, role)
                 .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRATION))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();
-        //
-        redisTemplate.opsForValue().set(username,refreshToken);
+
+        redisTemplate.opsForValue().set(refreshToken,username);
         return refreshToken;
     }
 
