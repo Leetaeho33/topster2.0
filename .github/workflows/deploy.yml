@@ -33,13 +33,9 @@ jobs:
 
       # Docker 이미지 빌드
       - run: docker build -t gyungku/topster-backend -f Dockerfile . # Docerfile로 이미지 생성
-      - run: docker build -t gyungku/topster-redis -f ./redis/Dockerfile .
-      - run: docker build -t gyungku/topster-nginx -f ./nginx/Dockerfile .
 
       # Docker Hub에 이미지 push
       - run: docker push gyungku/topster-backend
-      - run: docker push gyungku/topster-redis
-      - run: docker push gyungku/topster-nginx
 
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
@@ -50,8 +46,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: topster # elastic beanstalk의 어플리케이션 이름
-          environment_name: Topster-env # elastic beanstalk의 환경이름
+          application_name: ${{ secrets.AWS_APP_NAME }} # elastic beanstalk의 어플리케이션 이름
+          environment_name: ${{ secrets.AWS_APP_ENV_NAME }} # elastic beanstalk의 환경이름
           existing_bucket_name: ${{ secrets.S3_BEANSTALK_BUCKET_NAME }} # s3의 bucket name
           region: ap-northeast-2 # 지역, 위의 지역을 넣자
           version_label: ${{ github.sha }}-${{ github.run_number }}
