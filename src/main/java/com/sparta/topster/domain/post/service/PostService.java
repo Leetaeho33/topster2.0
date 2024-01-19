@@ -104,4 +104,9 @@ public class PostService {
         }
         return post;
     }
+
+    public Page<PostListRes> getMyPosts(Long id, PostSearchCond cond, PostPageReq pageReq,
+        PostSortReq sortReq) {
+        return postRepository.getMyPosts(id, cond, pageReq.toPageable(), sortReq);
+    }
 }

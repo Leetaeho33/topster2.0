@@ -10,4 +10,5 @@ public interface PostQueryDslRepository {
 
     Page<PostListRes> getPostList(PostSearchCond cond, Pageable pageable, PostSortReq sortReq);
 
+    Page<PostListRes> getMyPosts(Long id, PostSearchCond cond, Pageable pageable, PostSortReq sortReq);
 }

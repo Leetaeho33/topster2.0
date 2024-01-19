@@ -96,4 +96,15 @@ public class PostController {
             .message("본인의 게시글이 맞습니다")
             .build());
     }
+
+    @GetMapping("/posts/my")
+    public ResponseEntity<Page<PostListRes>> getMyPosts(
+        @AuthenticationPrincipal UserDetailsImpl userDetails, PostSearchCond cond,
+        PostPageReq pageReq, PostSortReq sortReq) {
+
+        Page<PostListRes> res = postService.getMyPosts
+            (userDetails.getUser().getId(), cond, pageReq, sortReq);
+        return ResponseEntity.ok(res);
+    }
+
 }
