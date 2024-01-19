@@ -51,4 +51,4 @@ jobs:
           existing_bucket_name: ${{ secrets.S3_BEANSTALK_BUCKET_NAME }} # s3의 bucket name
           region: ap-northeast-2 # 지역, 위의 지역을 넣자
           version_label: ${{ github.sha }}-${{ github.run_number }}
-          deployment_package: deploy.zip
+#          deployment_package: deploy.zip
