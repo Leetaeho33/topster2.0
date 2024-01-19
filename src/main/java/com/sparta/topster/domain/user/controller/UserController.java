@@ -9,10 +9,11 @@ import com.sparta.topster.domain.user.dto.update.UpdateRes;
 import com.sparta.topster.domain.user.service.UserService;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.security.UserDetailsImpl;
-import com.sparta.topster.global.util.RedisUtil;
+import com.sparta.topster.global.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -34,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final RedisUtil redisUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginReq loginReq, HttpServletResponse response){
@@ -68,16 +68,19 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(
-        @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String password) {
-        userService.deleteUser(userDetails.getUser(), password);
+        @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody Map<String, String> map) {
+        userService.deleteUser(userDetails.getUser(), map.get("password"));
 
         return ResponseEntity.ok().body(HttpStatus.OK);
     }
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse response){
-        userService.refreshToken(userDetails.getUser(), response);
-        String data = redisUtil.getData(userDetails.getUser().getUsername());
-        return ResponseEntity.ok().body(data);
+    public ResponseEntity<?> refreshToken(@RequestHeader Map<String, String> map) {
+        try {
+            String newAccessToken = userService.refreshToken(map.get("refreshToken"));
+            return ResponseEntity.ok().header(JwtUtil.AUTHORIZATION_HEADER, newAccessToken).build();
+        } catch (ServiceException e) {
+            return ResponseEntity.badRequest().body(e.getCode());
+        }
     }
 }

@@ -106,7 +106,7 @@ public class UserService {
             UserRoleEnum role = byUsername.get().getRole();
 
             response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(byUsername.get().getUsername(), role));
-            response.setHeader(JwtUtil.REFRESH_TOKEN_PREFIX, jwtUtil.createRefreshToken(byUsername.get().getUsername(), role));
+            response.setHeader(JwtUtil.REFRESH_TOKEN_PREFIX, jwtUtil.createRefreshToken(byUsername.get().getUsername()));
 
             return LoginRes.builder().username(byUsername.get().getUsername()).build();
         }else{
@@ -150,19 +150,19 @@ public class UserService {
     public void deleteUser(User user, String password) {
         User getUser = findByUser(user.getId());
         if (passwordEncoder.matches(password, getUser.getPassword())) {
-            userRepository.delete(getUser.getId());
+            userRepository.deleteById(getUser.getId());
         } else {
             throw new ServiceException(NOT_FOUND_PASSWORD);
         }
     }
 
     @Transactional
-    public void refreshToken(User user, HttpServletResponse response) {
-        String refreshToken = redisUtil.getData(user.getUsername());
+    public String refreshToken(String refreshToken) {
+        String username = redisUtil.getData(refreshToken);
 
         if(refreshToken != null){
-            String newAccessToken = jwtUtil.createToken(user.getUsername(),user.getRole());
-            response.setHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
+            Optional<User> byUsername = userRepository.findByUsername(username);
+            return jwtUtil.createToken(username,byUsername.get().getRole());
         }else{
             throw new ServiceException(TOKEN_ERROR);
         }
