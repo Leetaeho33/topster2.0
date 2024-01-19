@@ -7,7 +7,7 @@ import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
 
-import com.sparta.topster.domain.user.dto.getUser.getUserRes;
+import com.sparta.topster.domain.user.dto.getUser.GetUserRes;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.login.LoginRes;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
@@ -137,10 +137,10 @@ public class UserService {
             .build();
     }
 
-    public getUserRes getUser(User user) {
+    public GetUserRes getUser(User user) {
         findByUser(user.getId());
 
-        return getUserRes.builder()
+        return GetUserRes.builder()
             .username(user.getUsername())
             .email(user.getEmail())
             .nickname(user.getNickname())
