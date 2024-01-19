@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MailController {
 
-    @Autowired
-    MailService mailService;
+    private final MailService mailService;
 
     @PostMapping("/mail")
-    public String mailConfirm(@RequestParam String email) throws Exception{
+    public String mailConfirm(@RequestParam String email) throws Exception {
         String code = mailService.sendSimpleMessage(email);
         System.out.println("사용자에게 발송한 인증코드 ==> " + code);
 
