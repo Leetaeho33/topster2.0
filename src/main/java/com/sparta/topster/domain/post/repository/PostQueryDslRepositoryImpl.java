@@ -31,6 +31,13 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
     public Page<PostListRes> getPostList(PostSearchCond cond, Pageable pageable,
         PostSortReq sortReq) {
 
+        return getMyPosts(null, cond, pageable, sortReq);
+    }
+
+    @Override
+    public Page<PostListRes> getMyPosts(Long userId, PostSearchCond cond, Pageable pageable,
+        PostSortReq sortReq) {
+
         List<PostListRes> list = jpaQueryFactory.select(
                 Projections.fields(PostListRes.class,
                     post.id,
@@ -39,7 +46,7 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
                     post.createdAt))
             .from(post)
             .leftJoin(post.user)
-            .where(search(cond.key(), cond.query()))
+            .where(search(cond.key(), cond.query()), my(userId))
             .orderBy(sort(sortReq.getSortBy(), sortReq.getAsc()))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -66,6 +73,13 @@ public class PostQueryDslRepositoryImpl implements PostQueryDslRepository {
             default:
                 return null;
         }
+    }
+
+    private BooleanExpression my(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+        return post.user.id.eq(userId);
     }
 
     private OrderSpecifier sort(String sortBy, boolean asc) {
