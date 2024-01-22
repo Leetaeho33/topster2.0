@@ -3,7 +3,6 @@ package com.sparta.topster.domain.user.controller;
 import static com.sparta.topster.domain.user.excepetion.UserException.MODIFY_PROFILE_FAILED;
 
 import com.sparta.topster.domain.user.dto.getUser.GetUserRes;
-import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import com.sparta.topster.domain.user.dto.update.UpdateRes;
 import com.sparta.topster.domain.user.service.UserService;
@@ -11,7 +10,6 @@ import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import com.sparta.topster.global.util.JwtUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +22,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,9 +69,9 @@ public class UserController {
     }
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestHeader Map<String, String> map) {
+    public ResponseEntity<?> refreshToken(@RequestHeader String refreshToken) {
         try {
-            String newAccessToken = userService.refreshToken(map.get("refreshToken"));
+            String newAccessToken = userService.refreshToken(refreshToken);
             return ResponseEntity.ok().header(JwtUtil.AUTHORIZATION_HEADER, newAccessToken).build();
         } catch (ServiceException e) {
             return ResponseEntity.badRequest().body(e.getCode());
