@@ -46,40 +46,15 @@ public class TopsterService {
                 content(content).
                 user(user).
                 build();
-        log.info("빈 Topster save");
-        topster = topsterRepository.save(topster);
 
-        log.info("Topster AlbumLlist에 Album추가 시작");
-        for(AlbumInsertReq albumInsertReq : albumInsertReqList){
-            String albumTitle = albumInsertReq.getTitle();
-            String albumReleaseDate = albumInsertReq.getReleaseDate();
-            String albumImage = albumInsertReq.getImage();
-            String albumArtist = albumInsertReq.getArtist();
+        topsterRepository.save(topster);
 
-            Album album = albumService.getAlbumByTitleOrCreate(albumTitle,
-                        albumImage,
-                        albumArtist,
-                        albumReleaseDate);
+        //AlbumInsertReqList -> TopsterAlbumList
+        fromAlbumInstertReqToTopsterAlbum(albumInsertReqList, topster);
 
-            TopsterAlbum topsterAlbum = TopsterAlbum.builder().
-                    topster(topster).
-                    album(album).build();
-            topsterAlbumRepository.save(topsterAlbum);
+        //TopsterAlbum -> albumRes
+        List<AlbumRes> albumResList  = fromTopsterAlbumtoAlbumRes(topster.getTopsterAlbumList());
 
-            topster.getTopsterAlbumList().add(topsterAlbum);
-            }
-        log.info("Topster AlbumLlist에 Album추가 완료");
-        List<AlbumRes> albumResList  = new ArrayList<>();
-        log.info("Topster Entity -> TopsterCreateRes");
-        for(TopsterAlbum topsterAlbum : topster.getTopsterAlbumList()){
-            albumResList.add(
-                    AlbumRes.builder().
-                            title(topsterAlbum.getAlbum().getTitle()).
-                            artist(topsterAlbum.getAlbum().getArtist()).
-                            image(topsterAlbum.getAlbum().getImage()).
-                            releaseDate(topsterAlbum.getAlbum().getReleaseDate()).
-                            build());
-        }
         return TopsterCreateRes.builder().
                 id(topster.getId()).
                 title(topster.getTitle()).
@@ -97,13 +72,18 @@ public class TopsterService {
     }
 
 
-    public Object getTopsterByUserService(Long userId) {
+    public List<TopsterGetRes> getTopsterByUserService(Long userId) {
         List<Topster> topsterList = getTopsterByUser(userId);
         List<TopsterGetRes> topsterGetResList = new ArrayList<>();
         for(Topster topster:topsterList){
             topsterGetResList.add(fromTopsterToTopsterGetRes(topster));
         }
         return topsterGetResList;
+    }
+
+
+    public Object getTopstersService() {
+        return null;
     }
 
 
@@ -118,7 +98,7 @@ public class TopsterService {
     }
 
     @Transactional
-    public Object toggleTopsterLike(Long topsterId, User user){
+    public TopsterGetRes toggleTopsterLike(Long topsterId, User user){
         log.info("탑스터 좋아요 toggle 시작");
         Topster topster = getTopster(topsterId);
         Like like = likeService.getLike(user.getId(), topsterId);
@@ -198,6 +178,48 @@ public class TopsterService {
     private boolean checkAuthor(Long userId, Long topsterId){
         Topster topster = getTopster(topsterId);
         return topster.getUser().getId().equals((userId));
+    }
+
+
+    private void fromAlbumInstertReqToTopsterAlbum(List<AlbumInsertReq> albumInsertReqList,
+                                                      Topster topster){
+
+        log.info("Topster AlbumLlist에 Album추가 시작");
+
+        for(AlbumInsertReq albumInsertReq : albumInsertReqList){
+            String albumTitle = albumInsertReq.getTitle();
+            String albumReleaseDate = albumInsertReq.getReleaseDate();
+            String albumImage = albumInsertReq.getImage();
+            String albumArtist = albumInsertReq.getArtist();
+
+            Album album = albumService.getAlbumByTitleOrCreate(albumTitle,
+                    albumImage,
+                    albumArtist,
+                    albumReleaseDate);
+
+            TopsterAlbum topsterAlbum = TopsterAlbum.builder().
+                    topster(topster).
+                    album(album).build();
+            topsterAlbumRepository.save(topsterAlbum);
+
+            topster.getTopsterAlbumList().add(topsterAlbum);
+        }
+    }
+
+    private List<AlbumRes> fromTopsterAlbumtoAlbumRes(List<TopsterAlbum> topsterAlbumList){
+        log.info("Topster Entity -> TopsterCreateRes");
+
+        List<AlbumRes> albumResList = new ArrayList<>();
+        for(TopsterAlbum topsterAlbum : topsterAlbumList){
+            albumResList.add(
+                    AlbumRes.builder().
+                            title(topsterAlbum.getAlbum().getTitle()).
+                            artist(topsterAlbum.getAlbum().getArtist()).
+                            image(topsterAlbum.getAlbum().getImage()).
+                            releaseDate(topsterAlbum.getAlbum().getReleaseDate()).
+                            build());
+        }
+        return albumResList;
     }
 
 
