@@ -11,14 +11,5 @@ services:
 
   backend:
     image: gyungku/topster-backend
-    depends_on:
-      - redis
     env_file:
       - .env
-
-  redis:
-    image: redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    container_name: redis

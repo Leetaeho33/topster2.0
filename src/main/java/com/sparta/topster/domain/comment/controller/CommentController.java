@@ -6,6 +6,7 @@ import com.sparta.topster.domain.comment.dto.res.CommentRes;
 import com.sparta.topster.domain.comment.service.CommentService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "댓글 API")
 public class CommentController {
 
   private final CommentService commentService;
+
   @PostMapping("/posts/{postId}/comments")
   public ResponseEntity<CommentRes> createComment(@PathVariable Long postId,
                                                   @RequestBody CommentCreateReq commentCreateReq,

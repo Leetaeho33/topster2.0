@@ -1,4 +1,7 @@
 spring:
+  profiles:
+    include: swagger
+
   datasource:
     username: ${MYSQL_USER}
     password: ${MYSQL_ROOT_PASSWORD}
