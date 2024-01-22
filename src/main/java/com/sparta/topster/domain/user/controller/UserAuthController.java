@@ -3,11 +3,13 @@ package com.sparta.topster.domain.user.controller;
 
 import static com.sparta.topster.domain.user.excepetion.UserException.SIGNUP_FAIL;
 
+import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
-import com.sparta.topster.domain.user.dto.signup.SignupRes;
 import com.sparta.topster.domain.user.service.UserService;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
-public class UserSignupController {
+@Tag(name = "유저 Auth API")
+public class UserAuthController {
 
     private final UserService userService;
+    // UserAuthController
 
     @PostMapping("/signup")
     public ResponseEntity<RootResponseDto> signup(@Valid @RequestBody SignupReq signupReq,
@@ -40,6 +44,11 @@ public class UserSignupController {
             .code("200")
             .message("회원가입 성공")
             .build());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginReq loginReq, HttpServletResponse response){
+        return ResponseEntity.ok(userService.loginUser(loginReq,response));
     }
 
 
