@@ -74,6 +74,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.POST,"api/v1/users/mail/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"api/v1/posts/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"api/v1/topsters/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "/api-docs", "/swagger-ui-topster.html", "/api-docs/**").permitAll()
                 .anyRequest().authenticated()
         ).exceptionHandling(
             (exception) -> exception.authenticationEntryPoint(getAuthenticationEntryPoint())

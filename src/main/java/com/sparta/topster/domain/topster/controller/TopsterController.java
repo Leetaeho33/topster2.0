@@ -6,6 +6,9 @@ import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.response.RootResponseDto;
 import com.sparta.topster.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1")
-@Controller
+@RestController
 @RequiredArgsConstructor
+@Tag(name = "탑스터 API")
 public class TopsterController {
     private final TopsterService topsterService;
 

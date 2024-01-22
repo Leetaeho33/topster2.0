@@ -4,6 +4,7 @@ import com.sparta.topster.domain.like.dto.LikeCountStatusRes;
 import com.sparta.topster.domain.like.service.LikeService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/topsters")
 @RequiredArgsConstructor
+@Tag(name = "좋아요 API")
 public class LikeController {
 
     private final LikeService likeService;
