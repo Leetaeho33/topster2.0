@@ -72,4 +72,11 @@ public class User extends BaseEntity {
         this.kakaoId = kakaoId;
     }
 
+    public void updateIntro(String intro) {
+        this.intro = intro;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
