@@ -62,7 +62,7 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(
-        @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody @Valid DeleteReq deleteReq) {
+        @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody DeleteReq deleteReq) {
         userService.deleteUser(userDetails.getUser(), deleteReq);
 
         return ResponseEntity.ok().body(HttpStatus.OK);
