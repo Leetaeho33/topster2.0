@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.dto.signup.SignupRes;
+import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.domain.user.repository.UserRepository;
@@ -106,5 +107,34 @@ public class UserServiceTest {
 
         
         verify(response, times(1)).setHeader(eq(JwtUtil.AUTHORIZATION_HEADER), eq("mockedToken"));
+    }
+
+    @DisplayName("update")
+    @Test
+    void updateTest() {
+
+        //given
+        String username = "wogns";
+        String password = "password";
+        String newNickname = "newNickname";
+        String newIntro = "newIntro";
+
+        UpdateReq updateReq = new UpdateReq(newNickname,password,newIntro);
+
+        User user = User.builder()
+            .username(username)
+            .password(password)
+            .nickname(newNickname)
+            .intro(newIntro)
+            .build();
+
+        when(userRepository.findById(user.getId())).thenReturn(user);
+        when(passwordEncoder.matches(eq(password), anyString())).thenReturn(true);
+
+        //when
+        userService.updateUser(user,updateReq);
+
+        //then
+        assertEquals(newNickname,user.getNickname());
     }
 }
