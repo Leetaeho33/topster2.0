@@ -19,13 +19,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Table(name = "tb_comment")
-@Builder
 public class Comment extends BaseEntity {
 
     @Id
@@ -35,22 +35,22 @@ public class Comment extends BaseEntity {
     @Column
     private String content;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
     @ManyToOne
     private User user;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn
     @ManyToOne
     private Post post;
 
-
-    public Comment(CommentCreateReq commentCreateReq, Post post, UserDetailsImpl userDetails) {
-        this.content = commentCreateReq.getContent();
+    @Builder
+    public Comment(String content, User user, Post post) {
+        this.content = content;
+        this.user = user;
         this.post = post;
-        this.user = userDetails.getUser();
-
     }
-
 
     public void update(String comment) {
         this.content = comment;
