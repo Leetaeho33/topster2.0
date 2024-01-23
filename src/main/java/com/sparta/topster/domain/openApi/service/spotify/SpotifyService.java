@@ -1,12 +1,9 @@
-package com.sparta.topster.domain.open_api.service.spotify;
+package com.sparta.topster.domain.openApi.service.spotify;
 
 import com.sparta.topster.domain.album.entity.Album;
-import com.sparta.topster.domain.open_api.service.OpenApiService;
-import com.sparta.topster.domain.song.entity.Song;
-import com.sparta.topster.global.exception.ServiceException;
+import com.sparta.topster.domain.openApi.service.OpenApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.core5.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Primary;
@@ -17,8 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sparta.topster.domain.open_api.exception.ManiadbException.NOT_SERCH_ALBUM;
 
 @Service
 @Primary
