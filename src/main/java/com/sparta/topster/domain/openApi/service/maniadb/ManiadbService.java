@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_S
 
 @Service
 @Qualifier("maniadb")
-@Slf4j(topic = "ManiaServiceImpl")
+@Slf4j(topic = "ManiaDbService")
 @RequiredArgsConstructor
 public class ManiadbService implements OpenApiService {
 
