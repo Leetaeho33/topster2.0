@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,14 +27,25 @@ public class CommentService {
   private final CommentRespository commentRespository;
   private final PostService postService;
 
-  public CommentRes createComment(Long postId, CommentCreateReq commentCreateReq, UserDetailsImpl userDetails) {
+  public CommentRes createComment(Long postId, CommentCreateReq commentCreateReq, User user) {
     log.info("댓글 작성");
     Post post = postService.getPost(postId);
 
-    Comment comment = new Comment(commentCreateReq, post, userDetails);
+    Comment comment = Comment.builder()
+        .content(commentCreateReq.getContent())
+        .user(user)
+        .post(post)
+        .build();
+
     commentRespository.save(comment);
+
     log.info("댓글 작성 완료");
-    return new CommentRes(comment);
+    return CommentRes.builder()
+        .id(comment.getId())
+        .content(comment.getContent())
+        .author(comment.getUser().getUsername())
+        .createdAt(comment.getCreatedAt())
+        .build();
   }
 
   public List<CommentRes> getComment(Long postId) {
@@ -45,16 +55,21 @@ public class CommentService {
 
     for (Comment comment : findCommentList) {
       if(comment.getPost().getId().equals(postId)) {
-        postCommentList.add(new CommentRes(comment));
+        postCommentList.add(CommentRes.builder()
+            .id(comment.getId())
+            .content(comment.getContent())
+            .author(comment.getUser().getUsername())
+            .createdAt(comment.getCreatedAt())
+            .build());
       }
 
     }
         return postCommentList;
   }
 
-  public RootNoDataRes modifyComment(Long commentId, CommentModifyReq commentModifyReq, UserDetailsImpl userDetails) {
+  public RootNoDataRes modifyComment(Long commentId, CommentModifyReq commentModifyReq, User user) {
     log.info("댓글 수정");
-    Comment comment = modifyAndDeleteCommentAuthor(commentId, userDetails);
+    Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
 
     comment.update(commentModifyReq.getContent());
 
@@ -66,9 +81,9 @@ public class CommentService {
         .code("200").build();
   }
 
-  public RootNoDataRes deleteComment(Long commentId, UserDetailsImpl userDetails) {
+  public RootNoDataRes deleteComment(Long commentId, User user) {
     log.info("댓글 삭제");
-    Comment comment = modifyAndDeleteCommentAuthor(commentId, userDetails);
+    Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
 
     log.info("댓글 삭제 완료");
     commentRespository.delete(comment);
@@ -79,14 +94,14 @@ public class CommentService {
   }
 
 
-  public Comment modifyAndDeleteCommentAuthor(Long commentId, UserDetailsImpl userDetails) {
+  public Comment modifyAndDeleteCommentAuthor(Long commentId, User user) {
     Comment comment = commentRespository.findById(commentId);
 
     if(comment == null) {
       throw new ServiceException(CommentException.NO_COMMENT);  // 댓글이 존재하지 않습니다.
     }
 
-    if(!comment.getUser().getUsername().equals(userDetails.getUsername())) {
+    if(!comment.getUser().getUsername().equals(user.getUsername())) {
       throw new ServiceException(CommentException.MODIFY_AND_DELETE_ONLY_AUTHOR); // 작성자만 수정 및 삭제 할 수 있습니다.
     }
     System.out.println(comment);

@@ -16,36 +16,36 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/topsters")
-@RequiredArgsConstructor
-@Tag(name = "좋아요 API")
-public class LikeController {
+    @RequiredArgsConstructor
+    @Tag(name = "좋아요 API")
+    public class LikeController {
 
-    private final LikeService likeService;
+        private final LikeService likeService;
 
 
-    @GetMapping("/{topsterId}/like-count/status")
-    public ResponseEntity<LikeCountStatusRes> getLikeCountAndStatus(@PathVariable Long topsterId,
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        @GetMapping("/{topsterId}/like-count/status")
+        public ResponseEntity<LikeCountStatusRes> getLikeCountAndStatus(@PathVariable Long topsterId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        if (userDetails != null) {
-            return ResponseEntity.ok().body(likeService.getLikeCountAndStatus(topsterId, userDetails.getUser().getId()));
+            if (userDetails != null) {
+                return ResponseEntity.ok().body(likeService.getLikeCountAndStatus(topsterId, userDetails.getUser().getId()));
+            }
+            return ResponseEntity.ok(likeService.getLikeCountAndStatus(topsterId, null));
         }
-        return ResponseEntity.ok(likeService.getLikeCountAndStatus(topsterId, null));
+        @PostMapping("/{topsterId}/like")
+    public ResponseEntity<?> toggleLike(@PathVariable Long topsterId,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        try {
+            boolean liked = likeService.toggleLike(topsterId, userDetails.getUser());
+
+            if(liked) {
+                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요"));
+            } else {
+                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요 취소"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new RootNoDataRes(e.getMessage(), "400"));
+        }
     }
-//    @PostMapping("/{topsterId}/like")
-//    public ResponseEntity<?> toggleLike(@PathVariable Long topsterId,
-//                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//
-//        try {
-//            boolean liked = likeService.toggleLike(topsterId, userDetails);
-//
-//            if(liked) {
-//                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요"));
-//            } else {
-//                return ResponseEntity.ok().body(new RootNoDataRes("200", "좋아요 취소"));
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(new RootNoDataRes(e.getMessage(), "400"));
-//        }
-//    }
 }

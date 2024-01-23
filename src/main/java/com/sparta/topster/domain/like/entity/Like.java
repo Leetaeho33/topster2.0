@@ -40,10 +40,8 @@ public class Like extends BaseEntity{
 
 
     @Builder
-    public Like(Topster topster, User user) {
-        this.topster = topster;
+    public Like(User user, Topster topster) {
         this.user = user;
+        this.topster = topster;
     }
-
-
 }
