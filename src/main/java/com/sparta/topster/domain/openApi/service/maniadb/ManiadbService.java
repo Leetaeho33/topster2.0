@@ -3,6 +3,7 @@ package com.sparta.topster.domain.openApi.service.maniadb;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.openApi.service.OpenApiService;
 import com.sparta.topster.domain.song.entity.Song;
@@ -57,22 +58,22 @@ public class ManiadbService implements OpenApiService {
 
 
     @Override
-    public List<Album> getAlbums(String query) {
+    public List<AlbumRes> getAlbums(String query) {
         log.info(query + "로 rawData 가져오기");
         String rawData = getRawArtistData(query);
         JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
         if(rawJSONData.getJSONObject("rss").getJSONObject("channel").
                 has("item")){
-            return fromJSONArrayToAlbum(rawJSONData.getJSONObject("rss").getJSONObject("channel").
+            return fromJSONArrayToAlbumRes(rawJSONData.getJSONObject("rss").getJSONObject("channel").
                     getJSONArray("item"), query);
         }
         log.error(NOT_SERCH_ALBUM.getMessage());
         throw new ServiceException(NOT_SERCH_ALBUM);
     }
 
-    private List<Album> fromJSONArrayToAlbum(JSONArray items, String query){
-        List<Album> albumList = new ArrayList<>();
+    private List<AlbumRes> fromJSONArrayToAlbumRes(JSONArray items, String query){
+        List<AlbumRes> albumResList = new ArrayList<>();
         for(Object item : items){
             JSONObject itemObj = (JSONObject) item;
             log.info("maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
@@ -86,19 +87,15 @@ public class ManiadbService implements OpenApiService {
                 if(itemObj.getString("maniadb:albumartists").contains(initialUpperCase(query))) {
                     log.info("쿼리문이 영어로 이루어져 있을 때");
                     log.info("필터링 된 maniadb:albumartists : " + itemObj.getString("maniadb:albumartists"));
-                    Album album = fromJSONtoAlbum(itemObj);
-                    List<Song> songList = fromJSONToSong((JSONObject) item, album);
-                    album.setSongList(songList);
-                    albumList.add(album);
+                    AlbumRes albumRes = fromJSONtoAlbumRes(itemObj);
+                    albumResList.add(albumRes);
                 }
             }else{
-                Album album = fromJSONtoAlbum(itemObj);
-                List<Song> songList = fromJSONToSong((JSONObject) item, album);
-                album.setSongList(songList);
-                albumList.add(album);
+                AlbumRes albumRes = fromJSONtoAlbumRes(itemObj);
+                albumResList.add(albumRes);
             }
         }
-        return albumList;
+        return albumResList;
     }
 
     private List<Song> fromJSONToSong(JSONObject item, Album album){
@@ -107,14 +104,19 @@ public class ManiadbService implements OpenApiService {
         return songList;
     }
 
-    private Album fromJSONtoAlbum(JSONObject albumJSON) {
+    private AlbumRes fromJSONtoAlbumRes(JSONObject albumJSON) {
         String title = albumJSON.getString("title");
         String artist = albumJSON.getString("maniadb:albumartists");
         String release = albumJSON.getString("release");
         String image = albumJSON.getString("image");
 
-        Album album = Album.builder().title(title).artist(artist).release(release).image(image).build();
-        return album;
+        AlbumRes albumRes = AlbumRes.builder().
+                title(title).
+                artist(artist).
+                releaseDate(release).
+                image(image).
+                build();
+        return albumRes;
     }
 
     private String initialUpperCase(String s){
