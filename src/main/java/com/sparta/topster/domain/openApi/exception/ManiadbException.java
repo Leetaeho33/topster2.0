@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.open_api.exception;
+package com.sparta.topster.domain.openApi.exception;
 
 import com.sparta.topster.global.exception.ErrorCode;
 import lombok.Getter;
