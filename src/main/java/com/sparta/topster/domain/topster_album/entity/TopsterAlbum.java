@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Table(name = "tb_topster_album")
 @Entity
@@ -18,10 +20,12 @@ public class TopsterAlbum extends BaseEntity {
     @GeneratedValue
     private Long id;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne
     @JoinColumn(name = "album_id")
     private Album album;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "topster_id")

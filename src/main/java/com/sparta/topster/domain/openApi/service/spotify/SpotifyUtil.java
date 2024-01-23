@@ -1,10 +1,6 @@
-package com.sparta.topster.domain.open_api.service.spotify;
+package com.sparta.topster.domain.openApi.service.spotify;
 
-import com.neovisionaries.i18n.CountryCode;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,12 +8,9 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import se.michaelthelin.spotify.requests.data.albums.GetSeveralAlbumsRequest;
-import se.michaelthelin.spotify.requests.data.search.simplified.SearchArtistsRequest;
 
 import java.io.IOException;
 import java.net.URI;
-import java.text.ParseException;
 
 @Slf4j(topic = "SpotifyUtil")
 @Configuration
