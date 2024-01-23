@@ -50,7 +50,7 @@ public class SpotifyUtil {
             // Set access token for further "spotifyApi" object usage
             spotifyApi.setAccessToken(clientCredentials.getAccessToken());
             String accessToken = spotifyApi.getAccessToken();
-            log.debug("Spotify accessToken is " + accessToken);
+            log.info("Spotify accessToken is " + accessToken);
             return accessToken;
 
         } catch (IOException | SpotifyWebApiException e) {
