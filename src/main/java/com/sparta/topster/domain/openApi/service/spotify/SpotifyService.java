@@ -29,19 +29,20 @@ public class SpotifyService implements OpenApiService {
     private final SpotifyUtil spotifyUtil;
 
     private String accessToken;
-    @PostConstruct
-    private void init(){
-        accessToken =spotifyUtil.accesstoken();
-    }
-
-    @Scheduled(cron = "* 55 * * * *")
-    public void getAccessToken() {
-        accessToken =  spotifyUtil.accesstoken();
-    }
+//    @PostConstruct
+//    private void init(){
+//        accessToken =spotifyUtil.accesstoken();
+//    }
+//
+//    @Scheduled(cron = "* 55 * * * *")
+//    public void getAccessToken() {
+//        accessToken =  spotifyUtil.accesstoken();
+//    }
 
 
     @Override
     public String getRawArtistData(String query) {
+        accessToken = spotifyUtil.accesstoken();
         log.info(query + "로 rawData 가져오기");
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
