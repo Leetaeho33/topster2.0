@@ -39,14 +39,8 @@ public class AlbumService {
             return cacheAlbum.get().getAlbums();
         }
 
-        List<Album> albumList = openApiService.getAlbums(query);
+        List<AlbumRes> albumResList = openApiService.getAlbums(query);
 
-        List<AlbumRes> albumResList = new ArrayList<>();
-        for(Album album : albumList){
-            AlbumRes albumRes = AlbumRes.builder().id(album.getId()).artist(album.getArtist()).title(album.getTitle())
-                    .image(album.getImage()).releaseDate(album.getReleaseDate()).build();
-            albumResList.add(albumRes);
-        }
         CacheAlbum saveCache = CacheAlbum.builder()
             .artist(query)
             .albums(albumResList)

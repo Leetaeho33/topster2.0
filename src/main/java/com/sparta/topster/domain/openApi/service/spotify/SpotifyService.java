@@ -1,7 +1,9 @@
 package com.sparta.topster.domain.openApi.service.spotify;
 
+import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.openApi.service.OpenApiService;
+import com.sparta.topster.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -14,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_SERCH_ALBUM;
 
 @Service
 @Primary
@@ -34,7 +38,7 @@ public class SpotifyService implements OpenApiService {
         String accessToken = getAccessToken();
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);;
+        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Host", "api.spotify.com");
         headers.add("Content-type", "application/json");
         String body = "";
@@ -43,24 +47,24 @@ public class SpotifyService implements OpenApiService {
         ResponseEntity<String> responseEntity = rest
                 .exchange("https://api.spotify.com/v1/search?type=album&q="
                         + query, HttpMethod.GET, requestEntity, String.class);
-        HttpStatusCode httpStatus = responseEntity.getStatusCode();
         return responseEntity.getBody();
     }
 
     @Override
-    public List<Album> getAlbums(String query) {
+    public List<AlbumRes> getAlbums(String query) {
         String rawData = getRawArtistData(query);
         JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
-        JSONArray jsonArray = rawJSONData.getJSONObject("albums").getJSONArray("items");
-        return fromJSONArrayToAlbum(jsonArray, query);
-
-//        log.error(NOT_SERCH_ALBUM.getMessage());
-//        throw new ServiceException(NOT_SERCH_ALBUM);
+        if(rawJSONData.getJSONObject("albums").getBigInteger("total").equals(0)){
+            JSONArray jsonArray = rawJSONData.getJSONObject("albums").getJSONArray("items");
+            return fromJSONArrayToAlbum(jsonArray, query);
+        }
+        log.error(NOT_SERCH_ALBUM.getMessage());
+        throw new ServiceException(NOT_SERCH_ALBUM);
     }
 
-    private List<Album> fromJSONArrayToAlbum(JSONArray items, String query){
-        List<Album> albumList = new ArrayList<>();
+    private List<AlbumRes> fromJSONArrayToAlbum(JSONArray items, String query){
+        List<AlbumRes> albumResList = new ArrayList<>();
         for(Object item : items){
             JSONObject itemObj = (JSONObject) item;
 
@@ -74,28 +78,29 @@ public class SpotifyService implements OpenApiService {
             if(query.matches("^[a-zA-Z]*$")){
                 if(artistName.contains(initialUpperCase(query))) {
                     log.info("쿼리문이 영어로 이루어져 있을 때");
-                    Album album = fromJSONtoAlbum(itemObj, artistName);
-//                    List<Song> songList = fromJSONToSong((JSONObject) item, album);
-//                    album.setSongList(songList);
-                    albumList.add(album);
+                    AlbumRes album = fromJSONtoAlbumRes(itemObj, artistName);
+                    albumResList.add(album);
                 }
             }else{
-                Album album = fromJSONtoAlbum(itemObj, artistName);
-//                List<Song> songList = fromJSONToSong((JSONObject) item, album);
-//                album.setSongList(songList);
-                albumList.add(album);
+                AlbumRes albumRes = fromJSONtoAlbumRes(itemObj, artistName);
+                albumResList.add(albumRes);
             }
         }
-        return albumList;
+        return albumResList;
     }
 
 
-    private Album fromJSONtoAlbum(JSONObject albumJSON, String artistName) {
+    private AlbumRes fromJSONtoAlbumRes(JSONObject albumJSON, String artistName) {
         String title = albumJSON.getString("name");
         String release = albumJSON.getString("release_date");
         String image = albumJSON.getJSONArray("images").getJSONObject(0).getString("url");
 
-        return Album.builder().title(title).artist(artistName).release(release).image(image).build();
+        return AlbumRes.builder().
+                title(title).
+                artist(artistName).
+                releaseDate(release).
+                image(image).
+                build();
     }
 
 
