@@ -32,7 +32,7 @@ public class JwtUtil {
 
     public final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
-    public static final String REFRESH_TOKEN_PREFIX = "refreshToken:";
+    public static final String REFRESH_TOKEN_PREFIX = "refreshToken";
 
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
