@@ -8,6 +8,7 @@ import com.sparta.topster.domain.like.entity.Like;
 import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
 import com.sparta.topster.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tb_topster")
 @Entity
 @Getter
@@ -32,10 +33,10 @@ public class Topster extends BaseEntity {
     @Column
     private String content;
 
-    @OneToMany(mappedBy = "topster", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "topster", cascade = CascadeType.PERSIST)
     List<Like> topsterLike = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topster", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "topster", cascade = CascadeType.PERSIST)
     List<TopsterAlbum> topsterAlbumList = new ArrayList<>();
 
     @ManyToOne
@@ -50,7 +51,6 @@ public class Topster extends BaseEntity {
         this.title = title;
         this.content = content;
         this.user = user;
-//        this.topsterAlbumList = topsterAlbumList;
     }
 
     public void upAndDownLikeCount(Integer l) {
