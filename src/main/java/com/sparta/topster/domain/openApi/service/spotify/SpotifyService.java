@@ -27,14 +27,14 @@ import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_S
 @RequiredArgsConstructor
 public class SpotifyService implements OpenApiService {
     private final SpotifyUtil spotifyUtil;
-
     private String accessToken;
     @PostConstruct
+
     private void init(){
-        accessToken =spotifyUtil.accesstoken();
+        accessToken = spotifyUtil.accesstoken();
     }
 
-    @Scheduled(cron = "* 55 * * * *")
+    @Scheduled(fixedDelay = 60 * 55 * 1000L)
     public void getAccessToken() {
         accessToken =  spotifyUtil.accesstoken();
     }
@@ -42,6 +42,7 @@ public class SpotifyService implements OpenApiService {
 
     @Override
     public String getRawArtistData(String query) {
+        accessToken = spotifyUtil.accesstoken();
         log.info(query + "로 rawData 가져오기");
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -53,21 +54,22 @@ public class SpotifyService implements OpenApiService {
         HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
         ResponseEntity<String> responseEntity = rest
                 .exchange("https://api.spotify.com/v1/search?type=album&q="
-                        + query, HttpMethod.GET, requestEntity, String.class);
+                        + query + "&limit=30", HttpMethod.GET, requestEntity, String.class);
         return responseEntity.getBody();
     }
+
 
     @Override
     public List<AlbumRes> getAlbums(String query) {
         String rawData = getRawArtistData(query);
         JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
-//        if(rawJSONData.getJSONObject("albums").getBigInteger("total").equals(0)){
-            JSONArray jsonArray = rawJSONData.getJSONObject("albums").getJSONArray("items");
-            return fromJSONArrayToAlbum(jsonArray, query);
-//        }
-//        log.error(NOT_SERCH_ALBUM.getMessage());
-//        throw new ServiceException(NOT_SERCH_ALBUM);
+        if(rawJSONData.getJSONObject("albums").getJSONArray("items").isEmpty()){
+            log.error(NOT_SERCH_ALBUM.getMessage());
+            throw new ServiceException(NOT_SERCH_ALBUM);
+        }
+        JSONArray jsonArray = rawJSONData.getJSONObject("albums").getJSONArray("items");
+        return fromJSONArrayToAlbum(jsonArray, query);
     }
 
     private List<AlbumRes> fromJSONArrayToAlbum(JSONArray items, String query){
@@ -77,12 +79,12 @@ public class SpotifyService implements OpenApiService {
 
             // 가수를 검색했을 때 제목에 가수가 포함된 것도 포함됨.
             // 따라서 albumartists가 query를 포함한 것만 필터링
-            // maniadb에서 대문자/소문자를 구분하기 때문에 첫글자를 대문자로 변환하는 메소드 사용
 
             JSONArray artistArray = itemObj.getJSONArray("artists");
             String artistName = artistArray.getJSONObject(0).getString("name");
             log.info("artistName is " + artistName);
             if(query.matches("^[a-zA-Z]*$")){
+                //
                 if(artistName.contains(initialUpperCase(query))) {
                     log.info("쿼리문이 영어로 이루어져 있을 때");
                     AlbumRes album = fromJSONtoAlbumRes(itemObj, artistName);
