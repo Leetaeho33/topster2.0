@@ -2,6 +2,7 @@ package com.sparta.topster.domain.user.service;
 
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_EMAIL;
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_NICKNAME;
+import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_USERNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
@@ -57,8 +58,8 @@ public class UserService {
         Optional<User> byEmail = userRepository.findByUserEmail(signupReq.getEmail());
 
         if (byUsername.isPresent()) {
-            log.error(NOT_FOUND_AUTHENTICATION_CODE.getMessage());
-            throw new ServiceException(NOT_FOUND_AUTHENTICATION_CODE);
+            log.error(DUPLICATE_USERNAME.getMessage());
+            throw new ServiceException(DUPLICATE_USERNAME);
         }
 
         if (byNickname.isPresent()) {
