@@ -3,6 +3,7 @@ package com.sparta.topster.domain.user.service;
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_EMAIL;
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_NICKNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_USERNAME;
+import static com.sparta.topster.domain.user.excepetion.UserException.INVALID_NICKNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
@@ -125,8 +126,26 @@ public class UserService {
             throw new ServiceException(NOT_FOUND_PASSWORD);
         }
 
+        if (updateReq.getNickname() != null && updateReq.getNickname().trim().isEmpty()) {
+            throw new ServiceException(INVALID_NICKNAME);
+        }
+
         if (findByUser.getNickname().equals(updateReq.getNickname())) {
             throw new ServiceException(DUPLICATE_NICKNAME);
+        }
+
+        if (updateReq.getIntro() != null && updateReq.getNickname() == null) {
+            findByUser.updateIntro(updateReq.getIntro());
+            return UpdateRes.builder()
+                .intro(updateReq.getIntro())
+                .build();
+        }
+
+        if (updateReq.getNickname() != null && updateReq.getIntro() == null) {
+            findByUser.updateNickname(updateReq.getNickname());
+            return UpdateRes.builder()
+                .nickname(updateReq.getNickname())
+                .build();
         }
 
         findByUser.updateIntro(updateReq);
