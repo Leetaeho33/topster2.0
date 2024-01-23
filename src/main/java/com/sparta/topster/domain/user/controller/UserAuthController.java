@@ -7,6 +7,7 @@ import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
 import com.sparta.topster.domain.user.service.UserService;
 import com.sparta.topster.global.exception.ServiceException;
+import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.response.RootResponseDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,8 +48,12 @@ public class UserAuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginReq loginReq, HttpServletResponse response){
-        return ResponseEntity.ok(userService.loginUser(loginReq,response));
+    public ResponseEntity<RootNoDataRes> loginUser(@Valid @RequestBody LoginReq loginReq, HttpServletResponse response){
+        userService.loginUser(loginReq,response);
+        return ResponseEntity.ok().body(RootNoDataRes.builder()
+            .code("200")
+            .message("로그인 성공")
+            .build());
     }
 
 
