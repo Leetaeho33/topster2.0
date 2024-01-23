@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.message.StringFormattedMessage;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
 
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class Topster extends BaseEntity {
     @OneToMany(mappedBy = "topster", cascade = CascadeType.PERSIST)
     List<TopsterAlbum> topsterAlbumList = new ArrayList<>();
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
