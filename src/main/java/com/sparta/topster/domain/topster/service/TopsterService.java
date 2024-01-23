@@ -33,7 +33,7 @@ public class TopsterService {
     private final TopsterAlbumRepository topsterAlbumRepository;
     private final AlbumService albumService;
     private final TopsterRepository topsterRepository;
-    private final LikeService likeService;
+
 
     @Transactional
     public TopsterCreateRes createTopster(TopsterCreateReq topsterCreateReq, User user) {
@@ -95,23 +95,6 @@ public class TopsterService {
             log.error(NOT_AUTHOR.getMessage());
             throw new ServiceException(NOT_AUTHOR);
         }
-    }
-
-    @Transactional
-    public TopsterGetRes toggleTopsterLike(Long topsterId, User user){
-        log.info("탑스터 좋아요 toggle 시작");
-        Topster topster = getTopster(topsterId);
-        Like like = likeService.getLike(user.getId(), topsterId);
-        if(like == null){
-            log.info("탑스터에 좋아요가 눌리지 않은 상태");
-            topster.getTopsterLike().add(Like.builder().user(user).topster(topster).build());
-            topster.upAndDownLikeCount(1);
-        }else {
-            log.info("탑스터에 좋아요가 눌린 상태");
-            likeService.deleteLike(like);
-            topster.upAndDownLikeCount(-1);
-        }
-        return fromTopsterToTopsterGetRes(topster);
     }
 
 
