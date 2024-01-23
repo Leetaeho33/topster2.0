@@ -4,12 +4,14 @@ import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.openApi.service.OpenApiService;
 import com.sparta.topster.global.exception.ServiceException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -26,16 +28,21 @@ import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_S
 public class SpotifyService implements OpenApiService {
     private final SpotifyUtil spotifyUtil;
 
-    public String getAccessToken() {
-        String accessToken =  spotifyUtil.accesstoken();
-        return accessToken;
+    private String accessToken;
+    @PostConstruct
+    private void init(){
+        accessToken =spotifyUtil.accesstoken();
+    }
+
+    @Scheduled(cron = "* 55 * * * *")
+    public void getAccessToken() {
+        accessToken =  spotifyUtil.accesstoken();
     }
 
 
     @Override
     public String getRawArtistData(String query) {
         log.info(query + "로 rawData 가져오기");
-        String accessToken = getAccessToken();
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -55,12 +62,12 @@ public class SpotifyService implements OpenApiService {
         String rawData = getRawArtistData(query);
         JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
-        if(rawJSONData.getJSONObject("albums").getBigInteger("total").equals(0)){
+//        if(rawJSONData.getJSONObject("albums").getBigInteger("total").equals(0)){
             JSONArray jsonArray = rawJSONData.getJSONObject("albums").getJSONArray("items");
             return fromJSONArrayToAlbum(jsonArray, query);
-        }
-        log.error(NOT_SERCH_ALBUM.getMessage());
-        throw new ServiceException(NOT_SERCH_ALBUM);
+//        }
+//        log.error(NOT_SERCH_ALBUM.getMessage());
+//        throw new ServiceException(NOT_SERCH_ALBUM);
     }
 
     private List<AlbumRes> fromJSONArrayToAlbum(JSONArray items, String query){
