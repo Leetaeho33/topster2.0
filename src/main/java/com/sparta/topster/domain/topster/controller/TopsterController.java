@@ -4,18 +4,13 @@ import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
 import com.sparta.topster.domain.topster.service.TopsterService;
-import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.response.RootNoDataRes;
-import com.sparta.topster.global.response.RootResponseDto;
 import com.sparta.topster.global.security.UserDetailsImpl;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,13 +67,6 @@ public class TopsterController {
         return ResponseEntity.ok(RootNoDataRes.builder().
                 code(HttpStatus.OK.toString()).
                 message("탑스터가 정상적으로 삭제 되었습니다.").build());
-    }
-
-
-    @PostMapping("/topsters/{topsterId}/like")
-    public ResponseEntity<TopsterGetRes> toggleLike(@PathVariable Long topsterId,
-                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(topsterService.toggleTopsterLike(topsterId, userDetails.getUser()));
     }
 
 
