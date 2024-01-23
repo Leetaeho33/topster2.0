@@ -5,7 +5,7 @@ import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.album.entity.CacheAlbum;
 import com.sparta.topster.domain.album.repository.AlbumRepository;
 import com.sparta.topster.domain.album.repository.CacheAlbumRepository;
-import com.sparta.topster.domain.open_api.service.OpenApiService;
+import com.sparta.topster.domain.openApi.service.OpenApiService;
 import com.sparta.topster.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
