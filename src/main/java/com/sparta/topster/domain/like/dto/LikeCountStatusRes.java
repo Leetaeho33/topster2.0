@@ -1,5 +1,6 @@
 package com.sparta.topster.domain.like.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -9,6 +10,7 @@ public class LikeCountStatusRes {
   private Long likeCount;
   private boolean status;  // 좋아요 눌렀는지 여부
 
+  @Builder
   public LikeCountStatusRes(Long topsterId, Long likeCount, boolean isLiked) {
     this.id = topsterId;
     this.likeCount = likeCount;

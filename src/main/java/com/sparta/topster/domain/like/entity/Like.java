@@ -15,6 +15,8 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -26,20 +28,20 @@ public class Like extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     @ManyToOne
     private User user;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "topster_id")
     @ManyToOne
     private Topster topster;
 
 
     @Builder
-    public Like(Topster topster, User user) {
-        this.topster = topster;
+    public Like(User user, Topster topster) {
         this.user = user;
+        this.topster = topster;
     }
-
-
 }
