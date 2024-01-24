@@ -57,7 +57,7 @@ public class CommentController {
     return ResponseEntity.ok().body(commentService.deleteComment(commentId, userDetails.getUser()));
   }
   @GetMapping("/comments/{commentId}/isAuthor")
-  public ResponseEntity<RootNoDataRes> isAuthor(Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<RootNoDataRes> isAuthor(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
     return ResponseEntity.ok().body(commentService.isAuthor(commentId, userDetails.getUser()));
   }
