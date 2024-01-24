@@ -6,7 +6,7 @@ import com.sparta.topster.domain.user.dto.deleteDto.DeleteReq;
 import com.sparta.topster.domain.user.dto.getUser.GetUserRes;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import com.sparta.topster.domain.user.dto.update.UpdateRes;
-import com.sparta.topster.domain.user.service.UserService;
+import com.sparta.topster.domain.user.service.user.UserServiceImpl;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import com.sparta.topster.global.util.JwtUtil;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "유저 API")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @PatchMapping("/update")
     public ResponseEntity<?> updateUser(

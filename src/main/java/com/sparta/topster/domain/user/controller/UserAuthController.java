@@ -5,7 +5,7 @@ import static com.sparta.topster.domain.user.excepetion.UserException.SIGNUP_FAI
 
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.signup.SignupReq;
-import com.sparta.topster.domain.user.service.UserService;
+import com.sparta.topster.domain.user.service.user.UserServiceImpl;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.response.RootResponseDto;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "유저 Auth API")
 public class UserAuthController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
     // UserAuthController
 
     @PostMapping("/signup")
@@ -39,7 +39,7 @@ public class UserAuthController {
             throw new ServiceException(SIGNUP_FAIL);
         }
 
-        userService.signup(signupReq);
+        userService.signUp(signupReq);
 
         return ResponseEntity.ok().body(RootResponseDto.builder()
             .code("200")
