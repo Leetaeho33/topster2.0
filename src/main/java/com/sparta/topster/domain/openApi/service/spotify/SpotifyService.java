@@ -1,7 +1,6 @@
 package com.sparta.topster.domain.openApi.service.spotify;
 
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
-import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.openApi.service.OpenApiService;
 import com.sparta.topster.global.exception.ServiceException;
 import jakarta.annotation.PostConstruct;
@@ -28,15 +27,11 @@ import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_S
 public class SpotifyService implements OpenApiService {
     private final SpotifyUtil spotifyUtil;
     private String accessToken;
-    @PostConstruct
 
+    @PostConstruct
+    @Scheduled(fixedDelay = 60 * 55 * 1000L)
     private void init(){
         accessToken = spotifyUtil.accesstoken();
-    }
-
-    @Scheduled(fixedDelay = 60 * 55 * 1000L)
-    public void getAccessToken() {
-        accessToken =  spotifyUtil.accesstoken();
     }
 
 
@@ -61,32 +56,21 @@ public class SpotifyService implements OpenApiService {
 
     @Override
     public List<AlbumRes> getAlbums(String query) {
-        String rawData = getRawArtistData(query);
-        JSONObject rawJSONData = new JSONObject(rawData);
         log.info("rawData에서 item을 추출");
-        if(rawJSONData.getJSONObject("albums").getJSONArray("items").isEmpty()){
-            log.error(NOT_SERCH_ALBUM.getMessage());
-            throw new ServiceException(NOT_SERCH_ALBUM);
-        }
-        JSONArray jsonArray = rawJSONData.getJSONObject("albums").getJSONArray("items");
-        return fromJSONArrayToAlbum(jsonArray);
+        String rawData = getRawArtistData(query);
+        JSONArray itmes = new JSONObject(rawData).getJSONObject("albums").getJSONArray("items");
+        checkExist(itmes);
+        return fromJSONArrayToAlbum(itmes);
     }
+
 
     private List<AlbumRes> fromJSONArrayToAlbum(JSONArray items){
         List<AlbumRes> albumResList = new ArrayList<>();
-
+        String artistNames;
         for (Object item : items) {
-            JSONObject itemObj = (JSONObject) item;
-            JSONArray artistArray = itemObj.getJSONArray("artists");
-            StringBuilder sb = new StringBuilder();
-            for (Object artist : artistArray) {
-                sb.append(((JSONObject)artist).getString("name") + ", ");
-            }
-            String artistNames = sb.substring(0, sb.length() - 2).toString();
-            log.info("artistName is " + artistNames);
-            //
-            AlbumRes albumRes = fromJSONtoAlbumRes(itemObj, artistNames);
-            albumResList.add(albumRes);
+            JSONObject itemObj =  (JSONObject) item;
+            artistNames = fromItemsToArtistName(itemObj);
+            albumResList.add(fromJSONtoAlbumRes(itemObj, artistNames));
         }
         return albumResList;
     }
@@ -107,12 +91,23 @@ public class SpotifyService implements OpenApiService {
     }
 
 
-    private String initialUpperCase(String s){
-        String[] subString = s.split(" ");
+    private String fromItemsToArtistName(JSONObject item){
+        JSONArray artistArray = item.getJSONArray("artists");
         StringBuilder sb = new StringBuilder();
-        for(String sIndex : subString){
-            sb.append(StringUtils.capitalize(sIndex));
+        for (Object artist : artistArray) {
+            sb.append(((JSONObject)artist).getString("name") + ", ");
         }
-        return StringUtils.capitalize(sb.toString());
+        // 아티스트가 한명이 아닌 경우(합작 앨범) 처리
+        String artistNames = sb.substring(0, sb.length() - 2);
+        log.info("artistName is " + artistNames);
+        return artistNames;
+    }
+
+
+    private void checkExist(JSONArray items){
+        if(items.isEmpty()){
+            log.error(NOT_SERCH_ALBUM.getMessage());
+            throw new ServiceException(NOT_SERCH_ALBUM);
+        }
     }
 }
