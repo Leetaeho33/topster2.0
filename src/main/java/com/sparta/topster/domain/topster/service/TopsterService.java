@@ -1,11 +1,13 @@
 package com.sparta.topster.domain.topster.service;
 
+import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_AUTHOR;
+import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_EXIST_TOPSTER;
+import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_FOUND_TOPSTER;
+
 import com.sparta.topster.domain.album.dto.req.AlbumInsertReq;
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.album.service.AlbumService;
-import com.sparta.topster.domain.like.entity.Like;
-import com.sparta.topster.domain.like.service.LikeService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
@@ -15,16 +17,13 @@ import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
 import com.sparta.topster.domain.topster_album.repository.TopsterAlbumRepository;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.sparta.topster.domain.topster.exception.TopsterException.*;
 
 @Service
 @Slf4j(topic = "TopsterService")

@@ -12,6 +12,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,9 @@ public class JwtUtil {
 
     @Value("${jwt.secret.key}")
     private String secretKey;
+
     private Key key;
+
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     @PostConstruct
@@ -75,7 +78,7 @@ public class JwtUtil {
                 .signWith(key, signatureAlgorithm)
                 .compact();
 
-        redisTemplate.opsForValue().set(refreshToken,username);
+        redisTemplate.opsForValue().set(refreshToken,username, Duration.ofMillis(REFRESH_TOKEN_EXPIRATION));
         return refreshToken;
     }
 
@@ -106,5 +109,4 @@ public class JwtUtil {
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
-
 }

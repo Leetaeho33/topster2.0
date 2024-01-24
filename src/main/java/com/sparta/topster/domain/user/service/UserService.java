@@ -2,11 +2,14 @@ package com.sparta.topster.domain.user.service;
 
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_EMAIL;
 import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_NICKNAME;
+import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_USERNAME;
+import static com.sparta.topster.domain.user.excepetion.UserException.INVALID_NICKNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
 
+import com.sparta.topster.domain.user.dto.deleteDto.DeleteReq;
 import com.sparta.topster.domain.user.dto.getUser.GetUserRes;
 import com.sparta.topster.domain.user.dto.login.LoginReq;
 import com.sparta.topster.domain.user.dto.login.LoginRes;
@@ -56,8 +59,8 @@ public class UserService {
         Optional<User> byEmail = userRepository.findByUserEmail(signupReq.getEmail());
 
         if (byUsername.isPresent()) {
-            log.error(NOT_FOUND_AUTHENTICATION_CODE.getMessage());
-            throw new ServiceException(NOT_FOUND_AUTHENTICATION_CODE);
+            log.error(DUPLICATE_USERNAME.getMessage());
+            throw new ServiceException(DUPLICATE_USERNAME);
         }
 
         if (byNickname.isPresent()) {
@@ -123,8 +126,26 @@ public class UserService {
             throw new ServiceException(NOT_FOUND_PASSWORD);
         }
 
+        if (updateReq.getNickname() != null && updateReq.getNickname().trim().isEmpty()) {
+            throw new ServiceException(INVALID_NICKNAME);
+        }
+
         if (findByUser.getNickname().equals(updateReq.getNickname())) {
             throw new ServiceException(DUPLICATE_NICKNAME);
+        }
+
+        if (updateReq.getIntro() != null && updateReq.getNickname() == null) {
+            findByUser.updateIntro(updateReq.getIntro());
+            return UpdateRes.builder()
+                .intro(updateReq.getIntro())
+                .build();
+        }
+
+        if (updateReq.getNickname() != null && updateReq.getIntro() == null) {
+            findByUser.updateNickname(updateReq.getNickname());
+            return UpdateRes.builder()
+                .nickname(updateReq.getNickname())
+                .build();
         }
 
         findByUser.updateIntro(updateReq);
@@ -147,7 +168,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(User user, String password) {
+    public void deleteUser(User user, DeleteReq deleteReq) {
+        String password = deleteReq.getPassword();
         User getUser = findByUser(user.getId());
         if (passwordEncoder.matches(password, getUser.getPassword())) {
             userRepository.deleteById(getUser.getId());
