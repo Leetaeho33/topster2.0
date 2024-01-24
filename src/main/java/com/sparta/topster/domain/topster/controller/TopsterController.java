@@ -9,6 +9,7 @@ import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,9 +37,9 @@ public class TopsterController {
     }
 
 
-    @GetMapping("/topsters/page/{pageNum}")
-    public ResponseEntity<TopsterPageRes> getTopsters(@PathVariable Integer pageNum){
-        return ResponseEntity.ok(topsterService.getTopstersService(pageNum));
+    @GetMapping("/topsters/page")
+    public ResponseEntity<Page<TopsterGetRes>> getTopsters(Integer page){
+        return ResponseEntity.ok(topsterService.getTopstersService(page));
     }
 
 

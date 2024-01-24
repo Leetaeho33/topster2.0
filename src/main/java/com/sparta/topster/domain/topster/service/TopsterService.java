@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,10 +44,8 @@ public class TopsterService {
         log.info("Topster 등록 시작");
         List<AlbumInsertReq> albumInsertReqList = topsterCreateReq.getAlbums();
         String title = topsterCreateReq.getTitle();
-        String content = topsterCreateReq.getContent();
         Topster topster = Topster.builder().
                 title(title).
-                content(content).
                 user(user).
                 build();
 
@@ -85,24 +84,16 @@ public class TopsterService {
     }
 
 
-    public TopsterPageRes getTopstersService(Integer pageNum) {
-        Pageable pageable = PageRequest.of(pageNum,9);
+    public Page<TopsterGetRes> getTopstersService(Integer pageNum) {
+        Pageable pageable = PageRequest.
+                of(pageNum-1,9,
+                        Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Topster> topsterPage = topsterRepository.findAll(pageable);
         if(topsterPage.isEmpty()){
             log.error(NOT_EXIST_TOPSTER.getMessage());
             throw new ServiceException(NOT_EXIST_TOPSTER);
         }
-        List<TopsterGetRes> topsterGetResList = new ArrayList<>();
-        for(Topster topster: topsterPage){
-            topsterGetResList.add(fromTopsterToTopsterGetRes(topster));
-        }
-        return TopsterPageRes.builder().
-                totalPage(topsterPage.getTotalPages()).
-                totalElement(topsterPage.getTotalElements()).
-                data(topsterGetResList).
-                currentPage(pageNum).
-                size(9).
-                build();
+        return topsterPage.map(this::fromTopsterToTopsterGetRes);
     }
 
 
@@ -155,15 +146,17 @@ public class TopsterService {
 
     private TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr){
         log.info("Topster Entity -> TopsterGetRes");
+        Album album;
         List<AlbumRes> albumResList = new ArrayList<>();
         for(TopsterAlbum topsterAlbum : topstesr.getTopsterAlbumList()){
+            album = topsterAlbum.getAlbum();
             albumResList.add(
                     AlbumRes.builder()
-                    .id(topsterAlbum.getAlbum().getId())
-                    .title(topsterAlbum.getAlbum().getTitle())
-                    .artist(topsterAlbum.getAlbum().getArtist())
-                    .releaseDate(topsterAlbum.getAlbum().getReleaseDate())
-                    .image(topsterAlbum.getAlbum().getImage()).build());
+                    .id(album.getId())
+                    .title(album.getTitle())
+                    .artist(album.getArtist())
+                    .releaseDate(album.getReleaseDate())
+                    .image(album.getImage()).build());
         }
 
         return TopsterGetRes.builder()
