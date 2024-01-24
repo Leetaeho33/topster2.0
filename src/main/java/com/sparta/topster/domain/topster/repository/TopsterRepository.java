@@ -1,6 +1,8 @@
 package com.sparta.topster.domain.topster.repository;
 
 import com.sparta.topster.domain.topster.entity.Topster;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.RepositoryDefinition;
 
 import java.util.List;
@@ -15,4 +17,5 @@ public interface TopsterRepository {
     void delete(Topster topster);
     List<Topster> findTop3ByOrderByLikeCountDesc();
 
+    Page<Topster> findAll(Pageable pageable);
 }
