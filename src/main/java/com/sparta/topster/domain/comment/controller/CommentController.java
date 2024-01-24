@@ -32,7 +32,7 @@ public class CommentController {
                                                   @RequestBody CommentCreateReq commentCreateReq,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    return ResponseEntity.ok().body(commentService.createComment(postId, commentCreateReq, userDetails));
+    return ResponseEntity.ok().body(commentService.createComment(postId, commentCreateReq, userDetails.getUser()));
   }
 
   @GetMapping("/posts/{postId}/comments")
@@ -47,17 +47,17 @@ public class CommentController {
                                                   @RequestBody CommentModifyReq commentModifyReq,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    return ResponseEntity.ok().body(commentService.modifyComment(commentId, commentModifyReq, userDetails));
+    return ResponseEntity.ok().body(commentService.modifyComment(commentId, commentModifyReq, userDetails.getUser()));
   }
 
   @DeleteMapping("/comments/{commentId}")
   public ResponseEntity<RootNoDataRes> deleteComment(@PathVariable Long commentId,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-    return ResponseEntity.ok().body(commentService.deleteComment(commentId, userDetails));
+    return ResponseEntity.ok().body(commentService.deleteComment(commentId, userDetails.getUser()));
   }
   @GetMapping("/comments/{commentId}/isAuthor")
-  public ResponseEntity<RootNoDataRes> isAuthor(Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+  public ResponseEntity<RootNoDataRes> isAuthor(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
     return ResponseEntity.ok().body(commentService.isAuthor(commentId, userDetails.getUser()));
   }
