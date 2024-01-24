@@ -78,21 +78,22 @@ public class UserServiceTest {
         when(redisUtil.getData(email)).thenReturn(certificationCode);
 
         //when
-        User user = User.builder().username(username).password(passwordEncoder.encode(password)).email(email)
+        User user = User.builder().username(username).password(passwordEncoder.encode(password))
+            .email(email)
             .nickname(nickname).intro(intro).build();
 
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         SignupRes saveUser = userService.signup(signupReq);
         //then
-        assertEquals(saveUser.getUsername(),signupReq.getUsername());
+        assertEquals(saveUser.getUsername(), signupReq.getUsername());
         assertThatCode(() -> userService.signup(signupReq)).doesNotThrowAnyException();
     }
 
-    @DisplayName("Login")
+    @DisplayName("로그인")
     @Test
-    void LoginTest(){
-        LoginReq loginReq = new LoginReq("username","password");
+    void LoginTest() {
+        LoginReq loginReq = new LoginReq("username", "password");
         User mockUser = User.builder()
             .username(loginReq.getUsername())
             .password(loginReq.getPassword())
@@ -100,41 +101,63 @@ public class UserServiceTest {
             .build();
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(mockUser));
-        when(passwordEncoder.matches(anyString(),anyString())).thenReturn(true);
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.createToken(anyString(), any())).thenReturn("mockedToken");
 
-        userService.loginUser(loginReq,response);
+        userService.loginUser(loginReq, response);
 
-        
         verify(response, times(1)).setHeader(eq(JwtUtil.AUTHORIZATION_HEADER), eq("mockedToken"));
     }
 
-//    @DisplayName("update")
+    @DisplayName("수정")
+    @Test
+    void updateTest() {
+        //given
+        String username = "username";
+        String password = "password";
+        String newNickname = "newNickname";
+        String newIntro = "newIntro";
+        String encodePassword = passwordEncoder.encode(password);
+
+        UpdateReq updateReq = new UpdateReq(newNickname, password, newIntro);
+
+        User user = User.builder()
+            .username(username)
+            .password(encodePassword)
+            .nickname("nickname")
+            .intro("intro")
+            .build();
+
+        when(userRepository.findById(user.getId())).thenReturn(user);
+        when(passwordEncoder.matches(eq(password), eq(encodePassword))).thenReturn(true);
+
+        //when
+        userService.updateUser(user, updateReq);
+
+        //then
+        assertEquals(newNickname, user.getNickname());
+    }
+
 //    @Test
-//    void updateTest() {
-//
-//        //given
-//        String username = "wogns";
+//    @DisplayName("회원탈퇴")
+//    void deleteTest() {
+//        String username = "username";
 //        String password = "password";
-//        String newNickname = "newNickname";
-//        String newIntro = "newIntro";
 //
-//        UpdateReq updateReq = new UpdateReq(newNickname,password,newIntro);
+//        DeleteReq deleteReq = new DeleteReq(password);
 //
 //        User user = User.builder()
 //            .username(username)
-//            .password(password)
-//            .nickname(newNickname)
-//            .intro(newIntro)
+//            .password(passwordEncoder.encode(password))
+//            .nickname("nickname")
+//            .intro("intro")
 //            .build();
 //
-//        when(userRepository.findById(user.getId())).thenReturn(user);
+//        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 //        when(passwordEncoder.matches(eq(password), anyString())).thenReturn(true);
 //
-//        //when
-//        userService.updateUser(user,updateReq);
+//        userService.deleteUser(user,deleteReq);
 //
-//        //then
-//        assertEquals(newNickname,user.getNickname());
+//        assertThat(user).isNull();
 //    }
 }
