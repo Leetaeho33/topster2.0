@@ -69,34 +69,28 @@ public class SpotifyService implements OpenApiService {
             throw new ServiceException(NOT_SERCH_ALBUM);
         }
         JSONArray jsonArray = rawJSONData.getJSONObject("albums").getJSONArray("items");
-        return fromJSONArrayToAlbum(jsonArray, query);
+        return fromJSONArrayToAlbum(jsonArray);
     }
 
-    private List<AlbumRes> fromJSONArrayToAlbum(JSONArray items, String query){
+    private List<AlbumRes> fromJSONArrayToAlbum(JSONArray items){
         List<AlbumRes> albumResList = new ArrayList<>();
-        for(Object item : items){
+
+        for (Object item : items) {
             JSONObject itemObj = (JSONObject) item;
-
-            // 가수를 검색했을 때 제목에 가수가 포함된 것도 포함됨.
-            // 따라서 albumartists가 query를 포함한 것만 필터링
-
             JSONArray artistArray = itemObj.getJSONArray("artists");
-            String artistName = artistArray.getJSONObject(0).getString("name");
-            log.info("artistName is " + artistName);
-            if(query.matches("^[a-zA-Z]*$")){
-                //
-                if(artistName.contains(initialUpperCase(query))) {
-                    log.info("쿼리문이 영어로 이루어져 있을 때");
-                    AlbumRes album = fromJSONtoAlbumRes(itemObj, artistName);
-                    albumResList.add(album);
-                }
-            }else{
-                AlbumRes albumRes = fromJSONtoAlbumRes(itemObj, artistName);
-                albumResList.add(albumRes);
+            StringBuilder sb = new StringBuilder();
+            for (Object artist : artistArray) {
+                sb.append(((JSONObject)artist).getString("name") + ", ");
             }
+            String artistNames = sb.substring(0, sb.length() - 2).toString();
+            log.info("artistName is " + artistNames);
+            //
+            AlbumRes albumRes = fromJSONtoAlbumRes(itemObj, artistNames);
+            albumResList.add(albumRes);
         }
         return albumResList;
     }
+
 
 
     private AlbumRes fromJSONtoAlbumRes(JSONObject albumJSON, String artistName) {
