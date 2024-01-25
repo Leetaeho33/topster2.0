@@ -1,0 +1,15 @@
+version: "3"
+services:
+  frontend:
+    image: gyungku/topster-front
+
+  nginx:
+    restart: always
+    image: gyungku/topster-nginx
+    ports:
+      - "80:80"
+
+  backend:
+    image: gyungku/topster-backend
+    env_file:
+      - .env
