@@ -39,7 +39,7 @@ public class TopsterController {
     }
 
 
-    @GetMapping("/topsters/page")
+    @GetMapping("/topsters")
     public ResponseEntity<Page<TopsterGetRes>> getTopsters(Integer page){
         return ResponseEntity.ok(topsterService.getTopstersService(page));
     }
