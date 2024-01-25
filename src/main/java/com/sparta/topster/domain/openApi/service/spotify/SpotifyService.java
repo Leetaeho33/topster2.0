@@ -12,13 +12,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_SERCH_ALBUM;
+import static com.sparta.topster.domain.openApi.exception.OpenApiException.NOT_SERCH_ALBUM;
 
 @Service
 @Primary

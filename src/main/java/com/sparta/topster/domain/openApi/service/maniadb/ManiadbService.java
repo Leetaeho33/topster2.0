@@ -14,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_SERCH_ALBUM;
+import static com.sparta.topster.domain.openApi.exception.OpenApiException.NOT_SERCH_ALBUM;
 
 @Service
 @Qualifier("maniadb")
