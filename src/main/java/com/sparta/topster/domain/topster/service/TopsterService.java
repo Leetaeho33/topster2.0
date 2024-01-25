@@ -4,12 +4,18 @@ import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_A
 import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_EXIST_TOPSTER;
 import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_FOUND_TOPSTER;
 
+import com.sparta.topster.domain.album.dto.req.AlbumInsertReq;
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
+import com.sparta.topster.domain.album.entity.Album;
+import com.sparta.topster.domain.album.service.AlbumService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
+import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
+import com.sparta.topster.domain.topster.dto.res.TopsterPageRes;
 import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.repository.TopsterRepository;
 import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
+import com.sparta.topster.domain.topster_album.repository.TopsterAlbumRepository;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import java.util.ArrayList;
@@ -47,7 +53,6 @@ public class TopsterService {
         log.info("Topster 등록 시작");
         Topster topster = Topster.builder()
             .title(req.getTitle())
-            .content(req.getContent())
             .user(user)
             .build();
 
@@ -72,39 +77,35 @@ public class TopsterService {
 
 
     public Page<TopsterGetRes> getTopstersService(Integer pageNum) {
-        Pageable pageable = PageRequest.of(pageNum - 1, 9,
-            Sort.by(Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.
+                of(pageNum-1,9,
+                        Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Topster> topsterPage = topsterRepository.findAll(pageable);
-        Page<TopsterGetRes> res = topsterPage.map(topster -> fromTopsterToTopsterGetRes(topster));
-        if (topsterPage.isEmpty()) {
+        if(topsterPage.isEmpty()){
             log.error(NOT_EXIST_TOPSTER.getMessage());
             throw new ServiceException(NOT_EXIST_TOPSTER);
         }
-        List<TopsterGetRes> topsterGetResList = new ArrayList<>();
-        for (Topster topster : topsterPage) {
-            topsterGetResList.add(fromTopsterToTopsterGetRes(topster));
-        }
-        return res;
+        return topsterPage.map(this::fromTopsterToTopsterGetRes);
     }
 
 
     public void deleteTopster(Long topsterId, User user) {
         log.info("topster 삭제 시작");
-        if (checkAuthor(user.getId(), topsterId)) {
+        if(checkAuthor(user.getId(),topsterId)){
             topsterRepository.delete(getTopster(topsterId));
-        } else {
+        }else{
             log.error(NOT_AUTHOR.getMessage());
             throw new ServiceException(NOT_AUTHOR);
         }
     }
 
 
-    public Topster getTopster(Long topsterId) {
-        log.info("topsterId :" + topsterId + "로 topster 조회 시작");
+    public Topster getTopster(Long topsterId){
+        log.info("topsterId :" + topsterId +"로 topster 조회 시작");
         Optional<Topster> optionalTopster = topsterRepository.findById(topsterId);
-        if (optionalTopster.isPresent()) {
+        if(optionalTopster.isPresent()){
             return optionalTopster.get();
-        } else {
+        }else {
             log.error(NOT_EXIST_TOPSTER.getMessage());
             throw new ServiceException(NOT_EXIST_TOPSTER);
         }
@@ -114,10 +115,10 @@ public class TopsterService {
     public List<Topster> getTopsterByUser(Long userId) {
         log.info("userId :" + userId + "로 topster 조회 시작");
         List<Topster> userTopsterList = topsterRepository.findByUserId(userId);
-        if (!userTopsterList.isEmpty()) {
+        if(!userTopsterList.isEmpty()){
             log.info("userId :" + userId + "로 topster 조회 완료");
             return userTopsterList;
-        } else {
+        }else {
             log.error(NOT_FOUND_TOPSTER.getMessage());
             throw new ServiceException(NOT_FOUND_TOPSTER);
         }
@@ -127,10 +128,10 @@ public class TopsterService {
     public List<TopsterGetRes> getTopsterTopThree() {
         List<Topster> topsterList = topsterRepository.findTop3ByOrderByLikeCountDesc();
         List<TopsterGetRes> topsterGetResList = new ArrayList<>();
-        for (Topster topster : topsterList) {
+        for(Topster topster : topsterList){
             topsterGetResList.add(fromTopsterToTopsterGetRes(topster));
         }
-        return topsterGetResList;
+        return topsterGetResList ;
     }
 
 

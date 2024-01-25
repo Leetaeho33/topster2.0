@@ -4,6 +4,7 @@ import com.sparta.topster.domain.facade.TopsterCreateFlowService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
+import com.sparta.topster.domain.topster.dto.res.TopsterPageRes;
 import com.sparta.topster.domain.topster.service.TopsterService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
@@ -38,7 +39,7 @@ public class TopsterController {
     }
 
 
-    @GetMapping("/topsters")
+    @GetMapping("/topsters/page")
     public ResponseEntity<Page<TopsterGetRes>> getTopsters(Integer page){
         return ResponseEntity.ok(topsterService.getTopstersService(page));
     }
