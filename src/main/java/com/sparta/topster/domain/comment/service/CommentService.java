@@ -18,6 +18,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,12 +44,12 @@ public class CommentService {
     return CommentRes.builder()
         .id(comment.getId())
         .content(comment.getContent())
-        .author(comment.getUser().getUsername())
+        .author(comment.getUser().getNickname())
         .createdAt(comment.getCreatedAt())
         .build();
   }
 
-  public List<CommentRes> getComment(Long postId) {
+  public List<CommentRes> getComments(Long postId) {
     log.info("해당 게시글에 대한 댓글 조회");
     List<Comment> findCommentList = commentRespository.findByPostId(postId);
     List<CommentRes> postCommentList = new ArrayList<>();
@@ -66,7 +67,7 @@ public class CommentService {
     }
         return postCommentList;
   }
-
+  @Transactional
   public RootNoDataRes modifyComment(Long commentId, CommentModifyReq commentModifyReq, User user) {
     log.info("댓글 수정");
     Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
@@ -81,6 +82,7 @@ public class CommentService {
         .code("200").build();
   }
 
+  @Transactional
   public RootNoDataRes deleteComment(Long commentId, User user) {
     log.info("댓글 삭제");
     Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
@@ -94,7 +96,7 @@ public class CommentService {
   }
 
 
-  public Comment modifyAndDeleteCommentAuthor(Long commentId, User user) {
+  private Comment modifyAndDeleteCommentAuthor(Long commentId, User user) {
     Comment comment = commentRespository.findById(commentId);
 
     if(comment == null) {
