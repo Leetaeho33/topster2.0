@@ -5,12 +5,14 @@ import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.album.service.AlbumService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
+import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
 import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.repository.TopsterRepository;
 import com.sparta.topster.domain.topster_album.repository.TopsterAlbumRepository;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,10 +22,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.will;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TopsterServiceTest {
@@ -151,5 +158,24 @@ public class TopsterServiceTest {
         assertThat(topsterCreateRes.getAlbums().get(2).getTitle()).
                 isEqualTo("albumC 제목");
     }
+
+
+    @Test
+    @DisplayName("getTopsterService 성공")
+    void test2() {
+        //given
+        Topster topster = Topster.builder().title("탑스터 제목").
+                user(userA).
+                content("없어").
+                build();
+
+        when(topsterRepository.findById(any())).thenReturn(Optional.of(topster));
+        //when
+        TopsterGetRes topsterGetRes = topsterService.getTopsterService(any());
+        //then
+        assertThat(topsterGetRes.getTitle()).isEqualTo(topster.getTitle());
+        assertThat(topsterGetRes.getAuthor()).isEqualTo(topster.getUser().getNickname());
+    }
+
 
 }
