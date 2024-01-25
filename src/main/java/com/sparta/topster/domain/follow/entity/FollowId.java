@@ -22,12 +22,10 @@ public class FollowId implements Serializable {
     @Serial
     private static final long serialVersionUID = 932813899396136126L;
 
-    @Column(name = "follower_id")
-    private Long follower;
+    @Column(name = "from_follow_id")
+    private Long fromFollow;
 
-    @Column(name = "following_id")
-    private Long following;
-
-
+    @Column(name = "to_follow_id")
+    private Long toFollow;
 
 }

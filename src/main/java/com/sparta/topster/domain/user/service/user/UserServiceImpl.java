@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User findByUser(Long userId) {
+    public User findByUser(Long userId) {
         return userRepository.findById(userId);
     }
 
