@@ -1,24 +1,20 @@
 package com.sparta.topster.domain.follow.service;
 
+import static com.sparta.topster.domain.follow.exception.FollowException.CANT_FOLLOW_MYSELF;
+import static com.sparta.topster.domain.follow.exception.FollowException.NOT_FOUND_FOLLOWER;
+import static com.sparta.topster.domain.follow.exception.FollowException.NOT_FOUND_FOLLOWING;
+
 import com.sparta.topster.domain.follow.dto.FollowerGetRes;
 import com.sparta.topster.domain.follow.entity.Follow;
 import com.sparta.topster.domain.follow.repository.FollowRepository;
 import com.sparta.topster.domain.user.entity.User;
-import com.sparta.topster.domain.user.service.user.UserService;
 import com.sparta.topster.domain.user.service.user.UserServiceImpl;
 import com.sparta.topster.global.exception.ServiceException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.LifecycleState;
-import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.stereotype.Service;
-
-import java.io.Serial;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.sparta.topster.domain.follow.exception.FollowException.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j(topic = "FollowService")
@@ -34,7 +30,7 @@ public class FollowService {
             throw new ServiceException(CANT_FOLLOW_MYSELF);
         }
 
-        User toFollowUser = userService.findByUser(userId);
+        User toFollowUser = userService.getUser(userId);
         Optional<Follow> follow =
                 followRepository.findByToFollowAndFromFollow(toFollowUser, user);
         if(follow.isEmpty()){
