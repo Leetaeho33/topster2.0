@@ -69,8 +69,8 @@ public class KakaoService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "7a87fc3e7bcbae5c14ba39858700ce8a");
-        body.add("redirect_uri", baseUrl + "/api/user/kakao/callback");
+        body.add("client_id", "b7211278cf52bd7297f5a142941232c6");
+        body.add("redirect_uri", baseUrl + "/api/v1/users/kakao/callback");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -145,11 +145,12 @@ public class KakaoService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
+                String nickname = UUID.randomUUID().toString().substring(0,7);
 
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(kakaoUserInfo.getNickname(), encodedPassword, email, UserRoleEnum.USER, kakaoId);
+                kakaoUser = new User(kakaoUserInfo.getNickname(), nickname, encodedPassword, email, UserRoleEnum.USER, kakaoId);
             }
 
             userRepository.save(kakaoUser);
