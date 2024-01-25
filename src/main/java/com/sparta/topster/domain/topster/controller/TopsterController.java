@@ -1,5 +1,6 @@
 package com.sparta.topster.domain.topster.controller;
 
+import com.sparta.topster.domain.facade.TopsterCreateFlowService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
@@ -23,11 +24,12 @@ import java.util.List;
 @Tag(name = "탑스터 API")
 public class TopsterController {
     private final TopsterService topsterService;
+    private final TopsterCreateFlowService topsterCreateFlowService;
 
     @PostMapping("/topsters")
     public ResponseEntity<TopsterCreateRes> create(@RequestBody TopsterCreateReq topsterCreateReq,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseEntity.ok(topsterService.createTopster(topsterCreateReq, userDetails.getUser()));
+        return ResponseEntity.ok(topsterCreateFlowService.createFlow(topsterCreateReq, userDetails.getUser()));
     }
 
 
