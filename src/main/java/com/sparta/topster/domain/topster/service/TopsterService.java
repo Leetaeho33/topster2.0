@@ -4,18 +4,12 @@ import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_A
 import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_EXIST_TOPSTER;
 import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_FOUND_TOPSTER;
 
-import com.sparta.topster.domain.album.dto.req.AlbumInsertReq;
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
-import com.sparta.topster.domain.album.entity.Album;
-import com.sparta.topster.domain.album.service.AlbumService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
-import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
-import com.sparta.topster.domain.topster.dto.res.TopsterPageRes;
 import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.repository.TopsterRepository;
 import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
-import com.sparta.topster.domain.topster_album.repository.TopsterAlbumRepository;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import java.util.ArrayList;
@@ -27,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +84,7 @@ public class TopsterService {
 
     public void deleteTopster(Long topsterId, User user) {
         log.info("topster 삭제 시작");
-        if(checkAuthor(user.getId(),topsterId)){
+        if(isAuthor(user.getId(),topsterId)){
             topsterRepository.delete(getTopster(topsterId));
         }else{
             log.error(NOT_AUTHOR.getMessage());
@@ -160,11 +153,15 @@ public class TopsterService {
             .build();
     }
 
-
-    private boolean checkAuthor(Long userId, Long topsterId) {
+    public boolean isAuthor(Long userId, Long topsterId) {
         Topster topster = getTopster(topsterId);
-        return topster.getUser().getId().equals((userId));
+        if(!topster.getUser().getId().equals((userId))){
+            log.error(NOT_AUTHOR.getMessage());
+            throw new ServiceException(NOT_AUTHOR);
+        }
+        return true;
     }
+
 
 
 }
