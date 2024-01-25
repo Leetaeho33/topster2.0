@@ -74,4 +74,15 @@ public class TopsterController {
     }
 
 
+    @GetMapping("/topsters/{id}/isAuthor")
+    public ResponseEntity<RootNoDataRes> isAuthor(@PathVariable Long id,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        topsterService.isAuthor(userDetails.getUser().getId(), id);
+        return ResponseEntity.ok(RootNoDataRes.builder()
+                .code("200")
+                .message("본인의 탑스터가 맞습니다")
+                .build());
+    }
+
 }
