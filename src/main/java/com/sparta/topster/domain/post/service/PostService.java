@@ -36,6 +36,7 @@ public class PostService {
             .topster(topster)
             .user(user)
             .build());
+        System.out.println("post.getId() = " + post.getId());
 
         return post.getId();
     }
