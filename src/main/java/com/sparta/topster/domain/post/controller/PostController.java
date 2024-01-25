@@ -41,7 +41,7 @@ public class PostController {
 
         Long postId = postService.save(req, topsterId, userDetails.getUser());
         RootNoDataRes res = RootNoDataRes.builder()
-            .message(postId + "번 게시글 생성 완료하였습니다.")
+            .message(postId + "")
             .code("201")
             .build();
         return ResponseEntity.status(CREATED).body(res);
@@ -54,7 +54,7 @@ public class PostController {
 
         Long postId = postService.update(req, id, userDetails.getUser().getId());
         RootNoDataRes res = RootNoDataRes.builder()
-            .message(postId + "번 게시글 수정 완료하였습니다.")
+            .message(postId + "")
             .code("201")
             .build();
         return ResponseEntity.ok(res);
