@@ -21,7 +21,8 @@ public enum UserException implements ErrorCode {
     NOT_FOUND_PASSWORD(HttpStatus.BAD_REQUEST,"1010","비밀번호가 일치하지 않습니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "1011", "중복된 사용자 이메일 입니다."),
     NOT_FOUND_AUTHENTICATION_CODE(HttpStatus.BAD_REQUEST,"1012","인증번호 오류"),
-    INVALID_NICKNAME(HttpStatus.BAD_REQUEST,"1013","닉네임에는 공백이 허용되지 않습니다.");
+    INVALID_NICKNAME(HttpStatus.BAD_REQUEST,"1013","닉네임에는 공백이 허용되지 않습니다."),
+    NOT_FOUND_USERID(HttpStatus.BAD_REQUEST,"1014","유저 ID를 찾을 수 없습니다.");
 
     private final HttpStatus Status;
     private final String code;
