@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+//@IdClass(FollowId.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Getter
@@ -17,16 +18,16 @@ public class Follow {
     private FollowId followId = new FollowId();
 
     @ManyToOne
-    @MapsId("follower")
-    private User follower;
+    @MapsId("fromFollow")
+    private User fromFollow;
 
     @ManyToOne
-    @MapsId("following")
-    private User following;
+    @MapsId("toFollow")
+    private User toFollow;
 
     @Builder
-    public Follow(User follower, User following) {
-        this.follower = follower;
-        this.following = following;
+    public Follow(User fromFollow, User toFollow) {
+        this.fromFollow = fromFollow;
+        this.toFollow = toFollow;
     }
 }
