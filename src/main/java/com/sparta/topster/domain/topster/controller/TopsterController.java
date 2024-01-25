@@ -1,14 +1,15 @@
 package com.sparta.topster.domain.topster.controller;
 
+import com.sparta.topster.domain.facade.TopsterCreateFlowService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
-import com.sparta.topster.domain.topster.dto.res.TopsterPageRes;
 import com.sparta.topster.domain.topster.service.TopsterService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,11 +23,12 @@ import java.util.List;
 @Tag(name = "탑스터 API")
 public class TopsterController {
     private final TopsterService topsterService;
+    private final TopsterCreateFlowService topsterCreateFlowService;
 
     @PostMapping("/topsters")
     public ResponseEntity<TopsterCreateRes> create(@RequestBody TopsterCreateReq topsterCreateReq,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseEntity.ok(topsterService.createTopster(topsterCreateReq, userDetails.getUser()));
+        return ResponseEntity.ok(topsterCreateFlowService.createFlow(topsterCreateReq, userDetails.getUser()));
     }
 
 
@@ -36,9 +38,9 @@ public class TopsterController {
     }
 
 
-    @GetMapping("/topsters/page/{pageNum}")
-    public ResponseEntity<TopsterPageRes> getTopsters(@PathVariable Integer pageNum){
-        return ResponseEntity.ok(topsterService.getTopstersService(pageNum));
+    @GetMapping("/topsters")
+    public ResponseEntity<Page<TopsterGetRes>> getTopsters(Integer page){
+        return ResponseEntity.ok(topsterService.getTopstersService(page));
     }
 
 
