@@ -1,9 +1,7 @@
 package com.sparta.topster.domain.user.controller;
 
-import com.sparta.topster.domain.user.service.mail.MailService;
-import com.sparta.topster.global.util.RedisUtil;
+import com.sparta.topster.domain.user.service.mail.MailServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MailController {
 
-    private final MailService mailService;
+    private final MailServiceImpl mailService;
 
     @PostMapping("/mail")
     public String mailConfirm(@RequestParam String email) throws Exception {
