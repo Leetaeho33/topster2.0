@@ -41,7 +41,7 @@ public class KakaoService {
     @Value("${kakao.secret}")
     private String secret;
 
-    public String kakaoLogin(String code) throws JsonProcessingException {
+    public HttpHeaders kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
@@ -53,9 +53,14 @@ public class KakaoService {
 
         // 4. JWT 토큰 생성
         String createToken = jwtUtil.createToken(kakaoUser.getUsername(), kakaoUser.getRole());
+        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getUsername());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JwtUtil.AUTHORIZATION_HEADER, createToken);
+        headers.add(JwtUtil.REFRESH_TOKEN_PREFIX, refreshToken);
 
         // 생성 토큰 반환
-        return createToken;
+        return headers;
     }
 
     private String getToken(String code) throws JsonProcessingException {
