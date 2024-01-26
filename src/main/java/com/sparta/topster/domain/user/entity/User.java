@@ -64,8 +64,9 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public User(String username, String password, String email, UserRoleEnum role, Long kakaoId) {
+    public User(String username, String nickname, String password, String email, UserRoleEnum role, Long kakaoId) {
         this.username = username;
+        this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.role = role;
