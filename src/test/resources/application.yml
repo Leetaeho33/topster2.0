@@ -38,3 +38,8 @@ spotify:
 
 base:
   url: testurl
+
+kakao:
+  callback: 12312312312
+  client-id: 123123123
+  secret: 123123123

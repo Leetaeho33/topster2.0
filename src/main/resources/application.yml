@@ -50,3 +50,8 @@ spotify:
 
 base:
   url: ${BASE_URL}
+
+kakao:
+  callback: ${KAKAO_CALLBACK}
+  client-id: ${KAKAO_CLIENT_ID}
+  secret: ${KAKAO_SECRET}
