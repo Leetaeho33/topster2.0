@@ -6,10 +6,8 @@ import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,11 +22,15 @@ public class KakaoController {
    private final KakaoService kakaoService;
 
     @GetMapping("/kakao/callback")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
+    public ResponseEntity<RootNoDataRes> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         HttpHeaders headers = kakaoService.kakaoLogin(code);
-        headers.setLocation(URI.create("/"));
 
-        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY).headers(headers).build();
+        RootNoDataRes res = RootNoDataRes.builder()
+            .code("200")
+            .message("카카오 로그인 성공")
+            .build();
+
+        return ResponseEntity.ok().headers(headers).body(res);
     }
 
 }
