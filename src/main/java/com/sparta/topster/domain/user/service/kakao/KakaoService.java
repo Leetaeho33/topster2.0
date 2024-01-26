@@ -32,14 +32,12 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate; //따로 Bean수동등록을 해줘야함
     private final JwtUtil jwtUtil;
-    @Value("${base.url}")
-    private String baseUrl;
-    @Value("${kakao.callback}")
-    private String callback;
     @Value("${kakao.client-id}")
     private String clientId;
     @Value("${kakao.secret}")
     private String secret;
+    @Value("${kakao.redirect}")
+    private String redirectUrl;
 
     public HttpHeaders kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -81,7 +79,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
-        body.add("redirect_uri", baseUrl + callback);
+        body.add("redirect_uri", redirectUrl);
         body.add("code", code);
         body.add("client_secret",secret);
 
