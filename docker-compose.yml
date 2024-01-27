@@ -2,6 +2,8 @@ version: "3"
 services:
   frontend:
     image: gyungku/topster-front
+    env_file:
+      - .env
 
   nginx:
     restart: always
@@ -13,3 +15,5 @@ services:
     image: gyungku/topster-backend
     env_file:
       - .env
+    environment:
+      - TZ=Asia/Seoul
