@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
@@ -154,23 +155,23 @@ public class TopsterServiceTest {
 
 
     @Test
-    @DisplayName("getTopsterService 성공")
+    @DisplayName("탑스터 아이디로 탑스터를 조회할 수 있다.")
     void testGetTopsterService() {
         //given
         Topster topster = Topster.builder().title("탑스터 제목").
                 user(userA).
                 build();
 
-        when(topsterRepository.findById(any())).thenReturn(Optional.of(topster));
+        when(topsterRepository.findById(1L)).thenReturn(Optional.of(topster));
         //when
-        TopsterGetRes topsterGetRes = topsterService.getTopsterService(any());
+        TopsterGetRes topsterGetRes = topsterService.getTopsterService(1L);
         //then
         assertThat(topsterGetRes.getTitle()).isEqualTo(topster.getTitle());
         assertThat(topsterGetRes.getAuthor()).isEqualTo(topster.getUser().getNickname());
     }
 
     @Test
-    @DisplayName("Topster Entity -> TopsterGet DTO")
+    @DisplayName("두명의 유저의 topster를 각각 조회할 수 있다.")
     void testFromTopsterToTopsterGetRes(){
 
         //given 첫번째 유저의 Topster List
@@ -264,6 +265,89 @@ public class TopsterServiceTest {
         assertThat(topsterOtherUserB.getTitle()).isEqualTo(topsterGetResListB.get(1).getTitle());
         assertThat(topsterOtherUserB.getUser().getNickname())
                 .isEqualTo(topsterGetResListB.get(1).getAuthor());
+    }
+
+    @Test
+    @DisplayName("탑스터를 page로 조회할 수 있다.")
+    void testGetTopstersService(){
+        //given
+        // 탑스터 한페이지에 9개가 뜸 두번째 페이지까지 잘 가져오는지 test위해 10개의 topster 생성
+        Topster topster1 = Topster.builder()
+                .user(userA)
+                .title("topster1")
+                .build();
+        Topster topster2 = Topster.builder()
+                .user(userA)
+                .title("topster2")
+                .build();
+        Topster topster3 = Topster.builder()
+                .user(userA)
+                .title("topster3")
+                .build();
+        Topster topster4 = Topster.builder()
+                .user(userA)
+                .title("topster4")
+                .build();
+        Topster topster5 = Topster.builder()
+                .user(userA)
+                .title("topster5")
+                .build();
+        Topster topster6 = Topster.builder()
+                .user(userA)
+                .title("topster6")
+                .build();
+        Topster topster7 = Topster.builder()
+                .user(userA)
+                .title("topster7")
+                .build();
+        Topster topster8 = Topster.builder()
+                .user(userA)
+                .title("topster8")
+                .build();
+        Topster topster9 = Topster.builder()
+                .user(userA)
+                .title("topster9")
+                .build();
+        Topster topster10 = Topster.builder()
+                .user(userA)
+                .title("topster10")
+                .build();
+        List<Topster> topsterList1 = new ArrayList<>();
+        topsterList1.add(topster1);
+        topsterList1.add(topster2);
+        topsterList1.add(topster3);
+        topsterList1.add(topster4);
+        topsterList1.add(topster5);
+        topsterList1.add(topster6);
+        topsterList1.add(topster7);
+        topsterList1.add(topster8);
+        topsterList1.add(topster9);
+
+        List<Topster> topsterList2 = new ArrayList<>();
+        topsterList2.add(topster10);
+
+        Page<Topster> topsterPage1 = new PageImpl<>(topsterList1);
+        Page<Topster> topsterPage2 = new PageImpl<>(topsterList2);
+
+        Integer pageNum =1;
+        Pageable pageable = PageRequest.
+                of(pageNum-1,9,
+                        Sort.by(Sort.Direction.DESC, "createdAt"));
+        //when
+        when(topsterRepository.findAll(pageable)).thenReturn(topsterPage1);
+        Page<TopsterGetRes> findTopsterPage1 = topsterService.getTopstersService(pageNum);
+        List<TopsterGetRes> findTopsterPageList1 = findTopsterPage1.getContent();
+
+        when(topsterRepository.findAll(pageable)).thenReturn(topsterPage2);
+        Page<TopsterGetRes> findTopsterPage2 = topsterService.getTopstersService(pageNum);
+        List<TopsterGetRes> findTopsterPageList2 = findTopsterPage2.getContent();
+
+        //then
+        assertThat(findTopsterPageList1.get(0).getTitle()).isEqualTo(topster1.getTitle());
+        assertThat(findTopsterPageList1.get(8).getTitle()).isEqualTo(topster9.getTitle());
+
+        assertThat(findTopsterPageList2.get(0).getTitle()).isEqualTo(topster10.getTitle());
+
     }
 
 
