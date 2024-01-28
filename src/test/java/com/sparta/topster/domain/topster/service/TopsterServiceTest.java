@@ -173,7 +173,7 @@ public class TopsterServiceTest {
 
     @Test
     @DisplayName("두명의 유저의 topster를 각각 조회할 수 있다.")
-    void testFromTopsterToTopsterGetRes(){
+    void testGetTopsterByUserService(){
 
         //given 첫번째 유저의 Topster List
         //userA의 첫번째 탑스터
