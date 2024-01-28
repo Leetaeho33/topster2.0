@@ -12,7 +12,6 @@ import com.sparta.topster.domain.post.service.PostService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
-import com.sparta.topster.global.security.UserDetailsImpl;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +69,7 @@ public class CommentService {
   @Transactional
   public RootNoDataRes modifyComment(Long commentId, CommentModifyReq commentModifyReq, User user) {
     log.info("댓글 수정");
-    Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
+    Comment comment = getCommentUser(commentId, user);
 
     comment.update(commentModifyReq.getContent());
 
@@ -85,7 +84,7 @@ public class CommentService {
   @Transactional
   public RootNoDataRes deleteComment(Long commentId, User user) {
     log.info("댓글 삭제");
-    Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
+    Comment comment = getCommentUser(commentId, user);
 
     log.info("댓글 삭제 완료");
     commentRespository.delete(comment);
@@ -95,21 +94,23 @@ public class CommentService {
         .code("200").build();
   }
 
-
-  private Comment modifyAndDeleteCommentAuthor(Long commentId, User user) {
+  private Comment getComment(Long commentId) {
     Comment comment = commentRespository.findById(commentId);
 
     if(comment == null) {
       throw new ServiceException(CommentException.NO_COMMENT);  // 댓글이 존재하지 않습니다.
     }
+    return comment;
+  }
+
+  private Comment getCommentUser(Long commentId, User user) {
+    Comment comment = getComment(commentId);
 
     if(!comment.getUser().getUsername().equals(user.getUsername())) {
       throw new ServiceException(CommentException.MODIFY_AND_DELETE_ONLY_AUTHOR); // 작성자만 수정 및 삭제 할 수 있습니다.
     }
-    System.out.println(comment);
 
     return comment;
-
   }
 
   public RootNoDataRes isAuthor(Long commentId, User user) {
