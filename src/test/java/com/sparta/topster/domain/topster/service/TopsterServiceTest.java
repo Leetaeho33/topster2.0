@@ -330,15 +330,13 @@ public class TopsterServiceTest {
         Page<Topster> topsterPage2 = new PageImpl<>(topsterList2);
 
         Integer pageNum =1;
-        Pageable pageable = PageRequest.
-                of(pageNum-1,9,
-                        Sort.by(Sort.Direction.DESC, "createdAt"));
+
         //when
-        when(topsterRepository.findAll(pageable)).thenReturn(topsterPage1);
+        when(topsterRepository.findAll(any())).thenReturn(topsterPage1);
         Page<TopsterGetRes> findTopsterPage1 = topsterService.getTopstersService(pageNum);
         List<TopsterGetRes> findTopsterPageList1 = findTopsterPage1.getContent();
 
-        when(topsterRepository.findAll(pageable)).thenReturn(topsterPage2);
+        when(topsterRepository.findAll(any())).thenReturn(topsterPage2);
         Page<TopsterGetRes> findTopsterPage2 = topsterService.getTopstersService(pageNum);
         List<TopsterGetRes> findTopsterPageList2 = findTopsterPage2.getContent();
 
