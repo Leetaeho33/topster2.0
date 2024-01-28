@@ -373,4 +373,64 @@ public class TopsterServiceTest {
         //then
         verify(topsterRepository, times(1)).delete(topster);
     }
+
+    @Test
+    @DisplayName("탑스터 좋아요 Top3를 조회할 수 있다.")
+    void testGetTopsterTopThree(){
+        //given
+        Topster topster3 = Topster.builder()
+                .title("탑스터 제목3")
+                .user(userA)
+                .build();
+        ReflectionTestUtils.setField(topster3, "likeCount", 3L);
+        Topster topster2 = Topster.builder()
+                .title("탑스터 제목2")
+                .user(userA)
+                .build();
+        ReflectionTestUtils.setField(topster2, "likeCount", 2L);
+        Topster topster1 = Topster.builder()
+                .title("탑스터 제목1")
+                .user(userA)
+                .build();
+        ReflectionTestUtils.setField(topster1, "likeCount", 1L);
+        Topster topster0 = Topster.builder()
+                .title("탑스터 제목0")
+                .user(userA)
+                .build();
+        ReflectionTestUtils.setField(topster0, "likeCount", 0L);
+
+        TopsterGetRes topsterGetRes3 = TopsterGetRes.builder()
+                .title(topster3.getTitle())
+                .build();
+        TopsterGetRes topsterGetRes2 = TopsterGetRes.builder()
+                .title(topster2.getTitle())
+                .build();
+        TopsterGetRes topsterGetRes1 = TopsterGetRes.builder()
+                .title(topster1.getTitle())
+                .build();
+        TopsterGetRes topsterGetRes0 = TopsterGetRes.builder()
+                .title(topster0.getTitle())
+                .build();
+
+        List<Topster> topsterList = new ArrayList<>();
+        topsterList.add(topster3);
+        topsterList.add(topster2);
+        topsterList.add(topster1);
+
+        List<TopsterGetRes> topsterGetResList = new ArrayList<>();
+        topsterGetResList.add(topsterGetRes0);
+        topsterGetResList.add(topsterGetRes1);
+        topsterGetResList.add(topsterGetRes2);
+        topsterGetResList.add(topsterGetRes3);
+
+        //when
+        when(topsterRepository.findTop3ByOrderByLikeCountDesc()).thenReturn(topsterList);
+        List<TopsterGetRes> getTopsterGetResList = topsterService.getTopsterTopThree();
+        //then
+        assertThat(getTopsterGetResList.get(0).getTitle()).isEqualTo(topster3.getTitle());
+        assertThat(getTopsterGetResList.get(1).getTitle()).isEqualTo(topster2.getTitle());
+        assertThat(getTopsterGetResList.get(2).getTitle()).isEqualTo(topster1.getTitle());
+
+
+    }
 }
