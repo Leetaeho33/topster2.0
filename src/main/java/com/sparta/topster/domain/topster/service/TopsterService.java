@@ -8,6 +8,7 @@ import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
 import com.sparta.topster.domain.topster.entity.Topster;
+import com.sparta.topster.domain.topster.exception.TopsterException;
 import com.sparta.topster.domain.topster.repository.TopsterRepository;
 import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
 import com.sparta.topster.domain.user.entity.User;
@@ -61,6 +62,10 @@ public class TopsterService {
 
     public List<TopsterGetRes> getTopsterByUserService(Long userId) {
         List<Topster> topsterList = getTopsterByUser(userId);
+        if(topsterList.isEmpty()){
+            log.error(NOT_FOUND_TOPSTER.getMessage());
+            throw new ServiceException(NOT_FOUND_TOPSTER);
+        }
         List<TopsterGetRes> topsterGetResList = new ArrayList<>();
         for (Topster topster : topsterList) {
             topsterGetResList.add(fromTopsterToTopsterGetRes(topster));
