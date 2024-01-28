@@ -81,7 +81,8 @@ public class TopsterServiceTest {
     }
 
     @Test
-    void Topster를_등록할_수_있다(){
+    @DisplayName("Topster를_등록할_수_있다")
+    void TopsterServiceCreate(){
 
         //given
         AlbumInsertReq albumReqA = AlbumInsertReq.builder().
@@ -143,11 +144,10 @@ public class TopsterServiceTest {
 
     @Test
     @DisplayName("getTopsterService 성공")
-    void test2() {
+    void testTopsterServiceGetTopsterService() {
         //given
         Topster topster = Topster.builder().title("탑스터 제목").
                 user(userA).
-                content("없어").
                 build();
 
         when(topsterRepository.findById(any())).thenReturn(Optional.of(topster));
