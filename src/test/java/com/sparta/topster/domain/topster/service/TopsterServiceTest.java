@@ -13,6 +13,7 @@ import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
 import com.sparta.topster.domain.topster_album.repository.TopsterAlbumRepository;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
+import com.sparta.topster.global.exception.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,13 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_EXIST_TOPSTER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.will;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TopsterServiceTest {
@@ -88,7 +90,6 @@ public class TopsterServiceTest {
                 .release("albumB 발매일")
                 .artist("albumB 가수")
                 .build();
-
 
         ReflectionTestUtils.setField(userA, "id", 1L);
         ReflectionTestUtils.setField(userB, "id", 2L);
@@ -312,6 +313,8 @@ public class TopsterServiceTest {
                 .user(userA)
                 .title("topster10")
                 .build();
+
+        //첫번째 페이지
         List<Topster> topsterList1 = new ArrayList<>();
         topsterList1.add(topster1);
         topsterList1.add(topster2);
@@ -323,6 +326,7 @@ public class TopsterServiceTest {
         topsterList1.add(topster8);
         topsterList1.add(topster9);
 
+        //두번째 페이지
         List<Topster> topsterList2 = new ArrayList<>();
         topsterList2.add(topster10);
 
@@ -332,21 +336,41 @@ public class TopsterServiceTest {
         Integer pageNum =1;
 
         //when
+        //첫번째 페이지
         when(topsterRepository.findAll(any())).thenReturn(topsterPage1);
         Page<TopsterGetRes> findTopsterPage1 = topsterService.getTopstersService(pageNum);
         List<TopsterGetRes> findTopsterPageList1 = findTopsterPage1.getContent();
 
+        //두번째 페이지
         when(topsterRepository.findAll(any())).thenReturn(topsterPage2);
         Page<TopsterGetRes> findTopsterPage2 = topsterService.getTopstersService(pageNum+1);
         List<TopsterGetRes> findTopsterPageList2 = findTopsterPage2.getContent();
 
         //then
+        //첫번째 페이지
         assertThat(findTopsterPageList1.get(0).getTitle()).isEqualTo(topster1.getTitle());
         assertThat(findTopsterPageList1.get(8).getTitle()).isEqualTo(topster9.getTitle());
 
+        //두번째 페이지
         assertThat(findTopsterPageList2.get(0).getTitle()).isEqualTo(topster10.getTitle());
-
     }
 
+    @Test
+    @DisplayName("탑스터를 삭제할 수 있다.")
+    void testDeleteTopstersService(){
+        //given
+        Topster topster = Topster.builder()
+                .title("탑스터 제목")
+                .user(userA)
+                .build();
 
+        ReflectionTestUtils.setField(topster, "id", 1L);
+
+        //when
+        when(topsterRepository.findById(any())).thenReturn(Optional.of(topster));
+
+        topsterService.deleteTopster(topster.getId(), userA);
+        //then
+        verify(topsterRepository, times(1)).delete(topster);
+    }
 }
