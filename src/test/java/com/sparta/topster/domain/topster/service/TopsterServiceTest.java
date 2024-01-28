@@ -337,7 +337,7 @@ public class TopsterServiceTest {
         List<TopsterGetRes> findTopsterPageList1 = findTopsterPage1.getContent();
 
         when(topsterRepository.findAll(any())).thenReturn(topsterPage2);
-        Page<TopsterGetRes> findTopsterPage2 = topsterService.getTopstersService(pageNum);
+        Page<TopsterGetRes> findTopsterPage2 = topsterService.getTopstersService(pageNum+1);
         List<TopsterGetRes> findTopsterPageList2 = findTopsterPage2.getContent();
 
         //then
