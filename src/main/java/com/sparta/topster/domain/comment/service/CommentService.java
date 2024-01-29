@@ -12,12 +12,15 @@ import com.sparta.topster.domain.post.service.PostService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
-import com.sparta.topster.global.security.UserDetailsImpl;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,33 +46,29 @@ public class CommentService {
     return CommentRes.builder()
         .id(comment.getId())
         .content(comment.getContent())
-        .author(comment.getUser().getUsername())
+        .author(comment.getUser().getNickname())
         .createdAt(comment.getCreatedAt())
         .build();
   }
 
-  public List<CommentRes> getComment(Long postId) {
+  public Page<CommentRes> getComments(Long postId, Integer pageNum) {
+    pageNum = (pageNum == null || pageNum <= 0) ? 1 : pageNum;
+    Pageable pageable = PageRequest.of(pageNum - 1, 9);
     log.info("해당 게시글에 대한 댓글 조회");
-    List<Comment> findCommentList = commentRespository.findByPostId(postId);
-    List<CommentRes> postCommentList = new ArrayList<>();
+    Page<Comment> findCommentList = commentRespository.findByPostId(postId, pageable);
+    Page<CommentRes> postCommentList = findCommentList.map(comment -> CommentRes.builder()
+        .id(comment.getId())
+        .content(comment.getContent())
+        .author(comment.getUser().getNickname())
+        .createdAt(comment.getCreatedAt()).build());
 
-    for (Comment comment : findCommentList) {
-      if(comment.getPost().getId().equals(postId)) {
-        postCommentList.add(CommentRes.builder()
-            .id(comment.getId())
-            .content(comment.getContent())
-            .author(comment.getUser().getUsername())
-            .createdAt(comment.getCreatedAt())
-            .build());
-      }
-
-    }
-        return postCommentList;
+    return postCommentList;
   }
 
+  @Transactional
   public RootNoDataRes modifyComment(Long commentId, CommentModifyReq commentModifyReq, User user) {
     log.info("댓글 수정");
-    Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
+    Comment comment = getCommentUser(commentId, user);
 
     comment.update(commentModifyReq.getContent());
 
@@ -81,9 +80,10 @@ public class CommentService {
         .code("200").build();
   }
 
+  @Transactional
   public RootNoDataRes deleteComment(Long commentId, User user) {
     log.info("댓글 삭제");
-    Comment comment = modifyAndDeleteCommentAuthor(commentId, user);
+    Comment comment = getCommentUser(commentId, user);
 
     log.info("댓글 삭제 완료");
     commentRespository.delete(comment);
@@ -93,25 +93,23 @@ public class CommentService {
         .code("200").build();
   }
 
+  public Comment getComment(Long commentId) {
+    return commentRespository.findById(commentId)
+        .orElseThrow(() -> new ServiceException(CommentException.NO_COMMENT));
+  }
 
-  public Comment modifyAndDeleteCommentAuthor(Long commentId, User user) {
-    Comment comment = commentRespository.findById(commentId);
+  public Comment getCommentUser(Long commentId, User user) {
+    Comment comment = getComment(commentId);
 
-    if(comment == null) {
-      throw new ServiceException(CommentException.NO_COMMENT);  // 댓글이 존재하지 않습니다.
-    }
-
-    if(!comment.getUser().getUsername().equals(user.getUsername())) {
+    if(!comment.getUser().getNickname().equals(user.getNickname())) {
       throw new ServiceException(CommentException.MODIFY_AND_DELETE_ONLY_AUTHOR); // 작성자만 수정 및 삭제 할 수 있습니다.
     }
-    System.out.println(comment);
 
     return comment;
-
   }
 
   public RootNoDataRes isAuthor(Long commentId, User user) {
-    Comment comment = commentRespository.findById(commentId);
+    Comment comment = getComment(commentId);
 
     if(!comment.getUser().getId().equals(user.getId())){
       throw new ServiceException(PostException.AccessDeniedError);

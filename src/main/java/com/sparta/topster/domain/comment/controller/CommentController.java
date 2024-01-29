@@ -8,6 +8,7 @@ import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,9 +37,9 @@ public class CommentController {
   }
 
   @GetMapping("/posts/{postId}/comments")
-  public ResponseEntity<?> getComment(@PathVariable Long postId) {
+  public ResponseEntity<Page<CommentRes>> getComment(@PathVariable Long postId, Integer page) {
 
-    return ResponseEntity.ok().body(commentService.getComment(postId));
+    return ResponseEntity.ok().body(commentService.getComments(postId, page));
 
   }
 
