@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_AUTHOR;
 import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_EXIST_TOPSTER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -269,7 +270,7 @@ public class TopsterServiceTest {
     }
 
     @Test
-    @DisplayName("탑스터를 page로 조회할 수 있다.")
+    @DisplayName("탑스터를 Slice로 조회할 수 있다.")
     void testGetTopstersService(){
         //given
         // 탑스터 한페이지에 9개가 뜸 두번째 페이지까지 잘 가져오는지 test위해 10개의 topster 생성
@@ -338,12 +339,12 @@ public class TopsterServiceTest {
         //when
         //첫번째 페이지
         when(topsterRepository.findAll(any())).thenReturn(topsterPage1);
-        Page<TopsterGetRes> findTopsterPage1 = topsterService.getTopstersService(pageNum);
+        Slice<TopsterGetRes> findTopsterPage1 = topsterService.getTopstersService(pageNum);
         List<TopsterGetRes> findTopsterPageList1 = findTopsterPage1.getContent();
 
         //두번째 페이지
         when(topsterRepository.findAll(any())).thenReturn(topsterPage2);
-        Page<TopsterGetRes> findTopsterPage2 = topsterService.getTopstersService(pageNum+1);
+        Slice<TopsterGetRes> findTopsterPage2 = topsterService.getTopstersService(pageNum+1);
         List<TopsterGetRes> findTopsterPageList2 = findTopsterPage2.getContent();
 
         //then
@@ -430,7 +431,40 @@ public class TopsterServiceTest {
         assertThat(getTopsterGetResList.get(0).getTitle()).isEqualTo(topster3.getTitle());
         assertThat(getTopsterGetResList.get(1).getTitle()).isEqualTo(topster2.getTitle());
         assertThat(getTopsterGetResList.get(2).getTitle()).isEqualTo(topster1.getTitle());
+    }
 
+    @Test
+    @DisplayName("탑스터의 작성자만 권한을 가질 수 있다.")
+    void testIsAuthor(){
+        //given
+        Topster topster = Topster.builder()
+                .title("탑스터 제목3")
+                .user(userA)
+                .build();
+        ReflectionTestUtils.setField(topster, "id", 1L);
 
+        //when
+        when(topsterRepository.findById(1L)).thenReturn(Optional.of(topster));
+
+        //then
+        assertThat(topsterService.isAuthor(userA.getId(), topster.getId())).isTrue();
+    }
+
+    @Test
+    @DisplayName("탑스터의 작성자만 권한을 가질 수 있다. 작성자가 아닌 케이스")
+    void testIsAuthorFalse(){
+        //given
+        Topster topster = Topster.builder()
+                .title("탑스터 제목3")
+                .user(userA)
+                .build();
+        ReflectionTestUtils.setField(topster, "id", 1L);
+
+        //when
+        when(topsterRepository.findById(1L)).thenReturn(Optional.of(topster));
+
+        //then
+        assertThatThrownBy(()-> topsterService.isAuthor(userB.getId(), topster.getId()))
+                .hasCauseInstanceOf(ServiceException.class);
     }
 }
