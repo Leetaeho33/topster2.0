@@ -14,4 +14,10 @@ public class CommentRes {
     String author;
     LocalDateTime createdAt;
 
+    public CommentRes(Comment comment) {
+        this.id = comment.getId();
+        this.content = comment.getContent();
+        this.author = comment.getUser().getUsername();
+        this.createdAt = comment.getCreatedAt();
+    }
 }
