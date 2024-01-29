@@ -15,6 +15,7 @@ import com.sparta.topster.domain.post.service.PostService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -99,7 +100,7 @@ class CommentServiceTest {
         .user(user)
         .build();
 
-    given(commentRepository.findById(any())).willReturn(comment);
+    given(commentRepository.findById(any())).willReturn(Optional.of(comment));
 
     assertThatThrownBy(() -> commentService.modifyComment(9999L, req, otherUser)).isInstanceOf(
         ServiceException.class).hasMessage("작성자만 수정 및 삭제 할 수 있습니다.");
@@ -118,7 +119,7 @@ class CommentServiceTest {
         .build();
     ReflectionTestUtils.setField(comment, "id", 1L);
 
-    given(commentRepository.findById(any())).willReturn(comment);
+    given(commentRepository.findById(any())).willReturn(Optional.of(comment));
 
     RootNoDataRes res = commentService.modifyComment(comment.getId(), req, user);
 
