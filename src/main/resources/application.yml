@@ -50,3 +50,8 @@ spotify:
 
 base:
   url: ${BASE_URL}
+
+kakao:
+  redirect: ${KAKAO_REDIRECT_URL}
+  client-id: ${KAKAO_CLIENT_ID}
+  secret: ${KAKAO_SECRET}

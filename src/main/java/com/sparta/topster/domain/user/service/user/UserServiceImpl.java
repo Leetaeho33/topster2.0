@@ -6,6 +6,7 @@ import static com.sparta.topster.domain.user.excepetion.UserException.DUPLICATE_
 import static com.sparta.topster.domain.user.excepetion.UserException.INVALID_NICKNAME;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_AUTHENTICATION_CODE;
 import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_PASSWORD;
+import static com.sparta.topster.domain.user.excepetion.UserException.NOT_FOUND_USERID;
 import static com.sparta.topster.domain.user.excepetion.UserException.TOKEN_ERROR;
 import static com.sparta.topster.domain.user.excepetion.UserException.WRONG_ADMIN_CODE;
 
@@ -111,7 +112,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UpdateRes updateUser(User user, UpdateReq updateReq) {
-        User findByUser = findByUser(user.getId());
+        User findByUser = getUser(user.getId());
 
         checkPassword(updateReq, findByUser);
 
@@ -140,7 +141,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public GetUserRes getUser(User user) {
-        findByUser(user.getId());
+        getUser(user.getId());
 
         return GetUserRes.builder()
             .username(user.getUsername())
@@ -154,7 +155,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(User user, DeleteReq deleteReq) {
         String password = deleteReq.getPassword();
-        User getUser = findByUser(user.getId());
+        User getUser = getUser(user.getId());
         if (passwordEncoder.matches(password, getUser.getPassword())) {
             userRepository.deleteById(getUser.getId());
         } else {
@@ -175,8 +176,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User findByUser(Long userId) {
-        return userRepository.findById(userId);
+    public User getUser(Long userId) {
+        User byId = userRepository.findById(userId);
+        if(byId == null){
+            throw new ServiceException(NOT_FOUND_USERID);
+        }
+        return byId;
     }
 
     private void checkPassword(boolean passwordEncoder, UserException notFoundPassword) {

@@ -32,10 +32,14 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate; //따로 Bean수동등록을 해줘야함
     private final JwtUtil jwtUtil;
-    @Value("${base.url}")
-    private String baseUrl;
+    @Value("${kakao.client-id}")
+    private String clientId;
+    @Value("${kakao.secret}")
+    private String secret;
+    @Value("${kakao.redirect}")
+    private String redirectUrl;
 
-    public String kakaoLogin(String code) throws JsonProcessingException {
+    public HttpHeaders kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
@@ -47,9 +51,14 @@ public class KakaoService {
 
         // 4. JWT 토큰 생성
         String createToken = jwtUtil.createToken(kakaoUser.getUsername(), kakaoUser.getRole());
+        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getUsername());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JwtUtil.AUTHORIZATION_HEADER, createToken);
+        headers.add(JwtUtil.REFRESH_TOKEN_PREFIX, refreshToken);
 
         // 생성 토큰 반환
-        return createToken;
+        return headers;
     }
 
     private String getToken(String code) throws JsonProcessingException {
@@ -69,9 +78,10 @@ public class KakaoService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "7a87fc3e7bcbae5c14ba39858700ce8a");
-        body.add("redirect_uri", baseUrl + "/api/user/kakao/callback");
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUrl);
         body.add("code", code);
+        body.add("client_secret",secret);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
             .post(uri)
@@ -145,11 +155,12 @@ public class KakaoService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
+                String nickname = UUID.randomUUID().toString().substring(0,7);
 
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(kakaoUserInfo.getNickname(), encodedPassword, email, UserRoleEnum.USER, kakaoId);
+                kakaoUser = new User(kakaoUserInfo.getNickname(), nickname, encodedPassword, email, UserRoleEnum.USER, kakaoId);
             }
 
             userRepository.save(kakaoUser);

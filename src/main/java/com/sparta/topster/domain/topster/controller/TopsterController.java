@@ -4,12 +4,14 @@ import com.sparta.topster.domain.facade.TopsterCreateFlowService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
+import com.sparta.topster.domain.topster.dto.res.TopsterPageRes;
 import com.sparta.topster.domain.topster.service.TopsterService;
 import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,7 +41,7 @@ public class TopsterController {
 
 
     @GetMapping("/topsters")
-    public ResponseEntity<Page<TopsterGetRes>> getTopsters(Integer page){
+    public ResponseEntity<Slice<TopsterGetRes>> getTopsters(Integer page){
         return ResponseEntity.ok(topsterService.getTopstersService(page));
     }
 
@@ -72,5 +74,16 @@ public class TopsterController {
                 message("탑스터가 정상적으로 삭제 되었습니다.").build());
     }
 
+
+    @GetMapping("/topsters/{id}/isAuthor")
+    public ResponseEntity<RootNoDataRes> isAuthor(@PathVariable Long id,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        topsterService.isAuthor(userDetails.getUser().getId(), id);
+        return ResponseEntity.ok(RootNoDataRes.builder()
+                .code("200")
+                .message("본인의 탑스터가 맞습니다")
+                .build());
+    }
 
 }
