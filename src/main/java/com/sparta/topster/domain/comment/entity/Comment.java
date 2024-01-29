@@ -1,11 +1,8 @@
 package com.sparta.topster.domain.comment.entity;
 
 import com.sparta.topster.domain.BaseEntity;
-import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
-import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
 import com.sparta.topster.domain.post.entity.Post;
 import com.sparta.topster.domain.user.entity.User;
-import com.sparta.topster.global.security.UserDetailsImpl;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
