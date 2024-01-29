@@ -36,7 +36,6 @@ public class SpotifyService implements OpenApiService {
 
     @Override
     public String getRawArtistData(String query) {
-        accessToken = spotifyUtil.accesstoken();
         log.info(query + "로 rawData 가져오기");
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -101,6 +100,7 @@ public class SpotifyService implements OpenApiService {
         log.info("artistName is " + artistNames);
         return artistNames;
     }
+
 
 
     private void checkExist(JSONArray items){
