@@ -465,6 +465,6 @@ public class TopsterServiceTest {
 
         //then
         assertThatThrownBy(()-> topsterService.isAuthor(userB.getId(), topster.getId()))
-                .hasCauseInstanceOf(ServiceException.class);
+                .isInstanceOf(ServiceException.class);
     }
 }
