@@ -11,6 +11,7 @@ import com.sparta.topster.global.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +41,7 @@ public class TopsterController {
 
 
     @GetMapping("/topsters")
-    public ResponseEntity<Page<TopsterGetRes>> getTopsters(Integer page){
+    public ResponseEntity<Slice<TopsterGetRes>> getTopsters(Integer page){
         return ResponseEntity.ok(topsterService.getTopstersService(page));
     }
 
