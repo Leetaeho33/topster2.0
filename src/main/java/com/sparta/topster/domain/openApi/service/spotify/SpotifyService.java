@@ -110,9 +110,7 @@ public class SpotifyService implements OpenApiService {
             sb.append(((JSONObject)artist).getString("name") + ", ");
         }
         // 아티스트가 한명이 아닌 경우(합작 앨범) 처리
-        String artistNames = sb.substring(0, sb.length() - 2);
-        log.info("artistName is " + artistNames);
-        return artistNames;
+        return sb.substring(0, sb.length() - 2);
     }
 
 

@@ -111,7 +111,6 @@ public class TopsterService {
         log.info("userId :" + userId + "로 topster 조회 시작");
         List<Topster> userTopsterList = topsterRepository.findByUserId(userId);
         if(!userTopsterList.isEmpty()){
-            log.info("userId :" + userId + "로 topster 조회 완료");
             return userTopsterList;
         }else {
             log.error(NOT_FOUND_TOPSTER.getMessage());
@@ -132,7 +131,6 @@ public class TopsterService {
 
     private TopsterGetRes fromTopsterToTopsterGetRes(Topster topstesr) {
 
-        log.info("Topster Entity -> TopsterGetRes");
         List<AlbumRes> albumResList = new ArrayList<>();
         for (TopsterAlbum topsterAlbum : topstesr.getTopsterAlbumList()) {
             albumResList.add(
