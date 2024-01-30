@@ -140,7 +140,7 @@ public class KakaoService {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoUserInfo.getId();
         //kakaoId가 없다면 null 반환
-        User kakaoUser = userRepository.findByKakaoId(kakaoId);
+        User kakaoUser = userRepository.findByOAuthId(kakaoId);
         //null일시 회원가입 시작
         if (kakaoUser == null) {
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
@@ -155,14 +155,20 @@ public class KakaoService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
-                String nickname = UUID.randomUUID().toString().substring(0,7);
+                String nickname = kakaoUserInfo.getNickname();
 
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(kakaoUserInfo.getNickname(), nickname, encodedPassword, email, UserRoleEnum.USER, kakaoId);
+                kakaoUser = User.builder()
+                    .username(nickname)
+                    .nickname(nickname)
+                    .password(encodedPassword)
+                    .email(email)
+                    .role(UserRoleEnum.USER)
+                    .oauthId(kakaoId)
+                    .build();
             }
-
             userRepository.save(kakaoUser);
         }
         return kakaoUser;

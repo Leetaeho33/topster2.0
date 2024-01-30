@@ -32,7 +32,7 @@ public class GoogleService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final UserRepository userRepository;
 
-    public void socialLogin(String code, String registrationId) {
+    public User socialLogin(String code, String registrationId) {
         String accessToken = getAccessToken(code, registrationId);
         JsonNode userResourceNode = getUserResource(accessToken, registrationId);
         System.out.println("userResourceNode = " + userResourceNode);
@@ -40,28 +40,38 @@ public class GoogleService {
         String id = userResourceNode.get("id").asText();
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
-        System.out.println("id = " + id);
+        String saveId = id.substring(0,7);
+        System.out.println("id = " + saveId);
         System.out.println("email = " + email);
         System.out.println("nickname = " + nickname);
 
         String password = UUID.randomUUID().toString();
         String encodedPassword = passwordEncoder.encode(password);
 
-        User user = User.builder()
-            .username(id)
-            .email(email)
-            .nickname(nickname)
-            .password(encodedPassword)
-            .role(UserRoleEnum.USER)
-            .build();
 
-        Optional<User> byGoogleEmail = userRepository.findByGoogleEmail(user.getEmail());
-
-        if(byGoogleEmail.isEmpty()){
-            userRepository.save(user);
-        }else{
-            throw new ServiceException(DUPLICATE_EMAIL);
+        User googleUser = userRepository.findByOAuthId(Long.valueOf(saveId));
+        //OAuthId -> null 회원가입 시작
+        if(googleUser == null) {
+            //email 비교
+            User googleEmail = userRepository.findByGoogleEmail(email);
+            if (googleEmail != null) {
+                //동일 email 있을 시
+                googleUser = googleEmail;
+                googleUser = googleUser.GoogleIdUpdate(Long.valueOf(saveId));
+            }else{
+                //신규 회원가입
+                googleUser = User.builder()
+                    .username(nickname)
+                    .nickname(nickname)
+                    .password(encodedPassword)
+                    .email(email)
+                    .role(UserRoleEnum.USER)
+                    .oauthId(Long.valueOf(saveId))
+                    .build();
+            }
+            return userRepository.save(googleUser);
         }
+        return googleUser;
     }
 
     private String getAccessToken(String authorizationCode, String registrationId) {
