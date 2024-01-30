@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @PatchMapping("/modifyPassword")
-    public ResponseEntity<RootNoDataRes> modifyPassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ModifyReq modifyReq){
+    public ResponseEntity<RootNoDataRes> modifyPassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ModifyReq modifyReq) {
         userService.modifyPassword(userDetails.getUser(), modifyReq);
         return ResponseEntity.ok().body(RootNoDataRes.builder()
             .code("200")
@@ -66,7 +66,6 @@ public class UserController {
     @GetMapping
     public ResponseEntity<GetUserRes> getUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
         GetUserRes user = userService.userConvertDto(userDetails.getUser());
         return ResponseEntity.ok(user);
     }
