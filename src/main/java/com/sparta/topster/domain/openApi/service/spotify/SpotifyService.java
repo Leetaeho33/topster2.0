@@ -9,13 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.sparta.topster.domain.openApi.exception.OpenApiException.NOT_SERCH_ALBUM;
 
@@ -25,6 +27,7 @@ import static com.sparta.topster.domain.openApi.exception.OpenApiException.NOT_S
 @RequiredArgsConstructor
 public class SpotifyService implements OpenApiService {
     private final SpotifyUtil spotifyUtil;
+    private final RestClient restClient;
     private String accessToken;
 
     @PostConstruct
@@ -37,17 +40,17 @@ public class SpotifyService implements OpenApiService {
     @Override
     public String getRawArtistData(String query) {
         log.info(query + "로 rawData 가져오기");
-        RestTemplate rest = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("Host", "api.spotify.com");
-        headers.add("Content-type", "application/json");
-        String body = "";
+        Consumer<HttpHeaders> headersConsumer = (headers) -> {
+            headers.add("Authorization", "Bearer " + accessToken);
+            headers.add("Host", "api.spotify.com");
+            headers.add("Content-type", "application/json");
+        };
 
-        HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
-        ResponseEntity<String> responseEntity = rest
-                .exchange("https://api.spotify.com/v1/search?type=album&q="
-                        + query + "&limit=30", HttpMethod.GET, requestEntity, String.class);
+        ResponseEntity<String> responseEntity = restClient.get()
+                .uri("https://api.spotify.com/v1/search?type=album&q=" + query + "&limit=30")
+                .headers(headersConsumer)
+                .retrieve()
+                .toEntity(String.class);
         return responseEntity.getBody();
     }
 
