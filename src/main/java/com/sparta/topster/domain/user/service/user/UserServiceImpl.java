@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void modifyPassword(User user, ModifyReq modifyReq) {
+    public void modifyPassword(User user, ModifyReq modifyReq){
         User findByUser = getUser(user.getId());
         String userPassword = user.getPassword();
         checkPassword(modifyReq.getPassword(), userPassword);
