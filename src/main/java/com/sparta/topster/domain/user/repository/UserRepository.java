@@ -17,7 +17,9 @@ public interface UserRepository {
 
     User findById(Long id);
 
-    User findByOAuthId(Long kakaoId);
+    User findByKakaoId(Long kakaoId);
+
+    User findByGoogleId(Long googleId);
 
     User findByEmail(String kakaoEmail);
 
