@@ -26,5 +26,5 @@ public interface UserService {
 
     String refreshToken(String refreshToken);
 
-    void modifyPassword(User user, ModifyReq modifyReq);
+    void modifyPassword(User user, ModifyReq modifyReq) throws Exception;
 }
