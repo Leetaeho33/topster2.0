@@ -37,17 +37,22 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private UserRoleEnum role;
 
-    private Long OAuthId;
+    @Column
+    private Long kakaoId;
+
+    @Column
+    private Long googleId;
 
     @Builder
-    public User(String username, String nickname, String password, String email, String intro, UserRoleEnum role, Long oauthId){
+    public User(String username, String nickname, String password, String email, String intro, UserRoleEnum role, Long kakaoId, Long googleId){
         this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.intro = intro;
         this.role = role;
-        this.OAuthId = oauthId;
+        this.kakaoId = kakaoId;
+        this.googleId = googleId;
     }
 
     public void updateIntro(UpdateReq updateReq) {
@@ -56,12 +61,12 @@ public class User extends BaseEntity {
     }
 
     public User kakaoIdUpdate(Long kakaoId) {
-        this.OAuthId = kakaoId;
+        this.kakaoId = kakaoId;
         return this;
     }
 
     public User GoogleIdUpdate(Long googleId){
-        this.OAuthId = googleId;
+        this.googleId = googleId;
         return this;
     }
 
