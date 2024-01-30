@@ -17,12 +17,12 @@ public interface UserRepository {
 
     User findById(Long id);
 
-    User findByKakaoId(Long kakaoId);
+    User findByOAuthId(Long kakaoId);
 
     User findByEmail(String kakaoEmail);
 
     @Query("select u from User u where u.email = :googleEmail")
-    Optional<User> findByGoogleEmail(String googleEmail);
+    User findByGoogleEmail(String googleEmail);
 
     @Query("select u from User u where u.email = :email")
     Optional<User> findByUserEmail(String email);
