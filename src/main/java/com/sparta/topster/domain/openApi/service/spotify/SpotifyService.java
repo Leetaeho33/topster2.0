@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -40,6 +42,15 @@ public class SpotifyService implements OpenApiService {
     @Override
     public String getRawArtistData(String query) {
         log.info(query + "로 rawData 가져오기");
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://api.spotify.com/v1/search")
+                .queryParam("type", "album")
+                .queryParam("q", query)
+                .queryParam("limit", "30")
+                .encode()
+                .build()
+                .toUri();
+
         Consumer<HttpHeaders> headersConsumer = (headers) -> {
             headers.add("Authorization", "Bearer " + accessToken);
             headers.add("Host", "api.spotify.com");
@@ -47,7 +58,7 @@ public class SpotifyService implements OpenApiService {
         };
 
         ResponseEntity<String> responseEntity = restClient.get()
-                .uri("https://api.spotify.com/v1/search?type=album&q=" + query + "&limit=30")
+                .uri(uri)
                 .headers(headersConsumer)
                 .retrieve()
                 .toEntity(String.class);

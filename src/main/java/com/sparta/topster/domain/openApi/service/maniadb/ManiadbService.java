@@ -18,6 +18,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -34,6 +35,7 @@ import static com.sparta.topster.domain.openApi.exception.OpenApiException.NOT_S
 public class ManiadbService implements OpenApiService {
 
     private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
     @Override
     public String getRawArtistData(String query) {
@@ -51,9 +53,11 @@ public class ManiadbService implements OpenApiService {
         RequestEntity<Void> request = RequestEntity.get(uri).build();
 
         //uri를 날리고 온 response(XML)
-        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-        String rawDataJSON = fromXMLtoJSON(response.getBody());
-        return rawDataJSON;
+        ResponseEntity<String> response= restClient.get()
+                .uri(uri)
+                .retrieve()
+                .toEntity(String.class);
+        return fromXMLtoJSON(response.getBody());
     }
 
 
