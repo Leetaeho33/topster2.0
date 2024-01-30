@@ -41,7 +41,7 @@ public class CommentService {
         .build();
 
     commentRespository.save(comment);
-    notificationService.notifyComment(postId);
+//    notificationService.notifyComment(postId);
 
     log.info("댓글 작성 완료");
     return CommentRes.builder()
