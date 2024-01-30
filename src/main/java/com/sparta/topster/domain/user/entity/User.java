@@ -1,17 +1,12 @@
 package com.sparta.topster.domain.user.entity;
 
 import com.sparta.topster.domain.BaseEntity;
-import com.sparta.topster.domain.like.entity.Like;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,16 +37,17 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private UserRoleEnum role;
 
-    private Long kakaoId;
+    private Long OAuthId;
 
     @Builder
-    public User(String username, String nickname, String password, String email, String intro, UserRoleEnum role){
+    public User(String username, String nickname, String password, String email, String intro, UserRoleEnum role, Long oauthId){
         this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
         this.intro = intro;
         this.role = role;
+        this.OAuthId = oauthId;
     }
 
     public void updateIntro(UpdateReq updateReq) {
@@ -60,24 +56,17 @@ public class User extends BaseEntity {
     }
 
     public User kakaoIdUpdate(Long kakaoId) {
-        this.kakaoId = kakaoId;
+        this.OAuthId = kakaoId;
         return this;
     }
 
-    public User(String username, String nickname, String password, String email, UserRoleEnum role, Long kakaoId) {
-        this.username = username;
-        this.nickname = nickname;
+    public User GoogleIdUpdate(Long googleId){
+        this.OAuthId = googleId;
+        return this;
+    }
+
+    public void modifyPassword(String password){
         this.password = password;
-        this.email = email;
-        this.role = role;
-        this.kakaoId = kakaoId;
     }
 
-    public void updateIntro(String intro) {
-        this.intro = intro;
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
 }
