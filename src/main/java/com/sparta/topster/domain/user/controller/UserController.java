@@ -4,10 +4,12 @@ import static com.sparta.topster.domain.user.excepetion.UserException.MODIFY_PRO
 
 import com.sparta.topster.domain.user.dto.deleteDto.DeleteReq;
 import com.sparta.topster.domain.user.dto.getUser.GetUserRes;
+import com.sparta.topster.domain.user.dto.modifyPassword.ModifyReq;
 import com.sparta.topster.domain.user.dto.update.UpdateReq;
 import com.sparta.topster.domain.user.dto.update.UpdateRes;
 import com.sparta.topster.domain.user.service.user.UserServiceImpl;
 import com.sparta.topster.global.exception.ServiceException;
+import com.sparta.topster.global.response.RootNoDataRes;
 import com.sparta.topster.global.security.UserDetailsImpl;
 import com.sparta.topster.global.util.JwtUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +38,7 @@ public class UserController {
     private final UserServiceImpl userService;
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<UpdateRes> updateUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody @Valid UpdateReq updateReq,
         BindingResult bindingResult) {
@@ -52,11 +54,20 @@ public class UserController {
         return ResponseEntity.ok(updateRes);
     }
 
+    @PatchMapping("/modifyPassword")
+    public ResponseEntity<RootNoDataRes> modifyPassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ModifyReq modifyReq){
+        userService.modifyPassword(userDetails.getUser(), modifyReq);
+        return ResponseEntity.ok().body(RootNoDataRes.builder()
+            .code("200")
+            .message("비밀번호 변경완료")
+            .build());
+    }
+
     @GetMapping
-    public ResponseEntity<?> getUser(
+    public ResponseEntity<GetUserRes> getUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        GetUserRes user = userService.getUser(userDetails.getUser());
+        GetUserRes user = userService.userConvertDto(userDetails.getUser());
         return ResponseEntity.ok(user);
     }
 
