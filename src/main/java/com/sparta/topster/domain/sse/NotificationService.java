@@ -1,7 +1,5 @@
 package com.sparta.topster.domain.sse;
 
-import com.sparta.topster.domain.post.entity.Post;
-import com.sparta.topster.domain.post.repository.PostRepository;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,8 +8,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-
-    private final PostRepository postRepository;
 
     // 메시지 알림
     public SseEmitter subscribe(Long userId) {
@@ -38,20 +34,13 @@ public class NotificationService {
     }
 
     // 댓글 알림 - 게시글 작성자 에게
-    public void notifyComment(Long postId) {
-        Post post = getPost(postId);
-        Long userId = post.getUser().getId();
+    public void notifyComment(Long userId) {
         sendSseEvent(userId, "addComment", "댓글이 추가되었습니다.");
     }
 
     //좋아요 알림 - 게시글 작성자 에게
     public void notifyLikeAdded(Long userId) {
         sendSseEvent(userId, "addLike", "좋아요가 추가되었습니다.");
-    }
-
-    //top3 진입
-    public void notifyTop3(Long userId){
-
     }
 
     private void sendSseEvent(Long userId, String addLike, String object) {
@@ -63,12 +52,5 @@ public class NotificationService {
                 NotificationController.sseEmitters.remove(userId);
             }
         }
-    }
-
-    private Post getPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(
-            () -> new IllegalArgumentException("게시글을 찾을 수 없습니다.")
-        );
-        return post;
     }
 }
