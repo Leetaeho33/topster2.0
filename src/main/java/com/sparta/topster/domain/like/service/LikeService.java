@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
-
     private final TopsterService topsterService;
-
     private final NotificationService notificationService;
 
   @Transactional
