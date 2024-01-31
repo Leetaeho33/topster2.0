@@ -31,6 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class UserServiceTest {
 
@@ -213,28 +214,30 @@ public class UserServiceTest {
         }
     }
 
-    @Test
+    @ValueSource(strings = {"123","123123"})
+    @ParameterizedTest
     @Order(6)
     @DisplayName("비밀번호 변경")
-    void modifyPassword() {
-        //given
-        String username = "username";
+    void modifyPassword(String certificationCode) {
+        String email = "wogns8030@naver.com";
+        String password = "123";
+        String modifyPassword = "topster";
+        ModifyReq modifyReq = new ModifyReq(certificationCode, modifyPassword);
         User user = User.builder()
-            .username(username)
-            .password(passwordEncoder.encode("123"))
+            .email(email)
+            .password(passwordEncoder.encode(password))
             .build();
 
-        ModifyReq modifyReq = new ModifyReq("123", "updatePassword");
-
-        //when
+        ReflectionTestUtils.setField(user,"id",1L);
+        when(redisUtil.getData(email)).thenReturn("123");
         when(userRepository.findById(user.getId())).thenReturn(user);
-        when(passwordEncoder.matches(eq("123"), eq(user.getPassword()))).thenReturn(true);
-        userService.modifyPassword(user, modifyReq);
 
-        //then
-        if (passwordEncoder.matches(modifyReq.getModifyPassword(),user.getPassword())) {
-            assertThatCode(() -> userService.modifyPassword(user, modifyReq))
-                .doesNotThrowAnyException();
+        if(certificationCode.equals("123")){
+            assertThatCode(() -> userService.modifyPassword(user,modifyReq)).doesNotThrowAnyException();
+        }else{
+            assertThatCode(() -> userService.modifyPassword(user,modifyReq))
+                .isInstanceOf(ServiceException.class)
+                .hasMessage("인증번호 오류");
         }
     }
 }
