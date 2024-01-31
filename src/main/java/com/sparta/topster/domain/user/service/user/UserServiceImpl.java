@@ -79,6 +79,7 @@ public class UserServiceImpl implements UserService {
             .build();
 
         User saveUser = userRepository.save(user);
+        redisUtil.deleteData(user.getEmail());
 
         return SignupRes.builder()
             .username(saveUser.getUsername())
@@ -159,9 +160,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void modifyPassword(User user, ModifyReq modifyReq){
         User findByUser = getUser(user.getId());
-        String userPassword = user.getPassword();
-        checkPassword(modifyReq.getPassword(), userPassword);
+        String certification = redisUtil.getData(user.getEmail());
+        checkMailCode(modifyReq.getCertification(),certification);
         findByUser.modifyPassword(passwordEncoder.encode(modifyReq.getModifyPassword()));
+        redisUtil.deleteData(user.getEmail());
     }
 
     private User getByUsername(String username) {
