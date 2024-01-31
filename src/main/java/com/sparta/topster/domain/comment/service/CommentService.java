@@ -12,8 +12,6 @@ import com.sparta.topster.domain.post.service.PostService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,13 +54,12 @@ public class CommentService {
     Pageable pageable = PageRequest.of(pageNum - 1, 9);
     log.info("해당 게시글에 대한 댓글 조회");
     Page<Comment> findCommentList = commentRespository.findByPostId(postId, pageable);
-    Page<CommentRes> postCommentList = findCommentList.map(comment -> CommentRes.builder()
+
+    return findCommentList.map(comment -> CommentRes.builder()
         .id(comment.getId())
         .content(comment.getContent())
         .author(comment.getUser().getNickname())
         .createdAt(comment.getCreatedAt()).build());
-
-    return postCommentList;
   }
 
   @Transactional
