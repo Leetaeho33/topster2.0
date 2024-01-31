@@ -28,13 +28,13 @@ public class LikeService {
     Topster topster = topsterService.getTopster(topsterId);
 
     // 해당 탑스타에 대한 모든 좋아요 정보를 조회
-    Like optionalLike = getLike(user.getId(), topsterId);
+    Like findLike = getLike(user.getId(), topsterId);
 
     log.info("조회된 좋아요 목록을 순회");
       // 현재 사용자가 이미 해당 게시물에 좋아요를 눌렀는지 확인
-      if(optionalLike != null) {
+      if(findLike != null) {
         // 이미 좋아요를 눌렀다면 해당 좋아요 삭제
-        likeRepository.delete(optionalLike);
+        likeRepository.delete(findLike);
         topster.upAndDownLikeCount(-1);
         return false;
       }
@@ -61,12 +61,6 @@ public class LikeService {
       log.info("해당 유저가 탑스터에 좋아요를 누르지 않았습니다.");
     }
     return null;
-  }
-
-
-  public void deleteLike(Like like){
-    log.info("like 삭제");
-    likeRepository.delete(like);
   }
 
   public LikeCountStatusRes getLikeCountAndStatus(Long topsterId, Long userId) {
