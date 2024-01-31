@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 public class ModifyReq {
-    String password;
+    String certification;
     String modifyPassword;
 }
