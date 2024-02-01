@@ -142,4 +142,18 @@ class CommentServiceTest {
     assertThat(res.code()).isEqualTo("200");
     assertThat(res.message()).isEqualTo(comment.getId()+ "번 댓글을 삭제하였습니다.");
   }
+
+  @Test
+  void 삭제를_할_때_작성자가_아니면_예외를_반환한다() {
+    Comment comment = Comment.builder()
+        .content("댓글")
+        .post(post)
+        .user(user)
+        .build();
+
+    given(commentRepository.findById(any())).willReturn(Optional.of(comment));
+
+    assertThatThrownBy(() -> commentService.deleteComment(9999L, otherUser)).isInstanceOf(
+        ServiceException.class).hasMessage("작성자만 수정 및 삭제 할 수 있습니다.");
+  }
 }
