@@ -213,5 +213,18 @@ class CommentServiceTest {
       // then
       assertEquals(result, comment);
   }
+  @Test
+  void 댓글_작성자가_다른_경우() {
+    // given
+    Comment comment = Comment.builder()
+        .user(user)
+        .build();
+    ReflectionTestUtils.setField(comment, "id", 1L);
 
+    given(commentRepository.findById(any())).willReturn(Optional.of(comment));
+
+    // when, then
+    assertThatThrownBy(() -> commentService.deleteComment(9999L, otherUser)).isInstanceOf(
+        ServiceException.class).hasMessage("작성자만 수정 및 삭제 할 수 있습니다.");
+  }
 }
