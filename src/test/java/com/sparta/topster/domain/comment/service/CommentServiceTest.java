@@ -126,4 +126,20 @@ class CommentServiceTest {
     assertThat(res.code()).isEqualTo("200");
     assertThat(res.message()).isEqualTo(comment.getId()+ "번 댓글을 수정하였습니다.");
   }
+
+  @Test
+  void 삭제_성공_테스트() {
+    Comment comment = Comment.builder()
+        .content("댓글")
+        .post(post)
+        .user(user)
+        .build();
+    ReflectionTestUtils.setField(comment, "id", 1L);
+
+    given(commentRepository.findById(any())).willReturn(Optional.of(comment));
+
+    RootNoDataRes res = commentService.deleteComment(comment.getId(), user);
+    assertThat(res.code()).isEqualTo("200");
+    assertThat(res.message()).isEqualTo(comment.getId()+ "번 댓글을 삭제하였습니다.");
+  }
 }
