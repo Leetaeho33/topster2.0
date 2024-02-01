@@ -11,6 +11,7 @@ import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
 import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
 import com.sparta.topster.domain.comment.dto.res.CommentRes;
 import com.sparta.topster.domain.comment.entity.Comment;
+import com.sparta.topster.domain.comment.exception.CommentException;
 import com.sparta.topster.domain.comment.repository.CommentRespository;
 import com.sparta.topster.domain.post.entity.Post;
 import com.sparta.topster.domain.post.service.PostService;
@@ -193,6 +194,24 @@ class CommentServiceTest {
 
     assertThatThrownBy(() -> commentService.deleteComment(9999L, otherUser)).isInstanceOf(
         ServiceException.class).hasMessage("작성자만 수정 및 삭제 할 수 있습니다.");
+  }
+  @Test
+  void 댓글_작성자가_같은_경우() {
+  // given
+    Long commentId = 1L;
+    User user = User.builder().nickname("Test User").build();
+    Comment comment = Comment.builder()
+        .user(user)
+        .build();
+    ReflectionTestUtils.setField(comment, "id", 1L);
+
+    given(commentRepository.findById(any())).willReturn(Optional.of(comment));
+
+      // when
+      Comment result = commentService.getCommentUser(commentId, user);
+
+      // then
+      assertEquals(result, comment);
   }
 
 }
