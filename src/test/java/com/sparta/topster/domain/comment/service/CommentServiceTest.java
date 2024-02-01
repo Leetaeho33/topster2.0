@@ -2,7 +2,9 @@ package com.sparta.topster.domain.comment.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
@@ -15,6 +17,8 @@ import com.sparta.topster.domain.post.service.PostService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +27,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class) // Mockito의 목 객체 자동으로 초기화
@@ -74,6 +82,36 @@ class CommentServiceTest {
     // Then
     assertThat(result.getContent()).isEqualTo(req.getContent());
     assertThat(result.getAuthor()).isEqualTo(user.getNickname());
+  }
+
+  @Test
+  void 댓글_조회_테스트() {
+    // given
+    Long postId = 1L;
+    Integer pageNum = 1;
+    Pageable pageable = PageRequest.of(0, 9);
+
+    Comment comment = Comment.builder()
+        .content("댓글")
+        .post(post)
+        .user(user)
+        .build();
+    ReflectionTestUtils.setField(comment, "id", 1L);
+
+    Page<Comment> commentPage = new PageImpl<>(Collections.singletonList(comment), pageable, 1);
+
+    given(commentRepository.findByPostId(anyLong(), any(Pageable.class))).willReturn(commentPage);
+
+    // when
+    Page<CommentRes> result = commentService.getComments(postId, pageNum);
+
+    // then
+    assert(!result.getContent().isEmpty());
+    CommentRes commentRes = result.getContent().get(0);
+    assertEquals(commentRes.getId(), comment.getId());
+    assertEquals(commentRes.getContent(), comment.getContent());
+    assertEquals(commentRes.getAuthor(), comment.getUser().getNickname());
+    assertEquals(commentRes.getCreatedAt(), comment.getCreatedAt());
   }
 
   @Test
@@ -156,4 +194,5 @@ class CommentServiceTest {
     assertThatThrownBy(() -> commentService.deleteComment(9999L, otherUser)).isInstanceOf(
         ServiceException.class).hasMessage("작성자만 수정 및 삭제 할 수 있습니다.");
   }
+
 }
