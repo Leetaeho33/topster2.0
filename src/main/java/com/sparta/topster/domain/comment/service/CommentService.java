@@ -58,13 +58,12 @@ public class CommentService {
     Pageable pageable = PageRequest.of(pageNum - 1, 9);
     log.info("해당 게시글에 대한 댓글 조회");
     Page<Comment> findCommentList = commentRespository.findByPostId(postId, pageable);
-    Page<CommentRes> postCommentList = findCommentList.map(comment -> CommentRes.builder()
+
+    return findCommentList.map(comment -> CommentRes.builder()
         .id(comment.getId())
         .content(comment.getContent())
         .author(comment.getUser().getNickname())
         .createdAt(comment.getCreatedAt()).build());
-
-    return postCommentList;
   }
 
   @Transactional
