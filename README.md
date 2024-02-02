@@ -19,8 +19,9 @@
 
 ---
 
-| 음악 검색 API | 스포티 파이 API, maniaDB API |
+| 기술스택 | 활용 |
 | --- | --- |
+| 음악 검색 API | 스포티 파이 API, maniaDB API |
 | CI/CD | GitHub Action |
 | Docker | Back End Server, Front End Server, Nginx를 image로 관리 |
 | Data Caching | Redis로 외부 API 데이터 캐싱 |
