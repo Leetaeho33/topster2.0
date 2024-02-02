@@ -1,7 +1,7 @@
-package com.sparta.topster.domain.topster_album.repository;
+package com.sparta.topster.domain.topsterAlbum.repository;
 
-import com.sparta.topster.domain.topster.entity.Topster;
-import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
+import com.sparta.topster.domain.topsterAlbum.entity.TopsterAlbum;
+
 import java.util.List;
 import org.springframework.data.repository.RepositoryDefinition;
 

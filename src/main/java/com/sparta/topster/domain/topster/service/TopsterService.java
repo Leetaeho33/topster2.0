@@ -8,9 +8,8 @@ import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
 import com.sparta.topster.domain.topster.entity.Topster;
-import com.sparta.topster.domain.topster.exception.TopsterException;
 import com.sparta.topster.domain.topster.repository.TopsterRepository;
-import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
+import com.sparta.topster.domain.topsterAlbum.entity.TopsterAlbum;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import java.util.ArrayList;
@@ -142,7 +141,7 @@ public class TopsterService {
                     .image(topsterAlbum.getAlbum().getImage())
                     .build());
         }
-
+ 
         return TopsterGetRes.builder()
             .id(topstesr.getId())
             .title(topstesr.getTitle())

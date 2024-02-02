@@ -4,13 +4,11 @@ import com.sparta.topster.domain.album.dto.req.AlbumInsertReq;
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.album.service.AlbumService;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
-import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.dto.res.TopsterGetRes;
-import com.sparta.topster.domain.topster.dto.res.TopsterPageRes;
 import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.repository.TopsterRepository;
-import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
-import com.sparta.topster.domain.topster_album.repository.TopsterAlbumRepository;
+import com.sparta.topster.domain.topsterAlbum.entity.TopsterAlbum;
+import com.sparta.topster.domain.topsterAlbum.repository.TopsterAlbumRepository;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
 import com.sparta.topster.global.exception.ServiceException;
@@ -28,14 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_AUTHOR;
-import static com.sparta.topster.domain.topster.exception.TopsterException.NOT_EXIST_TOPSTER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.InstanceOfAssertFactories.optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.will;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

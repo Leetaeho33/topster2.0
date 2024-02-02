@@ -1,10 +1,11 @@
-package com.sparta.topster.domain.topster_album.service;
+package com.sparta.topster.domain.topsterAlbum.service;
 
 import com.sparta.topster.domain.album.entity.Album;
 import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.entity.Topster;
-import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
-import com.sparta.topster.domain.topster_album.repository.TopsterAlbumRepository;
+import com.sparta.topster.domain.topsterAlbum.entity.TopsterAlbum;
+import com.sparta.topster.domain.topsterAlbum.repository.TopsterAlbumRepository;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

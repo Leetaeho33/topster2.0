@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.facade;
+package com.sparta.topster.domain.topster.facade;
 
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
@@ -7,8 +7,8 @@ import com.sparta.topster.domain.topster.dto.req.TopsterCreateReq;
 import com.sparta.topster.domain.topster.dto.res.TopsterCreateRes;
 import com.sparta.topster.domain.topster.entity.Topster;
 import com.sparta.topster.domain.topster.service.TopsterService;
-import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
-import com.sparta.topster.domain.topster_album.service.TopsterAlbumService;
+import com.sparta.topster.domain.topsterAlbum.entity.TopsterAlbum;
+import com.sparta.topster.domain.topsterAlbum.service.TopsterAlbumService;
 import com.sparta.topster.domain.user.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
