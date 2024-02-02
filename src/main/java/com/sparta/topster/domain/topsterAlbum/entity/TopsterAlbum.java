@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.topster_album.entity;
+package com.sparta.topster.domain.topsterAlbum.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.topster.domain.BaseEntity;

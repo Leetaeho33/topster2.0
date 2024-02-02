@@ -66,7 +66,7 @@ public class SpotifyService implements OpenApiService {
     }
 
 
-    @Override
+     @Override
     public List<AlbumRes> getAlbums(String query) {
         log.info("rawData에서 item을 추출");
         String rawData = getRawArtistData(query);
