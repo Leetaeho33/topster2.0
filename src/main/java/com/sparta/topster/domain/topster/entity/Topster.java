@@ -1,21 +1,17 @@
 package com.sparta.topster.domain.topster.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.topster.domain.BaseEntity;
 import com.sparta.topster.domain.like.entity.Like;
-import com.sparta.topster.domain.topster_album.entity.TopsterAlbum;
+import com.sparta.topster.domain.topsterAlbum.entity.TopsterAlbum;
 import com.sparta.topster.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.message.StringFormattedMessage;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.bytecode.internal.bytebuddy.PrivateAccessorException;
 
 import java.util.ArrayList;
 import java.util.List;
