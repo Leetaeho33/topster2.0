@@ -15,7 +15,8 @@
 ![11](https://github.com/GyungKu/topster2.0/assets/148296128/c73e1e5b-97d7-4c5d-8478-4fb2494bdbae)
 
 # 탑스터 등록 페이지
-![스크린샷 2024-02-02 140631](https://github.com/GyungKu/topster2.0/assets/148296128/4902bd40-b871-4d13-a3fd-8f750715ccb3)
+![22](https://github.com/GyungKu/topster2.0/assets/148296128/a73bafcc-8dad-4fd9-b7e6-51fdd76c322d)
+
 
 # 탑스터 조회 페이지
 ![3](https://github.com/GyungKu/topster2.0/assets/148296128/6314dc5c-085e-42ae-bd61-402f1237af6f)
