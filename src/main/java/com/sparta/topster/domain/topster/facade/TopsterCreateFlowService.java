@@ -1,4 +1,4 @@
-package com.sparta.topster.domain.facade;
+package com.sparta.topster.domain.topster.facade;
 
 import com.sparta.topster.domain.album.dto.res.AlbumRes;
 import com.sparta.topster.domain.album.entity.Album;
