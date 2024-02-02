@@ -205,4 +205,133 @@ URI uri = UriComponentsBuilder
 
 </div>
 </details>
+
+
+
+# 디렉토리 구조
+
+---
+<details>
+<summary>디렉토리 구조</summary>
+	
+    └─src
+        ├─main
+        │  ├─java
+        │  │  └─com
+        │  │      └─sparta
+        │  │          └─topster
+        │  │              ├─domain
+        │  │              │  ├─album
+        │  │              │  │  ├─controller
+        │  │              │  │  ├─dto
+        │  │              │  │  │  ├─req
+        │  │              │  │  │  └─res
+        │  │              │  │  ├─entity
+        │  │              │  │  ├─exception
+        │  │              │  │  ├─repository
+        │  │              │  │  └─service
+        │  │              │  ├─comment
+        │  │              │  │  ├─controller
+        │  │              │  │  ├─dto
+        │  │              │  │  │  ├─req
+        │  │              │  │  │  └─res
+        │  │              │  │  ├─entity
+        │  │              │  │  ├─exception
+        │  │              │  │  ├─repository
+        │  │              │  │  └─service
+        │  │              │  ├─follow
+        │  │              │  │  ├─controller
+        │  │              │  │  ├─dto
+        │  │              │  │  ├─entity
+        │  │              │  │  ├─exception
+        │  │              │  │  ├─repository
+        │  │              │  │  └─service
+        │  │              │  ├─like
+        │  │              │  │  ├─controller
+        │  │              │  │  ├─dto
+        │  │              │  │  ├─entity
+        │  │              │  │  ├─repository
+        │  │              │  │  └─service
+        │  │              │  ├─openApi
+        │  │              │  │  ├─exception
+        │  │              │  │  └─service
+        │  │              │  │      ├─maniadb
+        │  │              │  │      └─spotify
+        │  │              │  ├─post
+        │  │              │  │  ├─controller
+        │  │              │  │  ├─dto
+        │  │              │  │  │  ├─request
+        │  │              │  │  │  └─response
+        │  │              │  │  ├─entity
+        │  │              │  │  ├─exception
+        │  │              │  │  ├─repository
+        │  │              │  │  └─service
+        │  │              │  ├─song
+        │  │              │  │  ├─entity
+        │  │              │  │  └─repository
+        │  │              │  ├─sse
+        │  │              │  ├─topster
+        │  │              │  │  ├─controller
+        │  │              │  │  ├─dto
+        │  │              │  │  │  ├─req
+        │  │              │  │  │  └─res
+        │  │              │  │  ├─entity
+        │  │              │  │  ├─exception
+        │  │              │  │  ├─facade
+        │  │              │  │  ├─repository
+        │  │              │  │  └─service
+        │  │              │  ├─topsterAlbum
+        │  │              │  │  ├─entity
+        │  │              │  │  ├─repository
+        │  │              │  │  └─service
+        │  │              │  └─user
+        │  │              │      ├─config
+        │  │              │      ├─controller
+        │  │              │      ├─dto
+        │  │              │      │  ├─deleteDto
+        │  │              │      │  ├─getUser
+        │  │              │      │  ├─kakao
+        │  │              │      │  ├─login
+        │  │              │      │  ├─modifyPassword
+        │  │              │      │  ├─signup
+        │  │              │      │  └─update
+        │  │              │      ├─entity
+        │  │              │      ├─excepetion
+        │  │              │      ├─repository
+        │  │              │      └─service
+        │  │              │          ├─google
+        │  │              │          ├─kakao
+        │  │              │          ├─mail
+        │  │              │          └─user
+        │  │              └─global
+        │  │                  ├─config
+        │  │                  ├─exception
+        │  │                  ├─filter
+        │  │                  ├─response
+        │  │                  ├─security
+        │  │                  └─util
+        │  └─resources
+        │      └─templates
+        └─test
+            ├─java
+            │  └─com
+            │      └─sparta
+            │          └─topster
+            │              └─domain
+            │                  ├─album
+            │                  │  ├─entity
+            │                  │  └─service
+            │                  ├─comment
+            │                  │  ├─entity
+            │                  │  └─service
+            │                  ├─post
+            │                  │  ├─entity
+            │                  │  ├─repository
+            │                  │  └─service
+            │                  ├─topster
+            │                  │  └─service
+            │                  └─user
+            └─resources
     
+    
+</details>
