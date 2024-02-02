@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class NotificationController {
 
     //모든 Emitters를 저장하는 ConcurrentHashMap
-    public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
     private final NotificationService notificationService;
 
     @GetMapping("/api/notification/subscribe")
