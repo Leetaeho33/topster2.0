@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 
 import com.sparta.topster.domain.comment.dto.req.CommentCreateReq;
 import com.sparta.topster.domain.comment.dto.req.CommentModifyReq;
@@ -15,6 +16,7 @@ import com.sparta.topster.domain.comment.exception.CommentException;
 import com.sparta.topster.domain.comment.repository.CommentRespository;
 import com.sparta.topster.domain.post.entity.Post;
 import com.sparta.topster.domain.post.service.PostService;
+import com.sparta.topster.domain.sse.NotificationService;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.global.exception.ServiceException;
 import com.sparta.topster.global.response.RootNoDataRes;
@@ -43,7 +45,8 @@ class CommentServiceTest {
   private CommentRespository commentRepository;
   @Mock
   private PostService postService;
-
+  @Mock
+  private NotificationService notificationService;
   User user;
   User otherUser;
   Post post;
@@ -79,7 +82,6 @@ class CommentServiceTest {
 
     // When
     CommentRes result = commentService.createComment(post.getId(), req, user);
-
     // Then
     assertThat(result.getContent()).isEqualTo(req.getContent());
     assertThat(result.getAuthor()).isEqualTo(user.getNickname());
