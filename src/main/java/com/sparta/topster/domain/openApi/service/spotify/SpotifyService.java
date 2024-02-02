@@ -9,16 +9,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_SERCH_ALBUM;
+import static com.sparta.topster.domain.openApi.exception.OpenApiException.NOT_SERCH_ALBUM;
 
 @Service
 @Primary
@@ -26,6 +29,7 @@ import static com.sparta.topster.domain.openApi.exception.ManiadbException.NOT_S
 @RequiredArgsConstructor
 public class SpotifyService implements OpenApiService {
     private final SpotifyUtil spotifyUtil;
+    private final RestClient restClient;
     private String accessToken;
 
     @PostConstruct
@@ -37,19 +41,27 @@ public class SpotifyService implements OpenApiService {
 
     @Override
     public String getRawArtistData(String query) {
-        accessToken = spotifyUtil.accesstoken();
         log.info(query + "로 rawData 가져오기");
-        RestTemplate rest = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("Host", "api.spotify.com");
-        headers.add("Content-type", "application/json");
-        String body = "";
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://api.spotify.com/v1/search")
+                .queryParam("type", "album")
+                .queryParam("q", query)
+                .queryParam("limit", "30")
+                .encode()
+                .build()
+                .toUri();
 
-        HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
-        ResponseEntity<String> responseEntity = rest
-                .exchange("https://api.spotify.com/v1/search?type=album&q="
-                        + query + "&limit=30", HttpMethod.GET, requestEntity, String.class);
+        Consumer<HttpHeaders> headersConsumer = (headers) -> {
+            headers.add("Authorization", "Bearer " + accessToken);
+            headers.add("Host", "api.spotify.com");
+            headers.add("Content-type", "application/json");
+        };
+
+        ResponseEntity<String> responseEntity = restClient.get()
+                .uri(uri)
+                .headers(headersConsumer)
+                .retrieve()
+                .toEntity(String.class);
         return responseEntity.getBody();
     }
 
@@ -98,10 +110,9 @@ public class SpotifyService implements OpenApiService {
             sb.append(((JSONObject)artist).getString("name") + ", ");
         }
         // 아티스트가 한명이 아닌 경우(합작 앨범) 처리
-        String artistNames = sb.substring(0, sb.length() - 2);
-        log.info("artistName is " + artistNames);
-        return artistNames;
+        return sb.substring(0, sb.length() - 2);
     }
+
 
 
     private void checkExist(JSONArray items){

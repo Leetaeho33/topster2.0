@@ -1,0 +1,52 @@
+# 셋팅
+# 1. 백엔드에 .env 루트 디렉토리에 생성 후 설정
+# 2. 프론트에 .dockerignore 파일 생성 후 설정
+# 3. 프론트에 .env 파일 생성 후 설정
+
+# 도커로 개발 환경 실행
+# 1. 도커 실행
+# 2. 터미널에서 docker-compose -f docker-compose-jaehoon.yml up 명령어 입력 (이미 컨테이너스에 있다면 도커 데스크탑으로 컨테이너스 실행해도 됩니다.)
+# 3. 무언가 업데이트 이후에는 gradle에서 clean -> bootJar 후 docker-compose -f docker-compose-jaehoon.yml up --build 명령어 입력
+# 3번을 자동화하고 싶은데 Dockerfile에서 clean, build하는 과정이 안돼서 일단 이렇게 합니다.
+
+# 프론트엔드 작업해서 프론트 쪽 개발 환경 업데이트하고 싶을 때
+# 1. 프론트가서 터미널에 docker build -t gyungku/topster-fe-jaehoon -f Dockerfile.jaehoon . 명령어 실행
+# 2. docker push gyungku/topster-fe-jaehoon 명령어 실행
+
+version: "3"
+services:
+  frontend:
+    image: gyungku/topster-fe-jaehoon
+
+  nginx:
+    restart: always
+    image: gyungku/topster-nginx
+    ports:
+      - "80:80"
+
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - mysql
+    restart: always
+
+  redis:
+    image: redis
+    restart: unless-stopped
+    ports:
+      - "6378:6378"
+    container_name: redis
+
+  mysql:
+    image: mysql
+    restart: unless-stopped
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: topster

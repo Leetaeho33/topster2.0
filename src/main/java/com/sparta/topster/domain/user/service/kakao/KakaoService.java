@@ -2,7 +2,6 @@ package com.sparta.topster.domain.user.service.kakao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.topster.domain.user.dto.kakao.KakaoUserInfoDto;
 import com.sparta.topster.domain.user.entity.User;
 import com.sparta.topster.domain.user.entity.UserRoleEnum;
@@ -14,13 +13,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
@@ -30,12 +30,16 @@ public class KakaoService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final RestTemplate restTemplate; //따로 Bean수동등록을 해줘야함
+    private final RestClient restClient;
     private final JwtUtil jwtUtil;
-    @Value("${base.url}")
-    private String baseUrl;
+    @Value("${kakao.client-id}")
+    private String clientId;
+    @Value("${kakao.secret}")
+    private String secret;
+    @Value("${kakao.redirect}")
+    private String redirectUrl;
 
-    public String kakaoLogin(String code) throws JsonProcessingException {
+    public HttpHeaders kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
@@ -47,9 +51,14 @@ public class KakaoService {
 
         // 4. JWT 토큰 생성
         String createToken = jwtUtil.createToken(kakaoUser.getUsername(), kakaoUser.getRole());
+        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getUsername());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JwtUtil.AUTHORIZATION_HEADER, createToken);
+        headers.add(JwtUtil.REFRESH_TOKEN_PREFIX, refreshToken);
 
         // 생성 토큰 반환
-        return createToken;
+        return headers;
     }
 
     private String getToken(String code) throws JsonProcessingException {
@@ -69,9 +78,10 @@ public class KakaoService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "7a87fc3e7bcbae5c14ba39858700ce8a");
-        body.add("redirect_uri", baseUrl + "/api/user/kakao/callback");
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUrl);
         body.add("code", code);
+        body.add("client_secret", secret);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
             .post(uri)
@@ -79,13 +89,16 @@ public class KakaoService {
             .body(body);
 
         // HTTP 요청 보내기
-        ResponseEntity<String> response = restTemplate.exchange(
-            requestEntity,
-            String.class
-        );
+        ResponseEntity<JsonNode> response =
+            restClient.post()
+                .uri(uri)
+                .body(body)
+                .header("Content-type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .retrieve()
+                .toEntity(JsonNode.class);
 
         // HTTP 응답 (JSON) -> 액세스 토큰 파싱
-        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        JsonNode jsonNode = response.getBody();
         return jsonNode.get("access_token").asText();
     }
 
@@ -110,12 +123,13 @@ public class KakaoService {
             .body(new LinkedMultiValueMap<>()); //body에 따로 보내줄 필요가 없음
 
         // HTTP 요청 보내기
-        ResponseEntity<String> response = restTemplate.exchange(
-            requestEntity,
-            String.class
-        );
+        ResponseEntity<JsonNode> response = restClient.get()
+            .uri(uri)
+            .header("Authorization", "Bearer " + accessToken)
+            .retrieve()
+            .toEntity(JsonNode.class);
 
-        JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        JsonNode jsonNode = response.getBody();
         Long id = jsonNode.get("id").asLong(); //Long타입으로 해당하는 id값 받아옴
         String nickname = jsonNode.get("properties")
             .get("nickname").asText();//닉네임 값 가져옴
@@ -145,13 +159,20 @@ public class KakaoService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
+                String nickname = kakaoUserInfo.getNickname();
 
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new User(kakaoUserInfo.getNickname(), encodedPassword, email, UserRoleEnum.USER, kakaoId);
+                kakaoUser = User.builder()
+                    .username(nickname)
+                    .nickname(nickname)
+                    .password(encodedPassword)
+                    .email(email)
+                    .role(UserRoleEnum.USER)
+                    .kakaoId(kakaoId)
+                    .build();
             }
-
             userRepository.save(kakaoUser);
         }
         return kakaoUser;

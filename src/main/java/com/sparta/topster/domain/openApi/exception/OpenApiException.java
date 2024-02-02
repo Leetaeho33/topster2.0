@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ManiadbException implements ErrorCode {
-    NOT_SERCH_ALBUM(HttpStatus.NOT_FOUND, "M1000", "검색 가수의 앨범이 존재하지 않습니다.");
+public enum OpenApiException implements ErrorCode {
+    NOT_SERCH_ALBUM(HttpStatus.NOT_FOUND, "O1000", "검색 가수의 앨범이 존재하지 않습니다.");
 
     private final HttpStatus Status;
     private final String code;
