@@ -9,6 +9,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class NotificationService {
 
+    private final NotificationRepository notificationRepository;
+
     // 메시지 알림
     public SseEmitter subscribe(Long userId) {
 
@@ -23,12 +25,12 @@ public class NotificationService {
         }
 
         // 3. 저장
-        NotificationController.sseEmitters.put(userId, sseEmitter);
+        notificationRepository.sseEmitters.put(userId, sseEmitter);
 
         // 4. 연결 종료 처리
-        sseEmitter.onCompletion(() -> NotificationController.sseEmitters.remove(userId));	// sseEmitter 연결이 완료될 경우
-        sseEmitter.onTimeout(() -> NotificationController.sseEmitters.remove(userId));		// sseEmitter 연결에 타임아웃이 발생할 경우
-        sseEmitter.onError((e) -> NotificationController.sseEmitters.remove(userId));		// sseEmitter 연결에 오류가 발생할 경우
+        sseEmitter.onCompletion(() -> notificationRepository.sseEmitters.remove(userId));	// sseEmitter 연결이 완료될 경우
+        sseEmitter.onTimeout(() -> notificationRepository.sseEmitters.remove(userId));		// sseEmitter 연결에 타임아웃이 발생할 경우
+        sseEmitter.onError((e) -> notificationRepository.sseEmitters.remove(userId));		// sseEmitter 연결에 오류가 발생할 경우
 
         return sseEmitter;
     }
@@ -44,12 +46,12 @@ public class NotificationService {
     }
 
     private void sendSseEvent(Long userId, String addLike, String object) {
-        if (NotificationController.sseEmitters.containsKey(userId)) {
-            SseEmitter sseEmitterReceiver = NotificationController.sseEmitters.get(userId);
+        if (notificationRepository.sseEmitters.containsKey(userId)) {
+            SseEmitter sseEmitterReceiver = notificationRepository.sseEmitters.get(userId);
             try {
                 sseEmitterReceiver.send(SseEmitter.event().name(addLike).data(object));
             } catch (Exception e) {
-                NotificationController.sseEmitters.remove(userId);
+                notificationRepository.sseEmitters.remove(userId);
             }
         }
     }
