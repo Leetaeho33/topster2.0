@@ -8,6 +8,22 @@
 - Topster2.0은 나만의 탑스터를 만들 수 있고, 그 앨범의 디테일(가수, 앨범 이름, 설명 등등..)들을 볼 수 있습니다.
 - 나의 탑스터를 게시판에 공유하고, 댓글을 달고 좋아요를 누를 수 있습니다. 좋아요 수가 높은 탑스터는 상위에 노출됩니다.
 
+- # 서비스 예시
+---
+
+# 메인 페이지
+![11](https://github.com/GyungKu/topster2.0/assets/148296128/c73e1e5b-97d7-4c5d-8478-4fb2494bdbae)
+
+# 탑스터 등록 페이지
+![스크린샷 2024-02-02 140631](https://github.com/GyungKu/topster2.0/assets/148296128/4902bd40-b871-4d13-a3fd-8f750715ccb3)
+
+# 탑스터 조회 페이지
+![3](https://github.com/GyungKu/topster2.0/assets/148296128/6314dc5c-085e-42ae-bd61-402f1237af6f)
+
+# 게시글 조회 페이지
+![44](https://github.com/GyungKu/topster2.0/assets/148296128/6bd02e7f-d013-46bf-92e8-b65fcb410f8a)
+
+
 # 서비스 아키텍쳐
 
 ---
